@@ -1,0 +1,63 @@
+<?php
+/**
+ * Copyright (c) 2009-2014 Vaimo AB
+ *
+ * Vaimo reserves all rights in the Program as delivered. The Program
+ * or any portion thereof may not be reproduced in any form whatsoever without
+ * the written consent of Vaimo, except as provided by licence. A licence
+ * under Vaimo's rights in the Program may be available directly from
+ * Vaimo.
+ *
+ * Disclaimer:
+ * THIS NOTICE MAY NOT BE REMOVED FROM THE PROGRAM BY ANY USER THEREOF.
+ * THE PROGRAM IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+ * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL
+ * THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE PROGRAM OR THE USE OR OTHER DEALINGS
+ * IN THE PROGRAM.
+ *
+ * @category    Vaimo
+ * @package     Vaimo_Klarna
+ * @copyright   Copyright (c) 2009-2014 Vaimo AB
+ */
+
+$_shippingRateGroups = $this->getShippingRates();
+
+?>
+
+<?php if (!$_shippingRateGroups): ?>
+
+    <p><?php echo $this->__('Sorry, no quotes are available for this order at this time.') ?></p>
+
+<?php else: ?>
+
+    <ul>
+    <?php $shippingCodePrice = array(); ?>
+    <?php $_sole = count($_shippingRateGroups) == 1; ?>
+    <?php foreach ($_shippingRateGroups as $code => $_rates): ?>
+        <?php $_sole = $_sole && count($_rates) == 1; ?>
+        <?php foreach ($_rates as $_rate): ?>
+            <?php $shippingCodePrice[] = "'".$_rate->getCode()."':".(float)$_rate->getPrice(); ?>
+            <li>
+                <?php if ($_rate->getErrorMessage()): ?>
+                <ul class="messages"><li class="error-msg"><ul><li><?php echo $this->escapeHtml($_rate->getErrorMessage()) ?></li></ul></li></ul>
+                <?php else: ?>
+                    <input name="shipping_method" type="radio" class="shipping-method-input-radio" value="<?php echo $_rate->getCode() ?>" id="s_method_<?php echo $_rate->getCode() ?>"<?php if($_rate->getCode()===$this->getAddressShippingMethod()) echo ' checked="checked"' ?> />
+
+                    <label for="s_method_<?php echo $_rate->getCode() ?>"><?php echo $this->escapeHtml($_rate->getMethodTitle()) ?>,
+                        <?php $_excl = $this->getShippingPrice($_rate->getPrice(), $this->helper('tax')->displayShippingPriceIncludingTax()); ?>
+                        <?php $_incl = $this->getShippingPrice($_rate->getPrice(), true); ?>
+                        <?php echo $_excl; ?>
+                        <?php if ($this->helper('tax')->displayShippingBothPrices() && $_incl != $_excl): ?>
+                            (<?php echo $this->__('Incl. Tax'); ?> <?php echo $_incl; ?>)
+                        <?php endif; ?>
+                    </label>
+                <?php endif ?>
+            </li>
+        <?php endforeach; ?>
+    <?php endforeach; ?>
+    </ul>
+
+<?php endif; ?>

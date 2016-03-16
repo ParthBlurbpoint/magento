@@ -1,0 +1,261 @@
+<?php
+$productId	          = $this->getRequest()->getParam('id');
+$helper		          = Mage::helper('md_partialpayment');
+$partialPaymentOptions    = $this->getPartialPaymentOption();
+$slabs		          = Mage::getModel('md_partialpayment/slabs');
+$initialPaymentAmount     = $status = $additionalPaymentAmount = $frequencyPayment = null;
+$useConfigInstallments    = $customerGroups = $installments = null;
+$productPartialPlanRuleId = Mage::helper('md_partialpayment')->getPlanProductsId($productId);
+
+if(!$partialPaymentOptions || !$partialPaymentOptions->getId() || !is_object($partialPaymentOptions)):
+    $isNew = true; 
+else:
+    $isNew = false;
+endif;
+
+if (!$isNew) :
+    if($partialPaymentOptions->getId()):
+	if(!is_null($partialPaymentOptions->getData('status'))):
+	    $status = $partialPaymentOptions->getData('status');
+	endif; 
+	
+	if(!is_null($partialPaymentOptions->getData('initial_payment_amount'))):
+	    $initialPaymentAmount = $partialPaymentOptions->getData('initial_payment_amount'); 
+	endif;
+	
+	if(!is_null($partialPaymentOptions->getData('additional_payment_amount'))):
+	    $additionalPaymentAmount = $partialPaymentOptions->getData('additional_payment_amount');
+	endif;
+	
+	if(!is_null($partialPaymentOptions->getData('customer_groups'))):
+	    $customerGroups = $partialPaymentOptions->getData('customer_groups');
+	endif;
+	
+	if(!is_null($partialPaymentOptions->getData('frequency_payment'))):
+	    $frequencyPayment = $partialPaymentOptions->getData('frequency_payment');
+	endif;
+	
+	if(!is_null($partialPaymentOptions->getData('installments'))):
+	    $installments = $partialPaymentOptions->getData('installments');
+	endif;
+	
+	if(!is_null($partialPaymentOptions->getData('use_config_installments'))):
+	    $useConfigInstallments = $partialPaymentOptions->getData('use_config_installments');
+	endif;
+    endif;
+endif;
+
+if (!empty($productPartialPlanRuleId)):
+    $ruleTitle = Mage::getModel('md_partialpayment/rule')->load($productPartialPlanRuleId)->getTitle();
+endif;
+
+?>
+<div class="entry-edit">
+    <div class="entry-edit-head">
+        <h4 class="icon-head head-edit-form fieldset-legend">
+	    <?php echo $helper->__('Partial Payment Configuration') ?>
+	</h4>
+    </div>
+    <div class="fieldset " id="partialpayment_partial_payment_options">
+        <div class="hor-scroll">
+            <table cellspacing="0" class="form-list">
+                <tbody>
+                    <tr>
+                        <td class="label"><label for="partialpayment_status"><?php echo $helper->__('Enable') ?></label></td>
+                        <td class="value">
+
+                            <select id="partialpayment_status" name="partialpayment[status]" class=" select">
+                                <option value="0" <?php if ($status == 0): ?>selected="selected"<?php endif; ?>><?php echo $helper->__('No') ?></option>
+                                <option value="1" <?php if ($status == 1): ?>selected="selected"<?php endif; ?>><?php echo $helper->__('Yes') ?></option>
+                            </select>
+                        </td>
+                    </tr>
+		    <tr>
+			<td class="label">
+			    <label for="partialpayment_status">
+				<?php echo $helper->__('Partial Plan Rule Applied') ?>
+			    </label>
+			</td>
+                        <td class="value">
+			    <?php
+			    if (!empty($ruleTitle)):
+				$partialPlanRuleUrl = $this->getUrl('md_partialpayment/adminhtml_partialplan/edit/id/' . $productPartialPlanRuleId);
+				?>
+				<a target="_blank" href="<?php echo $partialPlanRuleUrl ?>"><?php echo $ruleTitle ?></a>
+			    <?php else : ?>
+				<label for="no-rule">
+				    <?php echo $this->__('No rule is applied to this product.') ?>
+				</label>
+			    <?php endif; ?>
+			</td>
+		    </tr>
+		    
+                    <tr>
+                        <td class="label">
+			    <label for="partialpayment_initial_payment_amount">
+				<?php echo $helper->__('Initial Payment Amount') ?>
+			    </label>
+			</td>
+			
+                        <td class="value">
+			    <?php $_checked = (is_null($initialPaymentAmount) || $isNew) ? 'checked="checked"' : '' ?>
+<?php $_disabled = (is_null($initialPaymentAmount) || $isNew) ? ' disabled="disabled"' : '' ?>
+                            <input id="partialpayment_initial_payment_amount" value="<?php echo $initialPaymentAmount ?>" name="partialpayment[initial_payment_amount]" title="Additional Payment Amount" class="input-text required-entry validate-not-negative-number" type="text"<?php echo $_disabled ?> />            
+
+                            <input type="hidden" id="partialpayment_initial_payment_amount_default">
+                            <input onclick="toggleValueElements(this, this.parentNode);" type="checkbox" id="partialpayment_use_config_initial_payment_amount" name="partialpayment[use_config_initial_payment_amount]" value="1" class="checkbox" <?php echo $_checked ?> />
+                            <label for="partialpayment_use_config_initial_payment_amount" class="normal"><?php echo $helper->__('Use Config Settings') ?></label>
+                            <script type="text/javascript">toggleValueElements($('partialpayment_initial_payment_amount'), $('partialpayment_use_config_initial_payment_amount').parentNode);</script>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td class="label"><label for="partialpayment_frequency_payment"><?php echo $helper->__('Installments Settings') ?></label></td>
+                        <td colspan="10" class="grid tier">
+<?php $_checked = ($useConfigInstallments == 1 || $isNew) ? 'checked="checked"' : '' ?>
+                            <table cellspacing="0" class="data border" id="installment_slabs_table">
+                                <col width="135" />
+                                <col width="120" />
+                                <col />
+                                <col width="1" />
+                                <thead>
+                                    <tr class="headings">
+                                        <th><?php echo $helper->__('No of Installments') ?></th>
+                                        <th><?php echo $helper->__('Additional Fee Type') ?></th>
+                                        <th><?php echo $helper->__('Additional Fee') ?></th>
+                                        <th>&nbsp;</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="partialpayment_slabs_container"></tbody>
+                                <tfoot>
+                                    <tr>
+                                        <td>&nbsp;</td>
+                                        <td colspan="4" class="a-right"><?php echo $this->getInstallmentSlabAddButtonHtml() ?></td>
+                                    </tr>
+                                </tfoot>
+                            </table>
+                            <p class="note"><span><?php echo $helper->__('Minimum installments should be greater than one.') ?></span></p>
+                            <input type="checkbox" id="partialpayment_use_config_installments" name="partialpayment[use_config_installments]" value="1" class="checkbox" <?php echo $_checked ?> />
+                            <label for="partialpayment_use_config_installment_settings" class="normal"><?php echo $helper->__('Use Config Settings') ?></label>
+                            <script type="text/javascript">
+				document.observe("dom:loaded", function () {
+				    if ($('partialpayment_use_config_installments').checked) {
+					$('installment_slabs_table').select('button', 'input', 'select').each(function (elements) {
+					    $(elements).disabled = true;
+					    $(elements).addClassName('disabled');
+					});
+				    } else {
+					$('installment_slabs_table').select('button', 'input', 'select').each(function (elements) {
+					    $(elements).disabled = false;
+					    $(elements).removeClassName('disabled');
+					});
+				    }
+				});
+				$('partialpayment_use_config_installments').observe('click', function () {
+				    if ($('partialpayment_use_config_installments').checked) {
+					$('installment_slabs_table').select('button', 'input', 'select').each(function (elements) {
+					    $(elements).disabled = true;
+					    $(elements).addClassName('disabled');
+					});
+				    } else {
+					$('installment_slabs_table').select('button', 'input', 'select').each(function (elements) {
+					    $(elements).disabled = false;
+					    $(elements).removeClassName('disabled');
+					});
+				    }
+				});
+                            </script>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+    var installmentSlabsTemplate = '<tr>'
+	    + '<td><input class="input-text required-entry validate-greater-than-zero" type="text" name="partialpayment[slabs][{{index}}][unit]" id="partialpayment_slabs_{{index}}_unit" value="{{unit}}" /></td>'
+	    + '<td>'
+	    + '<select name="partialpayment[slabs][{{index}}][price_type]" class="select validate-select" id="partialpayment_slabs_{{index}}_price_type">'
+	    + '<option value="<?php echo $slabs::INSTALLMENT_SLAB_PRICE_FIXED ?>"><?php echo $helper->__('Fixed') ?></option>'
+	    + '<option value="<?php echo $slabs::INSTALLMENT_SLAB_PRICE_PERCENTAGE ?>"><?php echo $helper->__('Percentage') ?></option>'
+	    + '</select>'
+	    + '</td>'
+	    + '<td><input class="input-text required-entry" type="text" name="partialpayment[slabs][{{index}}][price]" id="partialpayment_slabs_{{index}}_price" value="{{price}}" /></td>'
+	    + '<td><input type="hidden" name="partialpayment[slabs][{{index}}][delete]" class="delete" value="" id="partialpayment_slabs_{{index}}_delete" /><?php echo $this->getInstallmentSlabDeleteButtonHtml() ?></td>'
+	    + '</tr>';
+    var slabOption = {
+	template  : new Template(installmentSlabsTemplate, new RegExp('(^|.|\\r|\\n)({{\\s*(\\w+)\\s*}})', '')),
+	itemsCount: 0,
+	addItem: function (data) {
+	    if (!data) {
+		data = {};
+		data.index = 'slab_option_' + this.itemsCount;
+	    } else {
+		data.index = data.slab_id;
+	    }
+	    Element.insert($('partialpayment_slabs_container'), {
+		bottom: this.template.evaluate(data)
+	    });
+	    
+	    var priceElement = 'partialpayment_slabs_' + data.index + '_price';
+	    Event.observe('partialpayment_slabs_' + data.index + '_price_type', 'change', function (event) {
+		var typeElement = Event.findElement(event, 'select');
+		if (typeElement.value == <?php echo $slabs::INSTALLMENT_SLAB_PRICE_PERCENTAGE ?>) {
+		    $(priceElement).addClassName('validate-percents');
+		    if ($(priceElement).hasClassName('validate-not-negative-number')) {
+			$(priceElement).removeClassName('validate-not-negative-number');
+		    }
+		} else {
+		    $(priceElement).addClassName('validate-not-negative-number');
+		    if ($(priceElement).hasClassName('validate-percents')) {
+			$(priceElement).removeClassName('validate-percents');
+		    }
+		}
+	    });
+	    
+	    $('partialpayment_slabs_' + data.index + '_price_type').select("option").each(function (node) {
+		if (data.price_type == $(node).value)
+		{
+		    $(node).selected = true;
+		    if ($(node).value == <?php echo $slabs::INSTALLMENT_SLAB_PRICE_PERCENTAGE ?>) {
+			$(priceElement).addClassName('validate-percents');
+			if ($(priceElement).hasClassName('validate-not-negative-number')) {
+			    $(priceElement).removeClassName('validate-not-negative-number');
+			}
+		    } else {
+			$(priceElement).addClassName('validate-not-negative-number');
+			if ($(priceElement).hasClassName('validate-percents')) {
+			    $(priceElement).removeClassName('validate-percents');
+			}
+		    }
+		}
+	    });
+	    this.itemsCount++;
+
+	},
+	deleteItem: function (event) {
+	    var tr = Event.findElement(event, 'tr');
+	    if (tr) {
+		Element.select(tr, '.delete').each(function (element) {
+		    element.value = '1';
+		});
+		Element.select(tr, ['input', 'select']).each(function (element) {
+		    element.hide();
+		});
+		Element.hide(tr);
+		Element.addClassName(tr, 'no-display template');
+	    }
+	    return false;
+	}
+    };
+<?php 
+$partialPaymentSlabs = $this->getPartialPaymentSlabs();
+if(!empty($partialPaymentSlabs)) :
+    foreach ($partialPaymentSlabs as $_slab): ?>
+        slabOption.addItem(<?php echo $_slab->toJson() ?>);
+<?php 
+    endforeach; 
+endif;
+?>
+</script>

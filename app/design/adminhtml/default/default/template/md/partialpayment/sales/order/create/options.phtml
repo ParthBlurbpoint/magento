@@ -1,0 +1,191 @@
+<?php
+$blockData	    = $this->getData();
+$quoteItem	    = $blockData['item'];
+$blockData	    = $quoteItem->getData();
+$quoteItemDiscount  = $quoteItem->getDiscountAmount();
+$initialPaymentAmt  = (double)$quoteItem->getData('partialpayment_option_intial_amount');
+$selectedPPOption   = $quoteItem->getData('partialpayment_installment_count');
+$_product	    = $blockData['product'];
+$option		    = $this->getPartialPaymentOption($_product);
+$slabs		    = $this->getOptionInstallmentOptions($_product);
+$displayOpt	    = Mage::helper("md_partialpayment")->getIsFullCartPartialPaymentEnabled();
+$configInitialType  = Mage::getStoreConfig("md_partialpayment/general/initial_payment_type", $_product->getStoreId());
+$configPrice	    = Mage::getStoreConfig("md_partialpayment/general/initial_payment_amount", $_product->getStoreId());
+$jsPriceFormat	    = Mage::helper('core')->jsonEncode(Mage::app()->getLocale()->getJsPriceFormat());
+$helper		    = Mage::helper('md_partialpayment');
+$hiddenInstallments = $hiddenPrice = $hiddenPriceType = 0;
+$instSlabPriceFixed = MD_Partialpayment_Model_Slabs::INSTALLMENT_SLAB_PRICE_FIXED;
+$displayOptionsArr  = array(MD_Partialpayment_Model_Options::DISPLAY_OPTIONS_PRODUCTS, MD_Partialpayment_Model_Options::DISPLAY_OPTIONS_PRODUCTS_ALL);
+
+if ($option && $option->getId() && $option->isActive() && !is_null($slabs) && in_array($displayOpt, $displayOptionsArr)) { 
+    if($initialPaymentAmt > 0) {
+	$selectedPPOption -= 1;
+    }
+?>
+    <div>
+	<?php $shouldReloadLable = $this->shouldReloadCheckboxLabel($_product); ?>
+        <script type="text/javascript">
+	    <?php if (!$option->getUseConfigForInstallmentOptions()) { ?>
+		    var slabsJson = <?php echo $this->getSlabJson($_product) ?>;
+	    <?php } else { ?>
+		    var slabsJson = <?php echo Mage::helper('core')->jsonEncode($helper->getConfigInstallmentOptions()) ?>;
+	    <?php } ?>
+        </script>
+        <div class="partialpayment-box-container">
+    	<ul class="form-list">
+    	    <li class="control partialpayment">
+		<label for="applied_custom_options">
+    		    <span id="applied_custom_options_<?php echo $_product->getId() ?>">
+			<?php 
+			$isPartialPaymentApplied = $quoteItem->getData('partialpayment_option_selected');
+			if($isPartialPaymentApplied==1) {
+			    $additionalFees    = $quoteItem->getData('partialpayment_price');
+			    $rowTotal	       = ($additionalFees * $quoteItem->getQty()) + ($quoteItem->getRowTotal()-$quoteItem->getDiscountAmount());
+			    
+			    if($isPartialPaymentApplied == 1) {
+				$rowTotal     -= ($additionalFees * $quoteItem->getQty());
+			    }
+			    if($initialPaymentAmt > 0) {
+				$unpaidRowTotal = $rowTotal - ($quoteItem->getData('partialpayment_paid_amount') * $quoteItem->getQty());
+			    } else {
+				$unpaidRowTotal = $rowTotal;
+			    }
+			    
+			    if($unpaidRowTotal > 0 && $selectedPPOption > 0) {
+				$perInstallmentAmt = $unpaidRowTotal/$selectedPPOption;
+			    } else {
+				$perInstallmentAmt = 0;
+			    }
+			    
+			    $rowTotal	       = Mage::helper('core')->currency($rowTotal,true,false);
+			    $perInstallmentAmt = Mage::helper('core')->currency($perInstallmentAmt,true,false);
+			    $appliedPPOptions  = $selectedPPOption. " installments of "
+				    . $perInstallmentAmt
+				    ." amount at total price ". $rowTotal;
+			}
+			
+			?>
+			<label name="applied-partialpayment-details-<?php echo $quoteItem->getId() ?>" id="applied-partialpayment-details-<?php echo $quoteItem->getId() ?>" <?php echo $isPartialPaymentApplied==1 ? "" : 'style="display:none"'?>>
+			    <?php echo $isPartialPaymentApplied==1 ? $appliedPPOptions : '' ?>
+			</label>
+			<label id="changing-partialpayment-details-<?php echo $quoteItem->getId() ?>" name="changing-partialpayment-details-<?php echo $quoteItem->getId() ?>" style="display:none;"></label>
+			<br/>
+    		    </span>
+    		</label>
+    		<label for="custom_options">
+    		    <span id="initial_label_<?php echo $_product->getId() ?>">
+			    <?php echo $this->getAdminCheckboxLabel($_product,$quoteItem->getQty()) ?>
+    		    </span>
+    		</label>
+    	    </li>
+	    <li class="control partialpayment">
+		<label for="custom_options">
+		    <?php echo $helper->__('Select Installment (%s)', $helper->getFrequencyLabel()); ?>
+
+		    <select name="options[installments]" id="installments_options[<?php echo $quoteItem->getId() ?>]" class="select">
+			<option value=""><?php echo "------Select Installments------"; ?></option>
+
+			<?php
+			$customPrice   = $quoteItem->getCustomPrice();
+			if(!empty($customPrice) && $isPartialPaymentApplied !=1) {
+			    $productPrice = $customPrice;
+			} else {
+			    $catalogPriceRulePrice = Mage::getModel('catalogrule/rule')->calcProductPriceRule($_product,$_product->getPrice());
+			    if(!empty($catalogPriceRulePrice)) {
+				$productPrice = $catalogPriceRulePrice;
+			    } else {
+				$productPrice = $_product->getFinalPrice();			    
+			    }
+			}
+			$productPrice -= ($quoteItemDiscount/$quoteItem->getQty());
+
+			foreach ($slabs->getItems() as $_slab) {
+			    $installmentUnit = (int) $_slab->getData('unit');
+
+			    if ($_slab->getData('price_type') == $instSlabPriceFixed) {
+				$price = $_slab->getData('price')+$productPrice;
+			    } else {
+				$price = $productPrice + (($productPrice * $_slab->getData('price')) / 100);
+			    }
+			    
+			    $configInitialPayment = Mage::getStoreConfig("md_partialpayment/general/initial_payment_amount");
+			    $configInitialPaymentType = Mage::getStoreConfig("md_partialpayment/general/initial_payment_type");
+			    if (!is_null($option->getInitialPaymentAmount()) || $configInitialPaymentType == MD_Partialpayment_Model_Options::PAYMENT_FIXED) {
+				$initialPaymentAmount = (!is_null($option->getInitialPaymentAmount())) ? $option->getInitialPaymentAmount() : $configInitialPayment;
+			    }
+			    
+			    $initialPaymentAmount = $initialPaymentAmount * $quoteItem->getQty();
+			    $price	          = $price * $quoteItem->getQty();
+			    $installmentAmount    = ($price - $initialPaymentAmount) / $installmentUnit;
+			   
+			    if($installmentAmount <=0) {
+				continue;
+			    }
+			    
+			    $installmentAmount = Mage::helper('core')->currency($installmentAmount, true, false);
+			    $price	       = Mage::helper('core')->currency($price, true, false);
+			    $slabUnit	       = (int) $_slab->getData('unit');
+			    $label	       = sprintf("%d Installments of %s at Total Price %s", $installmentUnit, $installmentAmount, $price);	
+			    if($selectedPPOption == $slabUnit) {
+				$hiddenInstallments = $selectedPPOption;
+				$hiddenPrice	    = $_slab->getData('price');
+				$hiddenPriceType    = $_slab->getData('price_type');
+			    }
+			    ?>
+			<option value="<?php echo $slabUnit ?>" <?php echo $selectedPPOption == $slabUnit ? "selected" : "" ?>><?php echo $label; ?></option>
+			<?php } ?>
+		    </select>
+		    <input disabled="disabled" type="hidden" id="slabsjson[<?php echo $quoteItem->getId() ?>]" name="slabsjson[<?php echo $quoteItem->getId() ?>]" value='<?php echo (!$option->getUseConfigForInstallmentOptions()) ? $this->getSlabJson($_product) : Mage::helper('core')->jsonEncode($helper->getConfigInstallmentOptions()) ?>' />
+		    <input disabled="disabled" type="hidden" name="options[<?php echo $quoteItem->getId() ?>][installments]" value='<?php echo $hiddenInstallments ?>' />
+		    <input disabled="disabled" type="hidden" name="options[<?php echo $quoteItem->getId() ?>][price]" value='<?php echo $hiddenPrice ?>' />
+		    <input disabled="disabled" type="hidden" name="options[<?php echo $quoteItem->getId() ?>][price_type]" value='<?php echo $hiddenPriceType ?>' />
+		    <br />
+		</label>
+		<br />
+	    </li>
+    	</ul>
+        </div>
+    <?php } ?>
+
+    <script type="text/javascript">
+	$$('select[name^=options[installments]]').each(function (element) {
+	    $(element).observe('change', function (e) {		
+		var matches = element.id.match(/\[(.*?)\]/);
+		
+		if (matches) {
+		    var quoteItemId = matches[1];
+		}
+
+		var price_type     = $$('input[name="options[' + quoteItemId + '][price_type]"]')[0];
+		var price	   = $$('input[name="options[' + quoteItemId + '][price]"]')[0];
+		var installments   = $$('input[name="options[' + quoteItemId + '][installments]"]')[0];
+		var labelText	   = element.options[element.selectedIndex].innerHTML;
+		var labelId	   = 'applied-partialpayment-details-'  + quoteItemId;
+		var hiddenLabelId  = 'changing-partialpayment-details-' + quoteItemId;
+		
+		if($(labelId).style.display=='none') {
+		    $(labelId).innerHTML   = labelText;
+		}
+		$(hiddenLabelId).innerHTML = labelText;
+		
+		var slabsJsonLabel = 'slabsjson[' + quoteItemId + ']';
+		slabsJson	   = $(slabsJsonLabel).value;
+		slabsJson	   = JSON.parse(slabsJson);
+		
+		for (var i in slabsJson) {
+		    if (parseInt(element.value) == slabsJson[i].unit) {
+
+			if (price_type) {
+			    $(price_type).writeAttribute("value", slabsJson[i].price_type);
+			}
+			if (price) {
+			    $(price).writeAttribute("value", slabsJson[i].price);
+			}
+			if (installments) {
+			    $(installments).writeAttribute("value", parseInt(element.value));
+			}
+		    }
+		}
+	    });
+	});
+    </script>

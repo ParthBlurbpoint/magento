@@ -1,0 +1,138 @@
+<?php
+/**
+ * Copyright (c) 2009-2014 Vaimo AB
+ *
+ * Vaimo reserves all rights in the Program as delivered. The Program
+ * or any portion thereof may not be reproduced in any form whatsoever without
+ * the written consent of Vaimo, except as provided by licence. A licence
+ * under Vaimo's rights in the Program may be available directly from
+ * Vaimo.
+ *
+ * Disclaimer:
+ * THIS NOTICE MAY NOT BE REMOVED FROM THE PROGRAM BY ANY USER THEREOF.
+ * THE PROGRAM IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+ * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL
+ * THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE PROGRAM OR THE USE OR OTHER DEALINGS
+ * IN THE PROGRAM.
+ *
+ * @category    Vaimo
+ * @package     Vaimo_Klarna
+ * @copyright   Copyright (c) 2009-2014 Vaimo AB
+ */
+?>
+
+<?php
+	$isTwoColumnLayout = Mage::getStoreConfig('payment/vaimo_klarna_checkout/klarna_layout');
+	$cartUpdateParams = array(
+		'klarna_layout' => $isTwoColumnLayout
+	);
+?>
+
+<div class="klarna_block" id="klarna_cart-container">
+	<?php if (Mage::helper('klarna')->excludeCartInKlarnaCheckout()) : ?>
+		<form id="klarna_cart" action="<?php echo $this->getUrl('checkout/klarna/cartUpdatePost') ?>" method="post">
+			<input type="hidden" name="return_url" value="<?php echo $this->getUrl('checkout/klarna') ?>"/>
+			<!-- <input type="hidden" id="klarna_cart_reload" name="klarna_cart_reload" value="<?php //echo $this->getUrl('checkout/klarna/getKlarnaWrapperHtml') ?>"/> -->
+			<input type="hidden" id="klarna_checkout_reload" name="klarna_checkout_reload" value="<?php echo $this->getUrl('checkout/klarna/getKlarnaCheckout') ?>"/>
+		</form>
+	<?php else: ?>
+		<?php if ($isTwoColumnLayout) : ?>
+			<h2 class="klarna_block-title"><?php echo $this->__('Order Summary'); ?></h2>
+		<?php endif; ?>
+
+		<?php if(!$this->hasError()): ?>
+			<ul class="checkout-types">
+				<?php foreach ($this->getMethods('top_methods') as $method): ?>
+					<?php if ($methodHtml = $this->getMethodHtml($method)): ?>
+						<li><?php echo $methodHtml; ?></li>
+					<?php endif; ?>
+				<?php endforeach; ?>
+			</ul>
+		<?php endif; ?>
+
+		<?php echo $this->getChildHtml('form_before') ?>
+
+		<form id="klarna_cart" class="klarna_cart" action="<?php echo $this->getUrl('checkout/klarna/cartUpdatePost') ?>" method="post">
+			<input type="hidden" name="return_url" value="<?php echo $this->getUrl('checkout/klarna') ?>"/>
+			<input type="hidden" id="klarna_cart_reload" name="klarna_cart_reload" value="<?php echo $this->getUrl('checkout/klarna/getKlarnaWrapperHtml', $cartUpdateParams) ?>"/>
+			<input type="hidden" id="klarna_checkout_reload" name="klarna_checkout_reload" value="<?php echo $this->getUrl('checkout/klarna/getKlarnaCheckout') ?>"/>
+
+			<?php if ($isTwoColumnLayout) : ?>
+				<ul class="klarna_cart-items">
+					<?php foreach($this->getItems() as $_item): ?>
+						<li class="klarna_product" id="cart_item_<?php echo $_item->getId(); ?>" data-itemid="<?php echo $_item->getId(); ?>">
+							<?php echo $this->getItemHtml($_item); ?>
+						</li>
+					<?php endforeach ?>
+				</ul>
+
+				<?php if ($this->helper('tax')->displayCartBothPrices()): ?>
+				<div class="klarna_cart-total">
+					<span class="a-right"><?php echo $this->helper('tax')->getIncExcTaxLabel(false) ?></span>
+					<span><?php echo $this->helper('tax')->getIncExcTaxLabel(true) ?></span>
+					<span class="a-right"><?php echo $this->helper('tax')->getIncExcTaxLabel(false) ?></span>
+					<span><?php echo $this->helper('tax')->getIncExcTaxLabel(true) ?></span>
+				</div>
+				<?php endif; ?>
+			<?php else : ?>
+				<table id="cart_table">
+
+					<?php $mergedCells = ($this->helper('tax')->displayCartBothPrices() ? 2 : 1); ?>
+					<thead>
+					<tr>
+						<th colspan="<?php echo $mergedCells; ?>"></th>
+						<th rowspan="<?php echo $mergedCells; ?>"></th>
+						<th rowspan="<?php echo $mergedCells; ?>"><?php echo $this->__('Product Name') ?></th>
+						<th colspan="<?php echo $mergedCells; ?>"><?php echo $this->__('Unit Price') ?></th>
+						<th class="qty" colspan="<?php echo $mergedCells; ?>"><?php echo $this->__('Qty') ?></th>
+						<th colspan="<?php echo $mergedCells; ?>"><?php echo $this->__('Subtotal') ?></th>
+					</tr>
+
+					<?php if ($this->helper('tax')->displayCartBothPrices()): ?>
+						<tr>
+							<th class="a-right"><?php echo $this->helper('tax')->getIncExcTaxLabel(false) ?></th>
+							<th><?php echo $this->helper('tax')->getIncExcTaxLabel(true) ?></th>
+							<th class="a-right"><?php echo $this->helper('tax')->getIncExcTaxLabel(false) ?></th>
+							<th><?php echo $this->helper('tax')->getIncExcTaxLabel(true) ?></th>
+						</tr>
+					<?php endif; ?>
+					</thead>
+
+					<?php if($this->getContinueShoppingUrl()): ?>
+						<tfoot>
+						<tr>
+							<td colspan="6">
+								<a href="<?php echo $this->getContinueShoppingUrl() ?>" title="<?php echo $this->__('Continue Shopping') ?>">&lt;&lt; <?php echo $this->__('Continue Shopping') ?></a>
+							</td>
+						</tr>
+						</tfoot>
+					<?php endif; ?>
+
+					<tbody>
+					<?php foreach($this->getItems() as $_item): ?>
+						<?php echo $this->getItemHtml($_item) ?>
+					<?php endforeach ?>
+					</tbody>
+
+				</table>
+			<?php endif; ?>
+
+			<script type="text/javascript">decorateTable('cart_table')</script>
+		</form>
+
+		<?php echo $this->getChildHtml('totals'); ?>
+
+		<?php if(!$this->hasError()): ?>
+		<ul class="checkout-types">
+			<?php foreach ($this->getMethods('methods') as $method): ?>
+				<?php if ($methodHtml = $this->getMethodHtml($method)): ?>
+					<li><?php echo $methodHtml; ?></li>
+				<?php endif; ?>
+			<?php endforeach; ?>
+		</ul>
+		<?php endif; ?>
+	<?php endif; ?>
+</div>

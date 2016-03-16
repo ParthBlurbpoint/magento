@@ -1,0 +1,29 @@
+<div class="kodematix-socialconnect-login">
+<h3><?php echo $this->__('Login With us Also') ?></h3>
+    <div class="account-login">
+        
+        <div class="<?php echo $this->_getColSet(); ?> kodematix-socialconnect-login-lower">
+            <?php if($this->_googleEnabled()): ?>
+            <div class="<?php echo $this->_getButtCol(); ?> kodematix-socialconnect-login-lower-google">
+                <div class="buttons-set">
+                    <?php echo $this->getChildHtml('kodematix_socialconnect_google_login_button'); ?>
+                </div>
+            </div>
+            <?php endif; ?>
+            <?php if($this->_facebookEnabled()): ?>
+            <div class="<?php echo $this->_getButtCol(); ?> kodematix-socialconnect-login-lower-facebook">
+                <div class="buttons-set">
+                    <?php echo $this->getChildHtml('kodematix_socialconnect_facebook_login_button'); ?>
+                </div>
+            </div>
+            <?php endif; ?>
+            <?php if($this->_twitterEnabled()): ?>
+            <div class="<?php echo $this->_getButtCol(); ?> kodematix-socialconnect-login-lower-twitter">
+                <div class="buttons-set">
+                    <?php echo $this->getChildHtml('kodematix_socialconnect_twitter_login_button'); ?>
+                </div>
+            </div>
+            <?php endif; ?>
+        </div>
+    </div>
+</div>

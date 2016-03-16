@@ -1,0 +1,59 @@
+<?php
+/**
+ * MageGiant
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Magegiant.com license that is
+ * available through the world-wide-web at this URL:
+ * http://www.magegiant.com/license-agreement.html
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade this extension to newer
+ * version in the future.
+ *
+ * @copyright   Copyright (c) 2014 Magegiant (http://magegiant.com/)
+ * @license     http://magegiant.com/license-agreement.html
+ */
+?>
+<div id="import-wrapper">
+    <form action="<?php echo Mage::helper("adminhtml")->getUrl('productimportexportadmin/adminhtml_product/upload'); ?>"
+          method="POST" enctype="multipart/form-data" id="upload-form">
+        <label for="filename"><?php echo $this->__('File')?></label> <input id="filename" name="filename" value="" type="file">
+        <input name="form_key" type="hidden" value="<?php echo Mage::getSingleton('core/session')->getFormKey() ?>">
+        <input type="submit" name="submit" value="<?php echo $this->__('Upload')?>"
+               class="magegiant-button magegiant-button-pill magegiant-button-primary">
+    </form>
+
+    <?php
+    //List all import files and button to click import
+
+    $_helper = Mage::helper('productimportexport');
+    $files = scandir($_helper->getImportPath());
+    $exclude = array('.', '..');
+    echo '<ul id="import-list">';
+    foreach ($files as $k => $v) {
+        if (in_array($v, $exclude)) {
+            unset($files[$k]);
+        } else {
+            $size = 0;
+            $date = 0;
+            if (is_file($file = $_helper->getImportPath() . DS . $v)) {
+                $size = $_helper->formatSizeUnits(filesize($file));
+                $date = $_helper->formatFileDate($file);
+            }
+            echo '<li class="import-file">';
+            echo '<div class="file-name">' .
+                 ' <a href="' . Mage::helper("adminhtml")->getUrl('productimportexportadmin/adminhtml_product/run', array('id' => $_helper->getImportProfileId(), 'action' => 'import', 'files' => $v)) . '" class="magegiant-button  magegiant-button-rounded magegiant-button-flat-primary magegiant-button-small">'.$this->__('Import').'</a>' .
+                 '<span class="file-name-span">'.$v . '</span>'.
+                 '</div>'.
+                 '<div class="file-date"> (' . $size . ' / ' . $date . ' ) </div>';
+            echo '</li>';
+        }
+    }
+    echo '</ul>';
+
+    ?>
+
+</div>

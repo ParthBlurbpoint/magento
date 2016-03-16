@@ -1,0 +1,29 @@
+<?php
+/**
+ * MageGiant
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Magegiant.com license that is
+ * available through the world-wide-web at this URL:
+ * http://www.magegiant.com/license-agreement.html
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade this extension to newer
+ * version in the future.
+ *
+ * @copyright   Copyright (c) 2014 Magegiant (http://magegiant.com/)
+ * @license     http://magegiant.com/license-agreement.html
+ */
+
+//$source = $this->getRequest()->getParam('source');
+//if($source){
+//    echo '';
+//}
+if($this->getRequest()->getParam('action') == 'export'){
+    $files = $this->getRequest()->getParam('files');
+    $download_url = Mage::helper("adminhtml")->getUrl('productimportexportadmin/adminhtml_product/streamdownload', array('files' => $files));
+    echo 'After the process has been done, you can download your export file <a href="'.$download_url .'" >'.$files.'</a>';
+    //Mage::app()->getResponse()->setRedirect($download_url);
+}

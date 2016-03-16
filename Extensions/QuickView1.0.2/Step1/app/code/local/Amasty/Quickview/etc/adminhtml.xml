@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+/**
+ * @author Amasty Team
+ * @copyright Copyright (c) 2015 Amasty (https://www.amasty.com)
+ * @package Amasty_Quickview
+ */
+-->
+<config>
+    <translate>
+        <modules>
+            <Amasty_Quickview>
+                <files>
+                    <default>Amasty_Quickview.csv</default>
+                </files>
+            </Amasty_Quickview>
+        </modules>
+    </translate>
+</config>

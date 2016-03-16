@@ -1,0 +1,48 @@
+<?php
+$helper = Mage::helper('md_partialpayment');
+$_installments = $this->getInstallments();
+?>
+<?php echo $this->getMessagesBlock()->getGroupedHtml() ?>
+<div class="page-title">
+    <h1><?php echo $helper->__('Partial Payment Installments Summary') ?></h1>
+</div>
+<?php echo $this->getPagerHtml(); ?>
+<?php if($_installments->getSize()): ?>
+<table class="data-table payments" id="my-payments-table">
+    <col width="1" />
+    <col width="1" />
+    <col width="1"/>
+    <col width="1" />
+    <col width="1" />
+    <col width="1" />
+    <thead>
+        <tr>
+            <th class="number"><?php echo $helper->__('Order #') ?></th>
+            <th class="total"><span class="nobr"><?php echo $helper->__('Paid Amount') ?></span></th>
+            <th class="total"><span class="nobr"><?php echo $helper->__('Due Amount') ?></span></th>
+            <th class="number"><span class="nobr"><?php echo $helper->__('Paid Installments') ?></span></th>
+            <th class="number"><span class="nobr"><?php echo $helper->__('Due Installments') ?></span></th>
+            <th class="date"><span class="nobr"><?php echo $helper->__('Last Payment Date') ?></span></th>
+            <th class="view">&nbsp;</th>
+        </tr>
+    </thead>
+    <tbody>
+        <?php $_odd = ''; ?>
+        <?php foreach ($_installments as $_installment): ?>
+        <tr>
+            <td class="number"><?php echo $_installment->getOrderId() ?></td>
+            <td class="a-center total"><span class="nobr"><?php echo $_installment->getOrder()->formatPrice($_installment->getPaidAmount()) ?></span></td>
+            <td class="a-center total"><span class="nobr"><?php echo $_installment->getOrder()->formatPrice(max(0,$_installment->getDueAmount())) ?></span></td>
+            <td class="a-center number"><span class="nobr"><?php echo $_installment->getPaidInstallments() ?></span></td>
+            <td class="a-center number"><span class="nobr"><?php echo max(0,$_installment->getDueInstallments()) ?></span></td>
+            <td class="date"><span class="nobr"><?php echo $this->formatDate($_installment->getLastInstallmentDate()) ?></span></td>
+            <td class="a-center view"><span class="nobr"><a href="<?php echo $this->getViewUrl($_installment) ?>"><?php echo $helper->__('View Summary') ?></a></span></td>
+        </tr>
+        <?php endforeach; ?>
+    </tbody>
+</table>
+<?php echo $this->getPagerHtml(); ?>
+<script type="text/javascript">decorateTable('my-payments-table');</script>
+<?php else: ?>
+    <p><?php echo $helper->__('You don\'t have any  Installment Summary available.'); ?></p>
+<?php endif; ?>

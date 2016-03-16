@@ -1,0 +1,23 @@
+<?php
+/**
+ * @Description : Wishlist image FREE tag
+ * @author Kodematix
+ *
+ */
+$item = $this->getItem();
+$product = $item->getProduct();
+?>
+<?php
+    $isGiftAvl=Mage::getResourceModel('catalog/product')->getAttributeRawValue($product->getId(), 'sku_of_product_gift',Mage::app()->getStore()->getStoreId());  
+    $isGiftEnbl=Mage::getResourceModel('catalog/product')->getAttributeRawValue($product->getId(), 'is_product_gift_enabled',Mage::app()->getStore()->getStoreId());  
+    $FromGift=strtotime(Mage::getResourceModel('catalog/product')->getAttributeRawValue($product->getId(), 'product_gift_active_from',Mage::app()->getStore()->getStoreId()));
+    $ToGift=strtotime(Mage::getResourceModel('catalog/product')->getAttributeRawValue($product->getId(), 'product_gift_active_to',Mage::app()->getStore()->getStoreId()));
+    
+    if((Mage::helper('core')->isModuleOutputEnabled('Kodematix_ProductGift')) && !empty($isGiftAvl) && $isGiftEnbl && (empty($FromGift) || $FromGift<time()) && (empty($ToGift) || $ToGift>time()) && Mage::helper('core')->isModuleOutputEnabled('Kodematix_ProductGift') && Mage::getStoreConfigFlag('productgiftsection/productgiftgroup/productgiftstatus')){ 
+        echo '<img src="'.Mage::getDesign()->getSkinUrl('images/gift_list.png').'" style="z-index: 999;width: 49px;position: absolute;"/>';
+        
+        }
+?>
+<a class="product-image" href="<?php echo $this->getProductUrl($item) ?>" title="<?php echo $this->escapeHtml($product->getName()) ?>">
+    <img src="<?php echo $this->helper('catalog/image')->init($product, 'small_image')->resize(113, 113); ?>" width="113" height="113" alt="<?php echo $this->escapeHtml($product->getName()) ?>" />
+</a>

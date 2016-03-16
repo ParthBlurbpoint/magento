@@ -1,0 +1,11 @@
+title:MAGMI by dweeves - version:0.7.21_git
+startup:Import Profile:multiplugins
+startup:Import Mode:create
+step:step:0.5%
+plugin;Magmi_DatapumpDS;pluginhello:DataPump Datasource-1.0.0-Dweeves- 
+plugin;ImageAttributeItemProcessor;pluginhello:Image attributes processor-1.0.33-Dweeves, Tommy Goode-http://wiki.magmi.org/index.php?title=Image_attributes_processor 
+plugin;Magmi_DefaultAttributeItemProcessor;pluginhello:Standard Attribute Import-1.0.6-Dweeves- 
+plugin;Magmi_DefaultAttributeItemProcessor;startup:Standard Attribute Import v1.0.6 - Newly created items will have default values for columns:store,type,status,visibility,page_layout,tax_class_id
+itime:1 - 0.27294397354126 - 0.27294397354126
+dbtime:36 - 0.028384447097778 - 0.028384447097778 - 36
+info:Skus imported OK:1/1

@@ -1,0 +1,26 @@
+E:\XAMPP\htdocs\magento\app\code\local\Magegiant\Productimportexport\Model\Convert\Adapter\Product.php
+
+$importData = $this->_importData; (3820)
+
+4133
+foreach ($gallery as $_img) {
+			if (in_array($_img, $exclude)) continue;
+			$_img = $this->_importRemoteImageUrl($_img);
+			$_img = pathinfo($_img);
+			$_img = $_img['basename'];
+			$_img = Mage::getBaseDir('media') . DS . 'import' . DS . $_img;
+			try {
+				/*11-02-2016 Kodematix Edited : Move to Condition : Changed from True to False*/
+				$_product->addImageToMediaGallery(
+					$_img,
+					null,
+					false,
+					$this->getBatchParams('exclude_images') == 'true'
+				);
+			} catch (Exception $e) {
+			}
+		}
+
+E:\XAMPP\htdocs\magento\app\code\local\Magegiant\Productimportexport\controllers\Adminhtml\ProductController.php
+
+E:\XAMPP\htdocs\magento\app\code\local\Magegiant\Productimportexport\controllers\Adminhtml\ProductimportexportController.php

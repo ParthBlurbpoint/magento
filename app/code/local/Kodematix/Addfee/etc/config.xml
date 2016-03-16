@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<config>
+	<modules>
+		<Kodematix_Addfee>
+			<version>0.0.1</version>
+		</Kodematix_Addfee>
+	</modules>
+	<global>
+		<helpers>
+			<addfee>
+				<class>Kodematix_Addfee_Helper</class>
+			</addfee>
+		</helpers>
+		<models>
+			<addfee>
+				<class>Kodematix_Addfee_Model</class>
+			</addfee>
+		</models>
+		
+		<resources>
+		  <addfee_setup>
+			<setup>
+			  <module>Kodematix_Addfee</module>
+			</setup>
+			<connection>
+			  <use>core_setup</use>
+			</connection>
+		  </addfee_setup>		  
+		  <addfeewrite>
+			<connection>
+			  <use>core_write</use>
+			</connection>
+		  </addfeewrite>
+		  <addfeeread>
+			<connection>
+			  <use>core_read</use>
+			</connection>
+		  </addfeeread>		
+		</resources>
+		
+		<events>
+			<sales_convert_quote_to_order>
+				<observers>
+					<kodematix_addfee_after_order>
+						<class>addfee/observer</class>
+						<method>modifyFeeAfterOrder</method>
+					</kodematix_addfee_after_order>
+				</observers>
+			</sales_convert_quote_to_order>			
+		</events>
+	</global>
+</config>

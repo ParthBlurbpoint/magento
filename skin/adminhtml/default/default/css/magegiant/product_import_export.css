@@ -1,0 +1,19 @@
+.content-header .form-buttons button{
+    display: none;
+}
+
+#magegiant-ie-wrapper{
+    width: 500px!important;
+    margin: auto!important;
+}
+
+.magegiant-ie-item a{
+    margin: 1em !important;
+}
+
+.magegiant-ie-item a:hover,
+.magegiant-ie-item a:visited{
+    color: white !important;
+    text-decoration: none!important;
+}
+

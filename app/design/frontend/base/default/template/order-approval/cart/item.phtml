@@ -1,0 +1,87 @@
+<?php
+/**
+ * OrderApproval
+ *
+ * @category design
+ * @package base_default
+ */
+?>
+
+<?php
+
+$_images = $this->getImages();
+$_pdfProof = $this->getPdfProof();
+
+?>
+
+<?php echo $this->getMessagesBlock()->getGroupedHtml() ?>
+
+<div class="page-title">
+  <h1><?php echo $this->__('Shopping cart item preview') ?></h1>
+</div>
+
+<div class="dashboard">
+  <div class="box-account box-info">
+    <div class="box-head">
+      <h2><?php echo $this->__('Account Information') ?></h2>
+    </div>
+
+    <?php echo $this->getChildHtml('customer_info') ?>
+  </div>
+</div>
+
+<?php if ($_images): ?>
+
+<h2><?php echo $this->getQuoteItem()->getName(); ?></h2>
+
+<div class="orderapproval-item-images clearer">
+
+<?php foreach ($_images as $_image): ?>
+  <a href="<?php echo $_image ?>" target="_blank" title="<?php echo $this->__('Click to enlarge'); ?>">
+    <img src="<?php echo $_image ?>" />
+  </a>
+<?php endforeach; ?>
+
+</div>
+
+<?php endif; ?>
+
+<?php if ($_pdfProof): ?>
+
+<a href="<?php echo $_pdfProof; ?>"><?php echo $this->__('PDF Proof'); ?></a>
+
+<?php endif; ?>
+
+<div class="box-account orderapproval-item-actions">
+  <a href="<?php echo $this->getApproveUrl(); ?>"><?php echo $this->__('Approve'); ?></a>
+  |
+  <a id="orderapproval-decline-button" href="#"><?php echo $this->__('Decline'); ?></a>
+
+  <form id="orderapproval-item-form" class="orderapproval-hidden" action="<?php echo $this->getDeclineUrl(); ?>" method="post">
+    <input type="text" name="message" class="orderapproval-disabled" value="<?php echo $this->__('Enter decline reason'); ?>" />
+    <input type="submit" value="<?php echo $this->__('Decline'); ?>" />
+  </form>
+</div>
+
+<script type="text/javascript">
+//<![CDATA[
+
+jQuery(document).ready(function($) {
+  $('#orderapproval-decline-button').click(function () {
+    $(this).hide();
+
+    $('#orderapproval-item-form')
+      .removeClass('orderapproval-hidden')
+      .children('input[type="text"]')
+      .click(function () {
+        $(this)
+          .removeClass('orderapproval-disabled')
+          .val('');
+      });
+
+    return false;
+  });
+});
+
+//]]>
+</script>

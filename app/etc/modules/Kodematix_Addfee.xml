@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+<config>
+  <modules>
+    <Kodematix_Addfee>
+      <active>false</active>
+      <codePool>local</codePool>
+    </Kodematix_Addfee>
+  </modules>
+</config>

@@ -1,0 +1,91 @@
+<!--@subject Installment Schedule for Order #{{var orderId}} @-->
+<!--@vars
+{"var paidAmount":"Order Paid Amount",
+"var dueAmount":"Order Due Amount",
+"var installmetAmount":"Installment Amount",
+"var productName":"Order Item Product Name",
+"var customerName":"Customer Name",
+"var customerEmail":"Customer Email",
+"var billingAddress.format('html')":"Billing Address",
+"var shippingAddress.format('html')":"Shipping Address",
+"var dueDate":"Installment Due date",
+"var orderDate":"Order Placed Date",
+"var orderId":"Order Increment Id"}
+@-->
+<!--@styles
+body,td { color:#2f2f2f; font:11px/1.35em Verdana, Arial, Helvetica, sans-serif; }
+@-->
+<div style="background:#F6F6F6; font-family:Verdana, Arial, Helvetica, sans-serif; font-size:12px; margin:0; padding:0;">
+    <table cellspacing="0" cellpadding="0" border="0" height="100%" width="100%">
+        <tbody>
+            <tr>
+                <td valign="top" align="center" style="padding:20px 0 20px 0">
+                    <table width="650" cellspacing="0" cellpadding="10" border="0" bgcolor="#FFFFFF" style="border:1px solid #E0E0E0;">
+                        <thead>
+                        <tr>
+                        <td valign="top">
+                            <a href="{{store url=" "}}"><img src="{{var logo_url}}" alt="{{var logo_alt}}" style="margin-bottom:10px;" border="0"></a></td>
+                    </tr>
+        <tr>
+            <th>Order Installment Schedule</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+                <td>
+                    <h2 style="font-size:18px; font-weight:normal; margin:0;">Installment Schedule For Order #{{var orderId}}</h2>
+                </td>
+            </tr>
+            <tr>
+                                <td valign="top">
+                                    <h1 style="font-size:22px; font-weight:normal; line-height:22px; margin:0 0 11px 0;">
+                                        Hello, {{var customerName}}
+                                    </h1>
+                                    <p style="font-size:12px; line-height:16px; margin:0;">
+                                        <p style="font-size:12px; line-height:16px; margin:0;">
+                        Thank you for your order from {{var store.getFrontendName()}}.<br />
+                        You can pay installments of your order by <a href="{{store url=' '}}/customer/account/" style="color:#1E7EC8;">logging into your account</a>.
+                        <br />If you have any questions about your order please contact us at <a href="mailto:{{config path='trans_email/ident_support/email'}}" style="color:#1E7EC8;">{{config path='trans_email/ident_support/email'}}</a> or call us at <span class="nobr">{{config path='general/store_information/phone'}}</span> Monday - Friday, 8am - 5pm PST.
+                    </p>
+                                    </p>
+                                    <p style="font-size:12px; line-height:16px; margin:0;">Your order confirmation is below. Thank you again for your business.</p>
+                                </td>
+                            </tr>
+            <tr>
+                <td>
+                    <table cellspacing="0" cellpadding="0" border="0" width="650">
+                        <thead>
+                            <tr>
+                                <th align="left" width="325" bgcolor="#EAEAEA" style="font-size:13px; padding:5px 9px 6px 9px; line-height:1em;">Billing Information:</th>
+                                <th width="10"></th>
+                                <th align="left" width="325" bgcolor="#EAEAEA" style="font-size:13px; padding:5px 9px 6px 9px; line-height:1em;">Shipping Information:</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td valign="top" style="font-size:12px; padding:7px 9px 9px 9px; border-left:1px solid #EAEAEA; border-bottom:1px solid #EAEAEA; border-right:1px solid #EAEAEA;">
+                                {{var billingAddress.format('html')}}&nbsp;
+                            </td>
+                            <td>&nbsp;</td>
+                            <td valign="top" style="font-size:12px; padding:7px 9px 9px 9px; border-left:1px solid #EAEAEA; border-bottom:1px solid #EAEAEA; border-right:1px solid #EAEAEA;">
+                                {{var shippingAddress.format('html')}}
+                                &nbsp;
+                            </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <br />
+                    {{layout handle="md_partialpayment_payments_summary" payments=$payments}}
+                </td>
+            </tr>
+            <tr>
+                        <td bgcolor="#EAEAEA" align="center" style="background:#EAEAEA; text-align:center;"><center><p style="font-size:12px; margin:0;">Thank you again, <strong>{{var store.getFrontendName()}}</strong></p></center></td>
+                    </tr>
+    </tbody>
+                    </table>
+                </td>
+            </tr>
+        </tbody>
+</table>
+</div>
+

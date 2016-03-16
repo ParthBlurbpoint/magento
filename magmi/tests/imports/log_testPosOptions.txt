@@ -1,0 +1,8 @@
+title:MAGMI by dweeves - version:0.7.21_git
+startup:Import Profile:baseprofile
+startup:Import Mode:create
+step:step:0.5%
+plugin;Magmi_DatapumpDS;pluginhello:DataPump Datasource-1.0.0-Dweeves- 
+plugin;ItemIndexer;pluginhello:On the fly indexer-0.2-Dweeves-http://wiki.magmi.org/index.php?title=On_the_fly_indexer 
+plugin;Magmi_DefaultAttributeItemProcessor;pluginhello:Standard Attribute Import-1.1-Dweeves- 
+plugin;Magmi_DefaultAttributeItemProcessor;startup:Standard Attribute Import v1.1 - Newly created items will have default values for columns:status,page_layout,tax_class_id

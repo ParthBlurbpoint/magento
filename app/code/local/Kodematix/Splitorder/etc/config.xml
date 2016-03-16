@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<config>
+	<modules>
+		<Kodematix_Splitorder>
+			<version>0.0.1</version>
+		</Kodematix_Splitorder>
+	</modules>
+	<global>
+		<helpers>
+			<addfee>
+				<class>Kodematix_Splitorder_Helper</class>
+			</addfee>
+		</helpers>
+		<models>
+			<addfee>
+				<class>Kodematix_Splitorder_Model</class>
+			</addfee>
+		</models>
+				
+		<events>
+			<sales_convert_quote_to_order>
+				<observers>
+					<kodematix_split_order>
+						<class>Kodematix_Splitorder_Model_Observer</class>
+						<method>splitOrder</method>
+					</kodematix_split_order>
+				</observers>
+			</sales_convert_quote_to_order>
+		</events>
+	</global>
+</config>

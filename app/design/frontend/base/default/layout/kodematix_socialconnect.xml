@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<layout>
+    <default>
+        <reference name="head">
+            <action method="addItem"
+                ifconfig="customer/kodematix_socialconnect_google/enabled">
+                <type>skin_css</type>
+                <name>kodematix_socialconnect/google/css/google.css</name>
+            </action>
+            <action method="addItem"
+                ifconfig="customer/kodematix_socialconnect_facebook/enabled">
+                <type>skin_css</type>
+                <name>kodematix_socialconnect/facebook/css/facebook.css</name>
+            </action>
+            <action method="addItem"
+                ifconfig="customer/kodematix_socialconnect_twitter/enabled">
+                <type>skin_css</type>
+                <name>kodematix_socialconnect/twitter/css/twitter.css</name>
+            </action>
+        </reference>
+    </default>
+
+    <customer_account_login>
+        <reference name="head">
+            <action method="addItem">
+                <type>skin_css</type>
+                <name>kodematix_socialconnect/css/styles.css</name>
+            </action>
+        </reference>
+        <reference name="content">
+            <block type="kodematix_socialconnect/login" name="kodematix_socialconnect_login">
+                <block type="kodematix_socialconnect/google_login" name="kodematix_socialconnect_google_login_button" />
+                <block type="kodematix_socialconnect/facebook_login" name="kodematix_socialconnect_facebook_login_button" />
+                <block type="kodematix_socialconnect/twitter_login" name="kodematix_socialconnect_twitter_login_button" />
+            </block>
+        </reference>
+    </customer_account_login>
+    
+    <customer_account_create>        
+        <reference name="head">
+            <action method="addItem">
+                <type>skin_css</type>
+                <name>kodematix_socialconnect/css/styles.css</name>
+            </action>
+        </reference>
+        <reference name="customer_form_register">
+            <action method="setTemplate" >
+                <template>kodematix/socialconnect/customer/form/register.phtml</template>
+            </action>
+            <block type="kodematix_socialconnect/register" name="kodematix_socialconnect_register">
+                <block type="kodematix_socialconnect/google_login" name="kodematix_socialconnect_checkout_google_login" />
+                <block type="kodematix_socialconnect/facebook_login" name="kodematix_socialconnect_checkout_facebook_login" />
+                <block type="kodematix_socialconnect/twitter_login" name="kodematix_socialconnect_checkout_twitter_login" />
+            </block>
+        </reference>        
+    </customer_account_create>    
+
+    <customer_account>
+        <reference name="customer_account_navigation">
+            <action method="addLink" translate="label" module="kodematix_socialconnect" ifconfig="customer/kodematix_socialconnect_google/enabled">
+                <name>kodematix_socialconnect_google</name>
+                <path>socialconnect/account/google</path>
+                <label>Google Connect</label>
+            </action>
+            <action method="addLink" translate="label" module="kodematix_socialconnect"
+                ifconfig="customer/kodematix_socialconnect_facebook/enabled">
+                <name>kodematix_socialconnect_facebook</name>
+                <path>socialconnect/account/facebook</path>
+                <label>Facebook Connect</label>
+            </action>
+            <action method="addLink" translate="label" module="kodematix_socialconnect"
+                ifconfig="customer/kodematix_socialconnect_twitter/enabled">
+                <name>kodematix_socialconnect_twitter</name>
+                <path>socialconnect/account/twitter</path>
+                <label>Twitter Connect</label>
+            </action>
+        </reference>
+    </customer_account>
+
+    <kodematix_socialconnect_account_google translate="label">
+        <label>Customer My Account Google Connect</label>
+        <update handle="customer_account"/>
+        <reference name="head">
+            <action method="setTitle" translate="title" module="kodematix_socialconnect">
+                <title>Google Connect</title>
+            </action>
+            <action method="addItem">
+                <type>skin_css</type>
+                <name>kodematix_socialconnect/css/styles.css</name>
+            </action>
+        </reference>
+        <reference name="my.account.wrapper">
+            <block type="kodematix_socialconnect/google_account" name="kodematix_socialconnect_google_account">
+                <block type="kodematix_socialconnect/google_login" name="kodematix_socialconnect_account_google_login" />
+            </block>
+        </reference>
+        <reference name="customer_account_navigation">
+            <action method="setActive" module="kodematix_socialconnect">
+                <path>socialconnect/account/google</path>
+            </action>
+        </reference>
+    </kodematix_socialconnect_account_google>
+
+   <kodematix_socialconnect_account_facebook translate="label">
+        <label>Customer My Account Facebook Connect</label>
+        <update handle="customer_account"/>
+        <reference name="head">
+            <action method="setTitle" translate="title" module="kodematix_socialconnect">
+                <title>Facebook Connect</title>
+            </action>
+            <action method="addItem">
+                <type>skin_css</type>
+                <name>kodematix_socialconnect/css/styles.css</name>
+            </action>
+        </reference>
+        <reference name="my.account.wrapper">
+            <block type="kodematix_socialconnect/facebook_account" name="kodematix_socialconnect_facebook_account">
+                <block type="kodematix_socialconnect/facebook_login" name="kodematix_socialconnect_account_facebook_login" />
+            </block>
+        </reference>
+        <reference name="customer_account_navigation">
+            <action method="setActive" module="kodematix_socialconnect">
+                <path>socialconnect/account/facebook</path>
+            </action>
+        </reference>
+    </kodematix_socialconnect_account_facebook>
+
+   <kodematix_socialconnect_account_twitter translate="label">
+        <label>Customer My Account Twitter Connect</label>
+        <update handle="customer_account"/>
+        <reference name="head">
+            <action method="setTitle" translate="title" module="kodematix_socialconnect">
+                <title>Twitter Connect</title>
+            </action>
+            <action method="addItem">
+                <type>skin_css</type>
+                <name>kodematix_socialconnect/css/styles.css</name>
+            </action>
+        </reference>
+        <reference name="my.account.wrapper">
+            <block type="kodematix_socialconnect/twitter_account" name="kodematix_socialconnect_twitter_account">
+                <block type="kodematix_socialconnect/twitter_login" name="kodematix_socialconnect_account_twitter_login" />
+            </block>
+        </reference>
+        <reference name="customer_account_navigation">
+            <action method="setActive" module="kodematix_socialconnect">
+                <path>socialconnect/account/twitter</path>
+            </action>
+        </reference>
+    </kodematix_socialconnect_account_twitter>
+
+    <checkout_onepage_index>
+        <reference name="head">
+            <action method="addItem">
+                <type>skin_css</type>
+                <name>kodematix_socialconnect/css/styles.css</name>
+            </action>
+        </reference>
+        <reference name="checkout.onepage.login">
+            <action method="setTemplate" >
+                <template>kodematix/socialconnect/checkout/onepage/login.phtml</template>
+            </action>
+            <block type="kodematix_socialconnect/checkout" name="kodematix_socialconnect_checkout">
+                <block type="kodematix_socialconnect/google_login" name="kodematix_socialconnect_checkout_google_login" />
+                <block type="kodematix_socialconnect/facebook_login" name="kodematix_socialconnect_checkout_facebook_login" />
+                <block type="kodematix_socialconnect/twitter_login" name="kodematix_socialconnect_checkout_twitter_login" />
+            </block>
+        </reference>
+    </checkout_onepage_index>
+</layout>

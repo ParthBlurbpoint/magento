@@ -1,0 +1,196 @@
+<?php
+/**
+ * Magedelight
+ * Copyright (C) 2015 Magedelight <info@magedelight.com>
+ *
+ * NOTICE OF LICENSE
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see http://opensource.org/licenses/gpl-3.0.html.
+ *
+ * @category MD
+ * @package MD_Partialpayment
+ * @copyright Copyright (c) 2015 Mage Delight (http://www.magedelight.com/)
+ * @license http://opensource.org/licenses/gpl-3.0.html GNU General Public License,version 3 (GPL-3.0)
+ * @author Magedelight <info@magedelight.com>
+ */
+?>
+<?php
+    $helper = Mage::helper('md_partialpayment');
+    $payment = $this->getPayment();
+    $store = Mage::app()->getStore($payment->getStoreId());
+    $name = array(
+        $store->getWebsite()->getName(),
+        $store->getGroup()->getName(),
+        $store->getName()
+    );
+    $order = $payment->getOrder();
+    $orderItem = $payment->getOrderItem();
+    $summaryCollection = $payment->getPaymentSummaryCollection();
+    $ids = $summaryCollection->getAllIds();
+    $summaryStatusMap = array(
+        MD_Partialpayment_Model_Summary::PAYMENT_FAIL=>array("label"=>$helper->__('Failed'),"class"=>"grid-severity-critical"),
+        MD_Partialpayment_Model_Summary::PAYMENT_PENDING=>array("label"=>$helper->__('Pending'),"class"=>"grid-severity-minor"),
+        MD_Partialpayment_Model_Summary::PAYMENT_SUCCESS=>array("label"=>$helper->__('Paid'),"class"=>"grid-severity-notice"),
+        MD_Partialpayment_Model_Summary::PAYMENT_HOLD=>array("label"=>$helper->__('Hold'),"class"=>"grid-severity-critical"),
+        MD_Partialpayment_Model_Summary::PAYMENT_DECLINED=>array("label"=>$helper->__('Declined'),"class"=>"grid-severity-critical"),
+        MD_Partialpayment_Model_Summary::PAYMENT_PROCESS=>array("label"=>$helper->__('Processing'),"class"=>"grid-severity-critical"),
+    );
+?>
+<div class="grid np" id="paymentsummarytable">
+    <div class="hor-scroll">
+        <table cellspacing="0" class="data order-tables" style="width:100%;" id="my-summary-table">
+            <colgroup>
+                <col width="1"/>
+                <col width="1"/>
+                <col />
+                <col />
+                <col />
+                <col />
+                <col width="1"/>
+                <col/>
+            </colgroup>
+            <thead>
+                <tr class="headings">
+                    <th>&nbsp;</th>
+                    <th class="a-center"><?php echo $helper->__('Amount') ?></th>
+                    <th class="a-center"><?php echo $helper->__('Due Date') ?></th>
+                    <th class="a-center"><?php echo $helper->__('Paid Date') ?></th>
+                    <th class="a-center"><?php echo $helper->__('Status') ?></th>
+                    <th class="a-center"><?php echo $helper->__('Payment Method') ?></th>
+                    <th class="a-center"><?php echo $helper->__('Details') ?></th>
+                    <th class="a-center"><?php echo $helper->__('Action') ?></th>
+                </tr>
+            </thead>
+            <tbody>                
+                <?php foreach($summaryCollection as $summary): ?>
+
+                    <?php $transactionDetails = ($summary->getTransactionData()) ? implode('<br />',$summary->getTransactionData()): '-'; ?>
+                    <tr>
+                        <td class="a-center">
+                            <?php $disabled = (in_array($summary->getStatus(),array(MD_Partialpayment_Model_Summary::PAYMENT_SUCCESS, MD_Partialpayment_Model_Summary::PAYMENT_PROCESS))) ? true: false; ?>
+                            <input class="validate-one-required-by-name" type="radio" name="payment_summary" id="payment_summary_<?php echo $summary->getId() ?>" value="<?php echo $summary->getId() ?>" <?php if($disabled): ?>disabled="disabled"<?php endif; ?>/>
+                        </td>
+                        <td class="a-left" style="width: 200px">
+                            <div id="orgsummaryparent_<?php echo $summary->getData('summary_id');?>">
+                                <?php echo Mage::app()->getLocale()->currency($order->getOrderCurrencyCode())->getSymbol();?>
+                                <span id="changeamount_<?php echo $summary->getData('summary_id');?>">
+                                    <?php echo number_format((float)$summary->getAmount(), 2, '.', '')?>
+                                </span>
+                                <?php if(!$disabled): ?>&nbsp;
+                                    <a onclick="hidesummarylabel('orgsummaryparent_<?php echo $summary->getData('summary_id');?>','changesummaryparent_<?php echo $summary->getData('summary_id');?>')" style="cursor: pointer;"><?php echo $this->__('Change Amount')?></a>
+                                    <?php endif; ?>
+                            </div>
+                            <div id="changesummaryparent_<?php echo $summary->getData('summary_id');?>" style="display: none;">
+                                <?php echo Mage::app()->getLocale()->currency($order->getOrderCurrencyCode())->getSymbol();?>
+                                <input type="text" name="summarychange_<?php echo $summary->getData('summary_id');?>" value="<?php echo number_format((float)$summary->getAmount(), 2, '.', '')?>" id="summarychange_<?php echo $summary->getData('summary_id');?>" onkeypress="return isNumber(event)"/>
+
+                                <button onclick="changeSummaryamount('summarychange_<?php echo $summary->getData('summary_id');?>','<?php echo $summary->getData('summary_id');?>','<?php echo number_format((float)$summary->getAmount(), 2, '.', '')?>')" title="<?php echo $this->__('Change Amount')?>" class="scalable " type="button">
+                                    <span>
+                                        <span>
+                                            <span><?php echo $this->__('Change Amount')?></span>
+                                        </span>
+                                    </span>
+                                </button>                                 
+                                <button onclick="notChangeSummaryamount('orgsummaryparent_<?php echo $summary->getData('summary_id');?>','changesummaryparent_<?php echo $summary->getData('summary_id');?>')" title="<?php echo $this->__('Cancel')?>" class="scalable " type="button">
+                                    <span>
+                                        <span>
+                                            <span><?php echo $this->__('Cancel')?></span>
+                                        </span>
+                                    </span>
+                                </button>    
+                            </div>
+                        </td>
+                        <td class="a-center">
+                            <?php $date = ($summary->getDueDate()) ? date('M d, Y', strtotime($summary->getDueDate())): 'N / A'; ?>
+                            <?php echo $date ?>
+                        </td>
+                        <td class="a-center">
+                            <?php $date = ($summary->getPaidDate()) ? date('M d, Y', strtotime($summary->getPaidDate())): 'N / A'; ?>
+                            <?php echo $date ?>
+                        </td>
+                        <td class="a-left">
+                            <span class="<?php echo $summaryStatusMap[$summary->getStatus()]['class'] ?>">
+                                <span><?php echo $summaryStatusMap[$summary->getStatus()]['label'] ?></span>
+                            </span>
+                        </td>
+                        <td class="a-left">
+                            <?php echo Mage::getStoreConfig('payment/'.$summary->getPaymentMethod().'/title') ?>
+                        </td>
+                        <td class="a-center">
+                            <?php if($transactionDetails !== '-'): ?>
+                                <a href="javascript:void(0)" class="summary-details" id="link_<?php echo $summary->getId() ?>"><?php echo $helper->__('Details') ?></a>
+                                <div id="trans_details_<?php echo $summary->getId() ?>" style="display:none;">
+                                    <div class="entry-edit">
+                                        <div class="entry-edit-head">
+                                            <h4 class="icon-head fieldset-legend"><?php echo $helper->__('Payment Details') ?></h4>
+                                        </div>
+                                        <div class="content">
+                                            <?php echo $transactionDetails; ?>
+                                        </div>
+                                    </div>
+                                </div>
+                                <?php else: ?>
+                                <?php echo $transactionDetails; ?>
+                                <?php endif; ?>
+                        </td>
+                        <td class="a-center">
+                            <?php if($summary->getStatus() == MD_Partialpayment_Model_Summary::PAYMENT_PROCESS): ?>
+                                <button type="button" class="scalable " title="<?php echo $helper->__('Confirm') ?>" onclick="confirmSetLocation('<?php echo $helper->__('Are you sure want to confirm this installment?') ?>','<?php echo $this->getUrl('*/*/confirmPayment',array('summary_id'=>$summary->getId(),'payment_id'=>$summary->getPaymentId())) ?>')">
+                                    <span>
+                                        <span>
+                                            <span><?php echo $helper->__('Confirm') ?></span>
+                                        </span>
+                                    </span>
+                                </button>&nbsp;&nbsp;
+                                <button style="margin-top:5px;" type="button" class="scalable " title="<?php echo $helper->__('Reject') ?>" onclick="confirmSetLocation('<?php echo $helper->__('Are you sure want to reject this installment?') ?>','<?php echo $this->getUrl('*/*/rejectPayment',array('summary_id'=>$summary->getId(),'payment_id'=>$summary->getPaymentId())) ?>')">
+                                    <span>
+                                        <span>
+                                            <span><?php echo $helper->__('Reject') ?></span>
+                                        </span>
+                                    </span>
+                                </button>
+                                <?php elseif($summary->getStatus() == MD_Partialpayment_Model_Summary::PAYMENT_SUCCESS): ?>
+                                <button type="button" class="scalable " title="<?php echo $helper->__('Send Email') ?>" onclick="setLocation('<?php echo $this->getUrl('*/*/sendEmail',array('action'=>'success','summary_id'=>$summary->getId(),'payment_id'=>$summary->getPaymentId())) ?>')">
+                                    <span>
+                                        <span>
+                                            <span><?php echo $helper->__('Send Email') ?></span>
+                                        </span>
+                                    </span>
+                                </button>
+                                <?php elseif($summary->getStatus() == MD_Partialpayment_Model_Summary::PAYMENT_FAIL): ?>
+                                <button type="button" class="scalable " title="<?php echo $helper->__('Send Email') ?>" onclick="setLocation('<?php echo $this->getUrl('*/*/sendEmail',array('action'=>'failed','summary_id'=>$summary->getId(),'payment_id'=>$summary->getPaymentId())) ?>')">
+                                    <span>
+                                        <span>
+                                            <span><?php echo $helper->__('Send Email') ?></span>
+                                        </span>
+                                    </span>
+                                </button>
+                                <?php elseif($summary->getStatus() == MD_Partialpayment_Model_Summary::PAYMENT_PENDING): ?>
+                                <button type="button" class="scalable " title="<?php echo $helper->__('Send Reminder') ?>" onclick="setLocation('<?php echo $this->getUrl('*/*/sendEmail',array('action'=>'reminder','summary_id'=>$summary->getId(),'payment_id'=>$summary->getPaymentId())) ?>')">
+                                    <span>
+                                        <span>
+                                            <span><?php echo $helper->__('Send Reminder') ?></span>
+                                        </span>
+                                    </span>
+                                </button>
+                                <?php endif; ?>
+                        </td>
+                    </tr>
+                    <?php endforeach; ?>
+            </tbody>
+        </table>
+    </div>
+    </div>
+    
+    

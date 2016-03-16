@@ -1,0 +1,25 @@
+<?php
+/**
+ * OrderApproval
+ *
+ * @category design
+ * @package base_default
+ */
+?>
+
+<?php $_items = $this->getItems(); ?>
+
+<table cellspacing="0" cellpadding="0" border="0" width="650" style="border:1px solid #EAEAEA;">
+
+<?php $i=0; ?>
+
+<?php foreach ($_items as $_item): ?>
+  <?php $i++; ?>
+
+  <tbody <?php echo $i%2 ? 'bgcolor="#F6F6F6"' : '' ?> style="border-bottom:2px solid #CCCCCC">
+    <?php echo $this->getChild('item')->setQuoteItem($_item)->toHtml(); ?>
+  </tbody>
+<?php endforeach; ?>
+
+</table>
+

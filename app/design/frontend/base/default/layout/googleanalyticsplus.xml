@@ -1,0 +1,48 @@
+<?xml version="1.0"?>
+<layout version="0.1.0">
+    <default>
+        <reference name="head">
+            <block type="core/text_list" name="before_head_end" as="before_head_end"/>
+            <action method="unsetChild" ifconfig="google/analyticsplus_universal/enabled">
+                <name>google_analytics</name>
+            </action>
+        </reference>
+        <reference name="before_head_end">
+            <block type="googleanalyticsplus/universal" name="googleanalyticsplus_universal"
+                   as="googleanalyticsplus_universal"/>
+        </reference>
+        <reference name="after_body_start">
+            <action method="unsetChild" ifconfig="google/analyticsplus_universal/enabled">
+                <name>google_analytics</name>
+            </action>
+            <block type="googleanalyticsplus/tagManager" name="googleanalyticsplus_tagmanager"
+                   as="googleanalyticsplus_tagmanager"/>
+        </reference>
+        <reference name="before_body_end">
+            <block type="googleanalyticsplus/remarketing" name="googleanalyticsplus_remarketing"
+                   as="googleanalyticsplus_remarketing"/>
+            <action method="unsetChild" ifconfig="google/analyticsplus_universal/enabled">
+                <name>google_analytics</name>
+            </action>
+        </reference>
+    </default>
+    <!--unfortunately not available across all versions - @see event observer core_block_abstract_to_html_after
+    <checkout_onepage_index>
+        <reference name="form.additional.info">
+            <block type="googleanalyticsplus/ajax" name="googleanalyticsplus_ajax"
+                   template="fooman/googleanalyticsplus/ajax-tracking.phtml"/>
+        </reference>
+    </checkout_onepage_index>-->
+    <checkout_onepage_success>
+        <reference name="before_body_end">
+            <block type="googleanalyticsplus/gaConversion" name="googleanalyticsplus_conversion"
+                   template="fooman/googleanalyticsplus/ga-conversion.phtml"/>
+        </reference>
+    </checkout_onepage_success>
+    <checkout_multishipping_success>
+        <reference name="before_body_end">
+            <block type="googleanalyticsplus/gaConversion" name="googleanalyticsplus_conversion"
+                   template="fooman/googleanalyticsplus/ga-conversion.phtml"/>
+        </reference>
+    </checkout_multishipping_success>
+</layout>

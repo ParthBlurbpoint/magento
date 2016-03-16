@@ -1,0 +1,9 @@
+<?php /* @var $this Fooman_GoogleAnalyticsPlus_Block_TagManager */?>
+<?php if ($this->shouldInclude()): ?>
+    <script>
+        /* <![CDATA[ */
+        dataLayer = [];
+        /* ]]> */
+    </script>
+    <?php echo $this->getTagManagerSnippet(); ?>
+<?php endif; ?>

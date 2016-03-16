@@ -1,0 +1,78 @@
+<?php
+/**
+ * Magento
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Academic Free License (AFL 3.0)
+ * that is bundled with this package in the file LICENSE_AFL.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://opensource.org/licenses/afl-3.0.php
+ * If you did not receive a copy of the license and are unable to
+ * obtain it through the world-wide-web, please send an email
+ * to license@magentocommerce.com so we can send you a copy immediately.
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade Magento to newer
+ * versions in the future. If you wish to customize Magento for your
+ * needs please refer to http://www.magentocommerce.com for more information.
+ *
+ * @category    design
+ * @package     base_default
+ * @copyright   Copyright (c) 2011 Magento Inc. (http://www.magentocommerce.com)
+ * @license     http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
+ */
+?>
+<?php echo $this->getMessagesBlock()->getGroupedHtml() ?>
+
+<?php $_customers = $this->getCustomers(); ?>
+
+<div class="page-title">
+  <h1><?php echo $this->__('Customers Carts') ?></h1>
+</div>
+
+<?php echo $this->getPagerHtml(); ?>
+
+<?php if($_customers->getSize()): ?>
+<table class="data-table" id="order-approval-carts-table">
+  <col/>
+  <col width="1" />
+  <col width="1" />
+  <col width="1" />
+
+  <thead>
+    <tr>
+      <th><?php echo $this->__('Customer') ?></th>
+      <th><?php echo $this->__('E-mail') ?></th>
+      <th><span class="nobr"><?php echo $this->__('Cart items') ?><span></th>
+      <th>&nbsp;</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <?php $_odd = ''; ?>
+    <?php foreach ($_customers as $_customer): ?>
+    <tr>
+      <td><?php echo $_customer->getName(); ?></td>
+      <td><?php echo $_customer->getEmail(); ?></td>
+      <td><?php echo $_customer->getUnapprovedItemsNumber(); ?></td>
+      <td class="a-center">
+        <span class="nobr">
+          <a href="<?php echo $this->getEditUrl($_customer) ?>">
+            <?php echo $this->__('Edit') ?>
+          </a>
+        </span>
+      </td>
+    </tr>
+    <?php endforeach; ?>
+  </tbody>
+</table>
+
+<script type="text/javascript">decorateTable('order-approval-carts-table');</script>
+
+<?php echo $this->getPagerHtml(); ?>
+
+<?php else: ?>
+  <p><?php echo $this->__('No products to approve.'); ?></p>
+<?php endif ?>

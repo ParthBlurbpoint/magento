@@ -1,0 +1,62 @@
+<?php
+    $payments = $this->getPayments();
+    $summaryCollection = $payments->getPaymentSummaryCollection();
+    $order = $payments->getOrder();
+    $helper = Mage::helper('md_partialpayment');
+    $codeHelper = Mage::helper('core');
+    $summaryStatusMap = array(
+        MD_Partialpayment_Model_Summary::PAYMENT_FAIL=>array("label"=>$helper->__('Failed'),"class"=>"color:#df280a !important;background:#faebe7;"),
+        MD_Partialpayment_Model_Summary::PAYMENT_PENDING=>array("label"=>$helper->__('Scheduled'),"class"=>"color:#3d6611 !important;background:#fffbf0;"),
+        MD_Partialpayment_Model_Summary::PAYMENT_SUCCESS=>array("label"=>$helper->__('Paid'),"class"=>"color:#3d6611 !important;background:#eff5ea;"),
+        MD_Partialpayment_Model_Summary::PAYMENT_HOLD=>array("label"=>$helper->__('Hold'),"class"=>"color:#3d6611 !important;background:#fffbf0;"),
+        MD_Partialpayment_Model_Summary::PAYMENT_DECLINED=>array("label"=>$helper->__('Declined'),"class"=>"color:#df280a !important;background:#faebe7;"),
+        MD_Partialpayment_Model_Summary::PAYMENT_PROCESS=>array("label"=>$helper->__('Processing'),"class"=>"color:#3d6611 !important;background:#fffbf0;"),
+    );
+?>
+<?php if($summaryCollection->count() > 0): ?>
+<table cellspacing="0" cellpadding="0" border="0" width="650" style="border:1px solid #EAEAEA;">
+    <thead>
+        <tr>
+            <th align="center" bgcolor="#EAEAEA" style="font-size:13px; padding:3px 9px"><?php echo $helper->__('Amount') ?></th>
+            <th align="center" bgcolor="#EAEAEA" style="font-size:13px; padding:3px 9px"><?php echo $helper->__('Due Date') ?></th>
+            <th align="center" bgcolor="#EAEAEA" style="font-size:13px; padding:3px 9px"><?php echo $helper->__('Paid Date') ?></th>
+            <th align="center" bgcolor="#EAEAEA" style="font-size:13px; padding:3px 9px"><?php echo $helper->__('Payment Method') ?></th>
+            <th align="center" bgcolor="#EAEAEA" style="font-size:13px; padding:3px 9px"><?php echo $helper->__('Status') ?></th>
+        </tr>
+    </thead>
+    <tbody bgcolor="#ffffff">
+        <?php foreach($summaryCollection as $summary): ?>
+        <?php 
+            $paidDate = ($summary->getPaidDate()) ? date('M d, Y', strtotime($summary->getPaidDate())): '-';
+            $dueDate = ($summary->getDueDate()) ? date('M d, Y', strtotime($summary->getDueDate())): '-';
+            $paymentMethod = ($summary->getPaymentMethod()) ? Mage::getStoreConfig('payment/'.$summary->getPaymentMethod().'/title',$order->getStoreId()): '-';
+        ?>
+        <tr>
+            <td align="center" valign="top" style="font-size:11px; padding:3px 9px; border-bottom:1px dotted #CCCCCC;<?php echo $summaryStatusMap[$summary->getStatus()]['class'] ?>"><?php echo $order->formatPrice($summary->getAmount()) ?></td>
+            <td align="center" valign="top" style="font-size:11px; padding:3px 9px; border-bottom:1px dotted #CCCCCC;<?php echo $summaryStatusMap[$summary->getStatus()]['class'] ?>"><?php echo $dueDate ?></td>
+            <td align="center" valign="top" style="font-size:11px; padding:3px 9px; border-bottom:1px dotted #CCCCCC;<?php echo $summaryStatusMap[$summary->getStatus()]['class'] ?>"><?php echo $paidDate ?></td>
+            <td align="center" valign="top" style="font-size:11px; padding:3px 9px; border-bottom:1px dotted #CCCCCC;<?php echo $summaryStatusMap[$summary->getStatus()]['class'] ?>"><?php echo $paymentMethod ?></td>
+            <td align="center" valign="top" style="font-size:11px; padding:3px 9px; border-bottom:1px dotted #CCCCCC;<?php echo $summaryStatusMap[$summary->getStatus()]['class'] ?>"><?php echo $summaryStatusMap[$summary->getStatus()]['label'] ?></td>
+        </tr>
+        <?php endforeach; ?>
+    </tbody>
+    <tbody>
+        <tr>
+            <td colspan="4" align="right" style="padding:3px 9px"><strong><?php echo $helper->__('Total Paid Amount') ?></strong></td>
+            <td align="right" style="padding:3px 9px"><?php echo $order->formatPrice($payments->getPaidAmount()) ?></td>
+        </tr>
+        <tr>
+            <td colspan="4" align="right" style="padding:3px 9px"><strong><?php echo $helper->__('Total Due Amount') ?></strong></td>
+            <td align="right" style="padding:3px 9px"><?php echo $order->formatPrice($payments->getDueAmount()) ?></td>
+        </tr>
+        <tr>
+            <td colspan="4" align="right" style="padding:3px 9px"><strong><?php echo $helper->__('Total Paid Installment(s)') ?></strong></td>
+            <td align="right" style="padding:3px 9px"><?php echo $payments->getPaidInstallments() ?></td>
+        </tr>
+        <tr>
+           <td colspan="4" align="right" style="padding:3px 9px"><strong><?php echo $helper->__('Total Due Installment(s)') ?></strong></td>
+            <td align="right" style="padding:3px 9px"><?php echo $payments->getDueInstallments() ?></td> 
+        </tr>
+    </tbody>
+</table>
+<?php endif; ?>

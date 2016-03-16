@@ -1,0 +1,52 @@
+<?php
+/**
+ * Copyright (c) 2009-2014 Vaimo AB
+ *
+ * Vaimo reserves all rights in the Program as delivered. The Program
+ * or any portion thereof may not be reproduced in any form whatsoever without
+ * the written consent of Vaimo, except as provided by licence. A licence
+ * under Vaimo's rights in the Program may be available directly from
+ * Vaimo.
+ *
+ * Disclaimer:
+ * THIS NOTICE MAY NOT BE REMOVED FROM THE PROGRAM BY ANY USER THEREOF.
+ * THE PROGRAM IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+ * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL
+ * THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE PROGRAM OR THE USE OR OTHER DEALINGS
+ * IN THE PROGRAM.
+ *
+ * @category    Vaimo
+ * @package     Vaimo_Klarna
+ * @copyright   Copyright (c) 2009-2014 Vaimo AB
+ */
+
+$currentPno = $this->getCurrentPno();
+
+?>
+
+        <?php if ($this->needDateOfBirth()==false): ?>
+
+            <li>
+
+                <label for="<?php echo $this->getMethodCode(); ?>_pno">
+                    <?php echo Mage::helper('klarna')->__('Personal ID/Registration number') ?>
+                </label>
+                <br/>
+                <input id="<?php echo $this->getMethodCode(); ?>_pno" type="text" name="payment[<?php echo $this->getMethodCode(); ?>_pno]" placeholder="<?php echo Mage::helper('klarna')->__('YYMMDD-XXXX'); ?>" value='<?php echo $currentPno; ?>' maxlength="15" />
+
+                <?php if ($this->needAddressSearch()): ?>
+                    <button id="<?php echo $this->getMethodCode(); ?>_update_address_button" class="form-button" type="button" onclick="doAddressSearch('<?php echo $this->getAjaxAddressSearchUrl() ?>', '<?php echo $this->getMethodCode(); ?>'); return false;">
+                        <span><?php echo Mage::helper('klarna')->__('Fetch ') ?></span>
+                    </button>
+                    <span id="identifyme-please-wait"  style="display:none;" class="opc-please-wait">
+                        &nbsp;<img src="<?php echo $this->getSkinUrl('images/opc-ajax-loader.gif') ?>" class="v-middle" alt="" /> &nbsp; <?php echo Mage::helper('klarna')->__('Identifying...') ?> &nbsp;
+                    </span>
+                <?php endif; ?>
+
+            </li>
+
+        <?php endif; ?>
+

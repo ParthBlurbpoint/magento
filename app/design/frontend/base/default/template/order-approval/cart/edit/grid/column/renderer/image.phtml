@@ -1,0 +1,15 @@
+<?php
+  //Trying to load helper from web-to-print extension
+  //We need to show real previews for web-to-print item
+  if (Mage::getConfig()->getHelperClassName('webtoprint/personalization-form')
+      === 'ZetaPrints_WebToPrint_Helper_PersonalizationForm')
+    $helper = $this->helper('webtoprint/personalization-form');
+  else
+    $helper = null;
+?>
+
+<!-- Show web-to-print previews only then web-to-print extension is installed
+     and product has web-to-print features -->
+<?php if(!($helper && $helper->get_cart_image($this))): ?>
+  <img src="<?php echo $this->getProductThumbnail()->resize(75); ?>" width="75" height="75" alt="<?php echo $this->htmlEscape($this->getProductName()) ?>" />
+<?php endif; ?>

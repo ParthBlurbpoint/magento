@@ -1,0 +1,97 @@
+<?php
+$_product    = $this->getProduct();
+$_attributes = Mage::helper('core')->decorateArray($this->getAllowAttributes());
+$_jsonConfig = $this->getJsonConfig();
+$_renderers  = false;
+?>
+<script type="text/javascript">
+    Product.RewrittenConfig = Class.create(Product.Config,{
+        reloadPrice: function(){
+            
+            if (this.config.disablePriceReload) {
+                return;
+            }
+            var price    = 0;
+            var oldPrice = 0;
+            for(var i=this.settings.length-1;i>=0;i--){
+                var selected = this.settings[i].options[this.settings[i].selectedIndex];
+                if(selected.config){
+                    price    += parseFloat(selected.config.price);
+                    oldPrice += parseFloat(selected.config.oldPrice);
+                }
+            }
+            $(document).fire('configurable:reload-price', {
+                price: price,
+                oldPrice: oldPrice,
+                priceInclTax: price,
+                configurable: this
+            });
+            optionsPrice.changePrice('config', {'price': price, 'oldPrice': oldPrice});
+            optionsPrice.reload();
+
+            return price;
+
+            if($('product-price-'+this.config.productId)){
+                $('product-price-'+this.config.productId).innerHTML = price;
+            }
+            this.reloadOldPrice();
+        },
+        reloadOldPrice: function(){
+            if (this.config.disablePriceReload) {
+                return;
+            }
+            if ($('old-price-'+this.config.productId)) {
+
+                var price = parseFloat(this.config.oldPrice);
+                for(var i=this.settings.length-1;i>=0;i--){
+                    var selected = this.settings[i].options[this.settings[i].selectedIndex];
+                    if(selected.config){
+                        price+= parseFloat(selected.config.price);
+                    }
+                }
+                if (price < 0)
+                    price = 0;
+                price = this.formatPrice(price);
+
+                if($('old-price-'+this.config.productId)){
+                    $('old-price-'+this.config.productId).innerHTML = price;
+                }
+
+            }
+        }
+    });
+</script>
+<?php if ($_product->isSaleable() && count($_attributes)):?>
+    <dl>
+    <?php foreach($_attributes as $_attribute): ?>
+        <?php
+        $_rendered = false;
+        foreach ($_renderers as $_rendererName):
+            $_renderer = $this->getChild('attr_renderers')->getChild($_rendererName);
+            if (method_exists($_renderer, 'shouldRender') && $_renderer->shouldRender($_product, $_attribute, $_jsonConfig)):
+                $_renderer->setProduct($_product);
+                $_renderer->setAttributeObj($_attribute);
+                echo $_renderer->toHtml();
+                $_rendered = true;
+                break;
+            endif;
+        endforeach;
+
+        if (!$_rendered):
+        ?>
+        <dt><label class="required"><em>*</em><?php echo $_attribute->getLabel() ?></label></dt>
+        <dd<?php if ($_attribute->decoratedIsLast){?> class="last"<?php }?>>
+            <div class="input-box">
+                <select name="super_attribute[<?php echo $_attribute->getAttributeId() ?>]" id="attribute<?php echo $_attribute->getAttributeId() ?>" class="required-entry super-attribute-select">
+                    <option><?php echo $this->__('Choose an Option...') ?></option>
+                  </select>
+              </div>
+        </dd>
+        <?php endif; ?>
+    <?php endforeach; ?>
+    </dl>
+    <script type="text/javascript">
+        var spConfig = new Product.RewrittenConfig(<?php echo $_jsonConfig ?>);
+    </script>
+    <?php echo $this->getChildHtml('after') ?>
+<?php endif;?>

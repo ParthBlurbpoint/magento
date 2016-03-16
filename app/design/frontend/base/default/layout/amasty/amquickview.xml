@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+/**
+ * @author Amasty Team
+ * @copyright Copyright (c) 2015 Amasty (https://www.amasty.com)
+ * @package Amasty_Quickview
+ */
+-->
+<layout>
+    <amquickview_category_handle>
+        <reference name="head">
+            <action method="addItem" ifconfig="amquickview/general/enable"><type>skin_js</type><name>js/amasty/plugins/jquery.js</name><params/></action>
+            <action method="addItem" ifconfig="amquickview/general/enable"><type>skin_js</type><name>js/amasty/plugins/fancybox/jquery.fancybox.js</name><params/></action>
+            <action method="addItem" ifconfig="amquickview/general/enable"><type>skin_js</type><name>js/amasty/amquickview/amquickview.js</name><params/></action>
+            <action method="addItem" ifconfig="amquickview/general/enable"><type>skin_css</type><name>js/amasty/plugins/fancybox/jquery.fancybox.css</name><params/></action>
+            <action method="addItem" ifconfig="amquickview/general/enable"><type>skin_css</type><name>css/amasty/amquickview/amquickview.css</name><params/></action>
+            <block type="amquickview/config" ifconfig="amquickview/general/enable" name="amquickview.config" before="-" />
+        </reference>
+    </amquickview_category_handle>
+
+    <cms_page>
+        <update handle="amquickview_category_handle" />
+    </cms_page>
+
+    <catalog_category_default>
+        <update handle="amquickview_category_handle" />
+    </catalog_category_default>
+
+    <catalogsearch_result_index>
+        <update handle="amquickview_category_handle" />
+    </catalogsearch_result_index>
+
+    <catalogsearch_advanced_result>
+        <update handle="amquickview_category_handle" />
+    </catalogsearch_advanced_result>
+
+    <amshopby_index_index>
+        <update handle="amquickview_category_handle" />
+    </amshopby_index_index>
+
+    <amlanding_page_view>
+        <update handle="amquickview_category_handle" />
+    </amlanding_page_view>
+
+    <catalog_category_layered>
+        <update handle="amquickview_category_handle" />
+    </catalog_category_layered>
+
+    <amquickview_ajax_view>
+        <update handle="catalog_product_view"/>
+        <reference name="head">
+            <action method="addItem"><type>skin_js</type><name>js/amasty/amquickview/amquickview_page.js</name><params/></action>
+        </reference>
+        <reference name="content">
+            <block type="reports/product_viewed" after="-" name="right.reports.product.viewed" template="catalog/product/review.phtml" />
+        </reference>
+        <remove name="header"/>
+        <remove name="breadcrumbs"/>
+        <remove name="messages"/>
+        <remove name="global_messages"/>
+        <remove name="footer"/>
+        <remove name="store_switcher"/>
+        <remove name="before_body_end"/>
+    </amquickview_ajax_view>
+</layout>

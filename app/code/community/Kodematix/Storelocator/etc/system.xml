@@ -1,0 +1,68 @@
+<?xml version="1.0" ?>
+<config>
+    <tabs>
+        <myconf translate="label">
+            <label>kodematix</label>
+            <sort_order>150</sort_order>
+        </myconf>
+    </tabs>
+    <sections>
+        <tab1 translate="label" module="storelocator">
+            <label>Store Locatore</label>
+            <tab>myconf</tab>
+            <sort_order>10</sort_order>
+            <show_in_default>1</show_in_default>
+            <show_in_website>1</show_in_website>
+            <show_in_store>1</show_in_store>
+            <groups>
+                <general translate="label comment">
+                    <label>General</label>
+                    <sort_order>50</sort_order>
+                    <show_in_default>1</show_in_default>
+                    <show_in_website>1</show_in_website>
+                    <show_in_store>1</show_in_store>
+                    <fields>
+						 <enable translate="label">
+                            <label>Enable Store Locator On Frontend</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>adminhtml/system_config_source_enabledisable</source_model>
+                            <sort_order>0</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </enable>
+						<default_radius translate="label">
+                            <label>Default Radius (Map)</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>1</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <comment>Radius is in miles</comment>
+                            <validate>required-entry validate-number</validate>
+                        </default_radius>
+						 <zoom_level translate="label">
+                            <label>Zoom Level</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>1</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <validate>required-entry validate-digits</validate>
+                        </zoom_level>
+                        <stores_per_page translate="label">
+                            <label>Stores Per Page</label>
+                            <comment>Empty value is the same as default 8.</comment>
+                            <sort_order>2</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <validate>required-entry validate-digits</validate>
+                        </stores_per_page>
+                    </fields>
+                </general>
+				
+            </groups>
+        </tab1>
+    </sections>
+</config>

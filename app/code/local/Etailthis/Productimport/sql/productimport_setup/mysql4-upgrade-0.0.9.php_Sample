@@ -1,0 +1,13 @@
+<?php
+$installer = $this;
+$installer->startSetup();
+$sql=<<<SQLTEXT
+create table etailthis_ProductImport(id int not null auto_increment, Import_Start varchar(100),Import_Finish varchar(100),Import_Type varchar(100),Status_Number_of_products varchar(100),primary key(id));
+SQLTEXT;
+
+$installer->run($sql);
+//demo 
+//Mage::getModel('core/url_rewrite')->setId(null);
+//demo 
+$installer->endSetup();
+	 

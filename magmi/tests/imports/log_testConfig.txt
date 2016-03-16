@@ -1,0 +1,14 @@
+title:MAGMI by dweeves - version:0.7.21_git
+startup:Import Profile:configurable
+startup:Import Mode:create
+step:step:0.5%
+plugin;Magmi_DatapumpDS;pluginhello:DataPump Datasource-1.0.0-Dweeves- 
+plugin;Magmi_ConfigurableItemProcessor;pluginhello:Configurable Item processor-1.3.7a-Dweeves-http://wiki.magmi.org/index.php?title=Configurable_Item_processor 
+plugin;Magmi_DefaultAttributeItemProcessor;pluginhello:Standard Attribute Import-1.0.6-Dweeves- 
+plugin;Magmi_ConfigurableItemProcessor;startup:Configurable Item processor v1.3.7a - no options_container set, defaulting to :Block after product info
+plugin;Magmi_DefaultAttributeItemProcessor;startup:Standard Attribute Import v1.0.6 - Newly created items will have default values for columns:status,page_layout,tax_class_id
+plugin;Magmi_ConfigurableItemProcessor;startup:Configurable Item processor v1.3.7a - no options_container set, defaulting to :Block after product info
+plugin;Magmi_DefaultAttributeItemProcessor;startup:Standard Attribute Import v1.0.6 - Newly created items will have default values for columns:store,status,page_layout,tax_class_id
+itime:21 - 1.4133861064911 - 1.4133861064911
+dbtime:340 - 0.16113066673279 - 0.16113066673279 - 340
+info:Skus imported OK:21/21

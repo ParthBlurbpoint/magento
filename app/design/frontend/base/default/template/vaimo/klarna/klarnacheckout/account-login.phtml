@@ -1,0 +1,40 @@
+<?php
+/**
+ * Copyright (c) 2009-2014 Vaimo AB
+ *
+ * Vaimo reserves all rights in the Program as delivered. The Program
+ * or any portion thereof may not be reproduced in any form whatsoever without
+ * the written consent of Vaimo, except as provided by licence. A licence
+ * under Vaimo's rights in the Program may be available directly from
+ * Vaimo.
+ *
+ * Disclaimer:
+ * THIS NOTICE MAY NOT BE REMOVED FROM THE PROGRAM BY ANY USER THEREOF.
+ * THE PROGRAM IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+ * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL
+ * THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE PROGRAM OR THE USE OR OTHER DEALINGS
+ * IN THE PROGRAM.
+ *
+ * @category    Vaimo
+ * @package     Vaimo_Klarna
+ * @copyright   Copyright (c) 2009-2014 Vaimo AB
+ */
+?>
+
+<div class="klarna_login">
+    <form id="klarna_form-login" action="<?php echo Mage::getUrl('klarna/login/loginPost', array('_secure' => true)); ?>" method="post">
+        <label for="login-username" class="klarna_input-label"><?php echo $this->__('E-mail'); ?></label>
+        <input class="required-entry klarna_input-text validate-email" type="email" name="email" id="login-username" placeholder="<?php echo $this->__('E-mail'); ?>">
+
+        <label for="login-password" class="klarna_input-label"><?php echo $this->__('Password'); ?></label>
+        <input class="required-entry klarna_input-text" type="password" name="pass" id="login-password" placeholder="<?php echo $this->__('Password'); ?>">
+
+        <button class="button button-action" type="submit"><?php echo $this->__('Login'); ?></button>
+    </form>
+    <div class="klarna_login_message">
+        <?php echo $this->getChildHtml('klarnacheckout.autofill') ?>
+    </div>
+</div>

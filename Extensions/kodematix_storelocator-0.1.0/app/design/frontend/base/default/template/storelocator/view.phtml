@@ -1,0 +1,104 @@
+<?php echo  $_storeView = $this->helper('storelocator')->getStoreViewInstance(); ?>
+<!-- Add Google Map Listener -->
+
+<div class="page-title">
+    <h1><?php echo $this->escapeHtml($_storeView->getName()) ?> - Store Detail</h1>
+
+<div id="store-view-detail">
+    
+    <div>
+           <button onclick="setLocation('<?php echo $this->getBackUrl() ?>');" class="button" title="<?php echo Mage::helper('storelocator')->__('Back') ?>" type="button">
+                <span>
+                    <span>
+                        <?php echo Mage::helper('storelocator')->__('Back') ?>
+                    </span>
+                </span>
+            </button>
+        </div>
+    <div id="store-detail">
+        <div id="store-view-detail-table" class="store-view-detail-data-table">
+            <?php if ($imageUrl = $this->getImageUrl($_storeView, 400)): ?>
+                <div>
+                     <p><img src="<?php echo $imageUrl ?>" alt="<?php echo $this->escapeHtml($_storeView->getName()) ?>" title="<?php echo $this->escapeHtml($_storeView->getName()) ?>" /></p>
+                </div>  
+            <?php endif; ?>
+               
+                <div class="label"><div class="label_new"><?php echo Mage::helper('storelocator')->__('StoreName') ?></div>
+                <div class="filed"><?php echo $this->escapeHtml(ucfirst($_storeView->getName())) ?></div></div>
+        
+                
+                <div class="label"><div class="label_new"><?php echo Mage::helper('storelocator')->__('Country') ?></div>
+                <div class="filed"><?php echo ucfirst($this->getCountryName($_storeView->getCountry())); ?></div></div>
+            
+                <div class="label"><div class="label_new"><?php echo Mage::helper('storelocator')->__('State') ?></div>
+                <div class="filed" ><?php echo $this->escapeHtml(ucfirst($_storeView->getState())) ?></div ></div>
+            
+                <div class="label"><div class="label_new"><?php echo Mage::helper('storelocator')->__('City') ?></div>
+                <div class="filed"><?php echo $this->escapeHtml(ucfirst($_storeView->getCity())) ?></div ></div>
+            <?php if($_storeView->getStreetAddress()): ?>
+                <div class="label"><div class="label_new"><?php echo Mage::helper('storelocator')->__('Street Address') ?></div>
+               <div class="filed"><?php echo $this->escapeHtml($_storeView->getStreetAddress()) ?></div></div>
+            <?php endif; ?>
+            <?php if($_storeView->getZipcode()): ?>
+                <div class="label"><div class="label_new"><?php echo Mage::helper('storelocator')->__('Zip Code') ?></div>
+                <div class="filed"><?php echo $this->escapeHtml($_storeView->getZipcode()) ?></div></div>
+            <?php endif; ?>
+            <?php if($_storeView->getPhone()): ?>
+                <div class="label"><div class="label_new"><?php echo Mage::helper('storelocator')->__('Phone') ?></div>
+                <div class="filed"><?php echo $this->escapeHtml($_storeView->getPhone()) ?></div></div>
+            <?php endif; ?>
+            <?php if($_storeView->getPhone()): ?>
+                <div  class="label"><div class="label_new"><?php echo Mage::helper('storelocator')->__('Phone') ?></div>
+                <div class="filed"><?php echo $this->escapeHtml($_storeView->getPhone()) ?></div></div>
+            <?php endif; ?>
+            <?php if($_storeView->getFax()): ?>
+                <div class="label"><div class="label_new"><?php echo Mage::helper('storelocator')->__('Fax') ?></div>
+                <div class="filed"><?php echo $this->escapeHtml($_storeView->getFax()) ?></div></div>
+            <?php endif; ?>
+            <?php if($_storeView->getUrl()): ?>
+                <div class="label"><div class="label_new"><?php echo Mage::helper('storelocator')->__('Store Url') ?></div>
+                <div class="filed"><?php echo $this->escapeHtml($_storeView->getUrl()) ?></div></div>
+            <?php endif; ?>
+            <?php if($_storeView->getEmail()): ?>
+                <div class="label"><div class="label_new"><?php echo Mage::helper('storelocator')->__('Email') ?></div>
+                <div class="filed"><?php echo $this->escapeHtml($_storeView->getEmail()) ?></div></div>
+            <?php endif; ?>
+            <?php if($_storeView->getTradingHours()): ?>
+                <div class="label"><div class="label_new"><?php echo Mage::helper('storelocator')->__('Trading Hours') ?></div>
+                <div class="filed"><?php echo $this->escapeHtml($_storeView->getTradingHours()) ?></div></div>
+            <?php endif; ?>
+            <?php if($_storeView->getRadius()): ?>
+                <div class="label"><div class="label_new"><?php echo Mage::helper('storelocator')->__('Radius') ?></div>
+                <div class="filed"><?php echo $this->escapeHtml($_storeView->getRadius()) ?>&nbsp;Miles</div></div>
+            <?php endif; ?>
+            <?php if($_storeView->getDescription()): ?>
+                <div class="label"><div class="label_new"><?php echo Mage::helper('storelocator')->__('Description') ?></div>
+                <div class="filed"><?php echo $_storeView->getDescription(); ?></div></div>
+            <?php endif; ?>
+        </div>
+   </div>
+    <div id="store-gmap" style="valign:top;"><div id="googleMap"></div>
+</div>
+</div>
+</div>
+<?php 
+
+$storeName = $_storeView->getName();
+$storeLat = $_storeView->getLatitude();
+$storeLong = $_storeView->getLongitude();
+$storeRadius = $this->getRadius($_storeView);
+$storeZoomLevel = $this->getZoomLevel($_storeView);
+?>
+<?php if($storeLat && $storeLong): ?>
+<script>
+    //<![CDATA[
+    var storeLat = <?php echo $storeLat ;?>;
+    var storeLong = <?php echo $storeLong ;?>;
+    var storeRadius = <?php echo $storeRadius ;?>;
+    var storeZoomLevel = <?php echo $storeZoomLevel ;?>;
+    var storeInfoText = '<?php echo $storeName ;?>';
+    var googleMapDivId = 'googleMap';
+    google.maps.event.addDomListener(window, 'load', initialize(storeLat, storeLong, storeRadius, storeZoomLevel, storeInfoText, googleMapDivId));
+      //]]>
+</script>
+<?php endif ?>

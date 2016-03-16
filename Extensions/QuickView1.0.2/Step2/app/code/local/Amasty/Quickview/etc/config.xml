@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+/**
+ * @author Amasty Team
+ * @copyright Copyright (c) 2015 Amasty (https://www.amasty.com)
+ * @package Amasty_Quickview
+ */
+-->
+<config>
+    <modules>
+        <Amasty_Quickview>
+            <version>1.0.2</version>
+        </Amasty_Quickview>
+    </modules>
+
+    
+    <frontend>
+        <translate>
+            <modules>
+                <Amasty_Quickview>
+                    <files>
+                        <default>Amasty_Quickview.csv</default>
+                    </files>
+                </Amasty_Quickview>
+            </modules>
+        </translate>
+
+        <layout>
+            <updates>
+                <amquickview>
+                    <file>amasty/amquickview.xml</file>
+                </amquickview>
+            </updates>
+        </layout>
+        
+        <routers>
+            <amquickview>
+                <use>standard</use>
+                <args>
+                    <module>Amasty_Quickview</module>
+                    <frontName>amquickview</frontName>
+                </args>
+            </amquickview>
+        </routers>
+    </frontend>
+    
+    
+    <adminhtml>
+        <translate>
+            <modules>
+                <Amasty_Quickview>
+                    <files>
+                        <default>Amasty_Quickview.csv</default>
+                    </files>
+                </Amasty_Quickview>
+            </modules>
+        </translate>
+        <acl>
+            <resources>
+                <all>
+                    <title>Allow Everything</title>
+                </all>
+                <admin>
+                    <children>
+                        <system>
+                            <children>
+                                <config>
+                                    <children>
+                                        <amquickview translate="title" module="amquickview">
+                                            <title>Quick View</title>
+                                        </amquickview>
+                                    </children>
+                                </config>
+                            </children>
+                        </system> 
+                     </children>
+                </admin> 
+            </resources>
+        </acl>
+    </adminhtml>
+    
+    
+    
+    <global>
+        <models>
+            <amquickview>
+                <class>Amasty_Quickview_Model</class>
+            </amquickview>
+        </models>
+        
+		<resources>
+             <amquickview_setup>
+                <setup>
+                    <module>Amasty_Quickview</module>
+                </setup>
+                <connection>
+                    <use>core_setup</use>
+                </connection>
+            </amquickview_setup>
+		    <amquickview_write>
+		        <connection><use>core_write</use></connection>
+		    </amquickview_write>
+		    <amquickview_read>
+		        <connection><use>core_read</use></connection>
+		    </amquickview_read>
+		</resources>
+		  
+        
+        <blocks>
+            <amquickview>
+                <class>Amasty_Quickview_Block</class>
+            </amquickview>
+
+            <bundle>
+                <rewrite>
+                    <catalog_product_price>Amasty_Quickview_Block_Bundle_Catalog_Product_Price</catalog_product_price>
+                </rewrite>
+            </bundle>
+			
+			<catalog>
+                <rewrite>
+                    <product_price>Amasty_Quickview_Block_Catalog_Product_Price</product_price>
+                </rewrite>
+            </catalog>
+
+        </blocks>
+        
+        <helpers>
+            <amquickview>
+                <class>Amasty_Quickview_Helper</class>
+            </amquickview>
+        </helpers>
+
+        
+    </global>
+    
+    <default>
+        <amquickview>
+            <general>
+                <enable>1</enable>
+                <item_selector>.products-grid .item, .products-list .item, .products-list .item</item_selector>
+                <custom_css_styles></custom_css_styles>
+            </general>
+        </amquickview>
+    </default>
+</config>

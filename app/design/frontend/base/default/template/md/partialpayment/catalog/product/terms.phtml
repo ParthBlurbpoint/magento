@@ -1,0 +1,12 @@
+<?php if(Mage::helper('md_partialpayment')->isTermsEnabled()): ?>
+<?php  ?>
+<div id="partial-terms-popup" class="partial-terms-popup" style="display:none;">
+    <a href="#" class="partial-terms-popup-close" id="partial-terms-popup-close">&times;</a>
+    <div class="partial-terms-popup-heading">
+        <h3><?php echo $this->__('Terms And Conditions') ?></h3>
+    </div>
+    <div class="map-popup-content">
+        <?php  ?>
+    </div>
+</div>
+<?php endif; ?>

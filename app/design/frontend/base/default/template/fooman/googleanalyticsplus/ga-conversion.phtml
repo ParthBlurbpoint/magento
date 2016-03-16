@@ -1,0 +1,22 @@
+<?php /* @var $this Fooman_GoogleAnalyticsPlus_Block_GaConversion */?>
+<?php if($this->isEnabled()):?>
+<!-- Google Code for <?php echo $this->getLabel() ?> Conversion Page -->
+<script>
+/* <![CDATA[ */
+var google_conversion_id = <?php echo $this->getConversionId() ?>;
+var google_conversion_language = "<?php echo $this->getLanguage() ?>";
+var google_conversion_format = "1";
+var google_conversion_color = "<?php echo $this->getColor() ?>";
+var google_conversion_label = "<?php echo $this->getLabel() ?>";
+<?php if ($this->getValue()): ?>
+    var google_conversion_value = <?php echo $this->getValue() ?>;
+<?php endif; ?>
+/* ]]> */
+</script>
+<script src="<?php echo $this->getConversionUrl() ?>"></script>
+<noscript>
+    <div style="display:inline;">
+        <img height="1" width="1" border="0" alt="" src="<?php echo $this->getNoScriptConversionUrl()?>">
+    </div>
+</noscript>
+<?php endif; ?>

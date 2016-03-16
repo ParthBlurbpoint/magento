@@ -1,0 +1,1 @@
+<block type="adminhtml/catalog_product_edit_tab_super_config_grid" name="admin.product.edit.tab.super.config.grid" output="toHtml"/>

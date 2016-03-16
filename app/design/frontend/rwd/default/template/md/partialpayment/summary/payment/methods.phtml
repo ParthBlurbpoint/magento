@@ -1,0 +1,447 @@
+<?php
+/**
+* Magedelight
+* Copyright (C) 2015 Magedelight <info@magedelight.com>
+*
+* NOTICE OF LICENSE
+*
+* This program is free software: you can redistribute it and/or modify
+* it under the terms of the GNU General Public License as published by
+* the Free Software Foundation, either version 3 of the License, or
+* (at your option) any later version.
+*
+* This program is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+* GNU General Public License for more details.
+*
+* You should have received a copy of the GNU General Public License
+* along with this program. If not, see http://opensource.org/licenses/gpl-3.0.html.
+*
+* @category MD
+* @package MD_Partialpayment
+* @copyright Copyright (c) 2015 Mage Delight (http://www.magedelight.com/)
+* @license http://opensource.org/licenses/gpl-3.0.html GNU General Public License,version 3 (GPL-3.0)
+* @author Magedelight <info@magedelight.com>
+*/
+?>
+<?php
+$savedCards	   = null;
+$helper		   = Mage::helper('md_partialpayment');
+$paymentConfig	   = Mage::getSingleton('payment/config');
+$methods	   = $this->getActiveMethods();
+$oneMethod	   = count($methods) <= 1;
+$ccTypes	   = $paymentConfig->getCcTypes();
+$months		   = $paymentConfig->getMonths();
+$years		   = $paymentConfig->getYears();
+$payments	   = Mage::getModel('md_partialpayment/payments')->load($this->getRequest()->getParam('payment_id'));
+$_ccRequiredMethod = array(
+    Mage_Paygate_Model_Authorizenet::METHOD_CODE,
+    'authorizenet_directpost',
+    'ccsave',
+    'md_authorizecim',
+    'md_stripe_cards',
+    'md_cybersource'
+);
+
+$_ccRedirectMethod = array(
+    Mage_Paypal_Model_Config::METHOD_WPS
+);
+
+$_adminRequiredActionMethod = array(
+    'cashondelivery',
+    'checkmo'
+);
+
+$_tokenizedMethods     = array(
+    'sagepaydirectpro' => 'md_partialpayment/sagepay_form_sagePayDirectPro',
+    'sagepayserver'    => 'md_partialpayment/sagepay_form_sagePayServer'
+);
+
+$checkPaybleto		    = Mage::getStoreConfig('payment/checkmo/payable_to');
+$checkMailingAddress	    = Mage::getStoreConfig('payment/checkmo/mailing_address');
+$cashOnDeliveryInstructions = Mage::getStoreConfig('payment/cashondelivery/instructions');
+?>
+<div class="page-title">
+    <h1><?php echo $this->__('Payment Information') ?></h1>
+</div>
+<?php if (empty($methods)): ?>
+    <dl>
+        <dt> <?php echo $this->__('No Payment Methods') ?> </dt> 
+    </dl>
+
+<?php else: ?> 
+<dl class="partial-payment-methods"> 
+<?php
+    foreach ($methods as $_method):
+	$_code = $_method->getCode();
+	$cards = $helper->getCardsByMethods($_code, $payments->getStoreId());
+?>
+	    <dt>
+		<input id="partial_method_<?php echo $_code ?>" value="<?php echo $_code ?>" type="radio" name="partial[method]" title="<?php echo $this->escapeHtml($_method->getTitle()) ?>" class="validate-one-required-by-name radio" />
+		<label for="partial_method_<?php echo $_code ?>">
+		    <?php echo $this->escapeHtml($_method->getTitle()) ?>
+		</label>
+	    </dt>
+	    <?php 
+	    if ($_method->getCode() && array_key_exists($_method->getCode(), $_tokenizedMethods)): 
+		echo $this->getLayout()->createBlock($_tokenizedMethods[$_method->getCode()])->toHtml();
+	    elseif ($_method->getCode() && in_array($_code, $_ccRequiredMethod)): ?>
+	        <dd>
+		    <ul class="form-list" id="payment_form_<?php echo $_code ?>" style="display:none;">
+			<?php 
+			if ($_method->getCode() == 'ccsave'): ?>
+			    <li>
+				<label for="<?php echo $_code ?>_cc_owner" class="required">
+				    <em>*</em><?php echo $this->__('Name on Card') ?>
+				</label>
+				<div class="input-box">
+				    <input type="text" title="<?php echo $this->__('Name on Card') ?>" class="input-text required-entry" id="<?php echo $_code ?>_cc_owner" name="<?php echo $_code ?>[cc_owner]" value="<?php echo $this->escapeHtml($this->getInfoData('cc_owner')) ?>" />
+				</div>
+			    </li>
+			<?php 
+			elseif ($_method->getCode() == 'md_authorizecim'):
+			    $cardInfoData = true; 
+			
+			    if (Mage::getSingleton("customer/session")->isLoggedIn()):
+				if (Mage::getModel("md_authorizecim/config")->getIsActive()): 
+				    $savedCards = Mage::getModel("md_authorizecim/payment")
+						  ->setCustomer(Mage::getSingleton("customer/session")->getCustomer())
+						  ->getCustomerPaymentProfiles(null, true);
+				endif; 
+				
+				if (count($savedCards) > 0):
+				    $cardInfoData = false; 
+				?>
+				    <li>
+					<label for="<?php echo $_code ?>_payment_profile_id">
+					    <?php echo $this->__("Select From Saved Card") ?>
+					</label>
+					<div class="input-box">
+					    <select name="<?php echo $_code; ?>[payment_id]" id="<?php echo $_code; ?>_payment_id" class="<?php echo $_code; ?>_require required-entry">
+						<?php foreach ($savedCards as $_card): ?>
+						    <?php $cardReplaced = substr_replace($_card->payment->creditCard->cardNumber, '-', 4, 0); ?>
+			    			<option value="<?php echo $_card->customerPaymentProfileId ?>">
+						    <?php echo sprintf('%s, %s %s', $cardReplaced, $_card->billTo->firstName, $_card->billTo->lastName) ?>
+						</option>
+						<?php endforeach; ?>
+						<option value="new">
+						    <?php echo $this->__("Use other card") ?>
+						</option>
+					    </select>
+					</div>
+				    </li>
+			    <?php 
+				endif; //count(cards) 
+			    endif; //customer session 
+			    ?>
+			    <li class="<?php echo $_code ?>_new" <?php if (!$cardInfoData): ?>style="display:none;"<?php endif; ?>>
+				<label for="<?php echo $_code ?>_cc_type" class="required">
+				    <em>*</em><?php echo $this->__('Credit Card Type') ?>
+				</label>
+				<div class="input-box" style="clear:left">
+				    <select id="<?php echo $_code ?>_cc_type" name="<?php echo $_code; ?>[cc_type]" class="required-entry validate-cc-type-select">
+					<option value=""><?php echo $this->__('--Please Select--') ?></option>
+					<?php 
+					$_ccType = $this->getInfoData('cc_type');
+					foreach ($ccTypes as $_typeCode => $_typeName): 
+					    if (in_array($_typeCode, $cards)): ?>
+						<option value="<?php echo $_typeCode ?>"<?php if ($_typeCode == $_ccType): ?> selected="selected"<?php endif ?>>
+						    <?php echo $_typeName ?>
+						</option>
+					    <?php 
+					    endif; 
+					endforeach; ?>
+				    </select>
+				</div>
+			    </li>
+			    <li class="<?php echo $_code ?>_new" <?php if (!$cardInfoData): ?>style="display:none;"<?php endif; ?>>
+				<label for="<?php echo $_code ?>_cc_number" class="required">
+				    <em>*</em><?php echo $this->__('Credit Card Number') ?>
+				</label>
+				<div class="input-box">
+				    <input type="text" pattern="\d*" id="<?php echo $_code ?>_cc_number" name="<?php echo $_code; ?>[cc_number]" title="<?php echo $this->__('Credit Card Number') ?>" class="input-text validate-cc-number validate-cc-type" value="" />
+				</div>
+			    </li>
+			    <li class="<?php echo $_code ?>_new" <?php if (!$cardInfoData): ?>style="display:none;"<?php endif; ?>>
+				<label for="<?php echo $_code ?>_expiration" class="required">
+				    <em>*</em><?php echo $this->__('Expiration Date') ?>
+				</label>
+				<div class="input-box">
+				    <div class="v-fix">
+					<select id="<?php echo $_code ?>_expiration" name="<?php echo $_code; ?>[cc_exp_month]" class="month validate-cc-exp required-entry">
+					    <?php foreach ($months as $k => $v): ?>
+						<option value="<?php echo $k ? $k : '' ?>"><?php echo $v ?></option>
+					    <?php endforeach; ?>
+					</select>
+				    </div>
+				    <div class="v-fix">
+					<?php $_ccExpYear = $this->getInfoData('cc_exp_year') ?>
+					<select id="<?php echo $_code ?>_expiration_yr" name="<?php echo $_code; ?>[cc_exp_year]" class="year required-entry">
+					    <?php foreach ($years as $k => $v): ?>
+						<option value="<?php echo $k ? $k : '' ?>"><?php echo $v ?></option>
+					    <?php endforeach ?>
+					</select>
+				    </div>
+				</div>
+			    </li>
+			    <?php 
+			    echo $_method->getChildHtml();
+			    
+			    if ($_method->hasVerification()): ?>
+				<li id="<?php echo $_code ?>_cc_type_cvv_div">
+				    <label for="<?php echo $_code ?>_cc_cid" class="required">
+					<em>*</em><?php echo $this->__('Card Verification Number') ?>
+				    </label>
+				    <div class="input-box">
+					<div class="v-fix">
+					    <input type="text" pattern="\d*" title="<?php echo $this->__('Card Verification Number') ?>" class="input-text cvv required-entry" id="<?php echo $_code ?>_cc_cid" name="<?php echo $_code; ?>[cc_cid]" value="" />
+					</div>
+					<a href="#" class="cvv-what-is-this">
+					    <?php echo $this->__('What is this?') ?>
+					</a>
+				    </div>
+				</li>
+			    <?php 
+			    endif; 
+			    
+			    // We need to be able to identify whether they're a guest or 'registering'...
+			    $quote = Mage::getSingleton('checkout/session')->getQuote();
+			    $items = array();
+			    
+			    if ($quote && $quote->getId()):
+				$items = $quote->getAllItems();
+			    endif;
+			    
+			    ?>
+			    <?php if ((!isset($items[0]) || !$items[0]->isNominal()) && (Mage::getSingleton('customer/session')->getCustomerId() || $quote->getCheckoutMethod() == 'register') && Mage::getModel("md_authorizecim/config")->getSaveCardOptional()): ?>
+		    	    <li class="<?php echo $_code ?>_new" <?php if (!$cardInfoData): ?>style="display:none;"<?php endif; ?>>
+		    		<label>&nbsp;</label>
+				
+		    		<input type="checkbox" name="<?php echo $_code; ?>[save_card]" id="<?php echo $_code ?>_save_card" value="1" checked="checked" autocomplete="on" />
+				
+		    		<label for="<?php echo $_code ?>_save_card" style="float:none;font-weight:normal;">
+				    <?php echo $this->__('Save this credit card for future use.'); ?>
+				</label>
+		    	    </li>
+			    <?php elseif ((isset($items[0]) && $items[0]->isNominal()) || (Mage::getSingleton('customer/session')->getCustomerId() || $quote->getCheckoutMethod() == 'register')): ?>
+		    	    <li class="<?php echo $_code ?>_new" <?php if (!$cardInfoData): ?>style="display:none;"<?php endif; ?>>
+		    		<input type="hidden" name="<?php echo $_code; ?>[save_card]" id="<?php echo $_code ?>_save_card" value="1" /> 
+				    <?php echo $this->__('<strong>Note:</strong> For your convenience, this card will be stored securely via Authorize.Net.'); ?>
+		    	    </li>
+			    <?php else: ?>
+				<li class="<?php echo $_code ?>_new" <?php if (!$cardInfoData): ?>style="display:none;"<?php endif; ?>>
+				    <input type="hidden" name="<?php echo $_code; ?>[save_card]" id="<?php echo $_code ?>_save_card" value="1" />
+				</li>
+			    <?php 
+			    endif; 
+			elseif($_code == MD_Stripe_Model_Cardspayment::METHOD_CODE):
+			    if (Mage::getSingleton("customer/session")->isLoggedIn()):
+				echo $this->getLayout()->createBlock('md_stripe/cards_form')
+				     ->setMethod($_method)
+				     ->setCustomer(Mage::getSingleton("customer/session")->getCustomer())
+				     ->setTemplate('md/partialpayment/summary/payment/method/stripe/form.phtml')
+				     ->toHtml();
+			    endif; 
+			elseif ($_code == 'md_cybersource'): 
+			    if (Mage::getSingleton("customer/session")->isLoggedIn()):
+				echo $this->getLayout()->createBlock('md_cybersource/form')
+				    ->setMethod($_method)
+				    ->setCustomer(Mage::getSingleton("customer/session")->getCustomer())
+				    ->setTemplate('md/partialpayment/summary/payment/method/cybersource/form.phtml')->toHtml();
+			    endif; 
+			endif; 
+			
+			if (!in_array($_code,array('md_authorizecim',MD_Stripe_Model_Cardspayment::METHOD_CODE,'md_cybersource'))):  ?>
+			    <li>
+				<p class="required">
+				    <?php echo $this->__('* Required Fields') ?>
+				</p>
+				
+				<label for="<?php echo $_code ?>_cc_type" class="required">
+				    <em>*</em> <?php echo $this->__('Credit Card Type') ?>
+				</label>
+				
+				<div class="input-box">
+				    <select id="<?php echo $_code ?>_cc_type" name="<?php echo $_code ?>[cc_type]" class="required-entry validate-cc-type-select" title="<?php echo $this->__('Credit Card Type') ?>" autocomplete="off">
+					<option value=""><?php echo $this->__('--Please Select--') ?></option>
+					<?php 
+					foreach ($ccTypes as $code => $label): 
+					    if (in_array($code, $cards)): 
+					?>
+						<option value="<?php echo $code ?>"><?php echo $label ?></option>
+					<?php 
+					    endif;
+					endforeach; 
+					?>
+				    </select>
+				</div>
+			    </li>
+			    
+			    <li>
+				<label for="<?php echo $_code ?>_cc_number" class="required">
+				    <em>*</em><?php echo $this->__('Credit Card Number') ?>
+				</label>
+				
+				<div class="input-box">
+				    <input type="text" id="<?php echo $_code ?>_cc_number" name="<?php echo $_code ?>[cc_number]" title="<?php echo $this->__('Credit Card Number') ?>" class="input-text validate-cc-number validate-cc-type" value="" />
+				</div>
+			    </li>
+			    
+			    <li id="<?php echo $_code ?>_cc_type_exp_div">
+				<label for="<?php echo $_code ?>_expiration" class="required">
+				    <em>*</em><?php echo $this->__('Expiration Date') ?>
+				</label>
+				
+				<div class="input-box">
+				    <div class="v-fix">
+					<select id="<?php echo $_code ?>_expiration" name="<?php echo $_code ?>[cc_exp_month]" class="month validate-cc-exp required-entry">
+					    <?php foreach ($months as $k => $v): ?>
+						<option value="<?php echo $k ? $k : '' ?>"><?php echo $v ?></option>
+					    <?php endforeach ?>
+					</select>
+				    </div>
+				    
+				    <div class="v-fix">
+					<select id="<?php echo $_code ?>_expiration_yr" name="<?php echo $_code ?>[cc_exp_year]" class="year required-entry">
+					    <?php foreach ($years as $k => $v): ?>
+						<option value="<?php echo $k ? $k : '' ?>"><?php echo $v ?></option>
+					    <?php endforeach ?>
+					</select>
+				    </div>
+				</div>
+			    </li>
+			    <?php 
+			    echo $_method->getChildHtml();
+			    
+			    if ($_method->hasVerification()): 
+			    ?>
+		    	    <li id="<?php echo $_code ?>_cc_type_cvv_div">
+		    		<label for="<?php echo $_code ?>_cc_cid" class="required">
+				    <em>*</em><?php echo $this->__('Card Verification Number') ?>
+				</label>
+				
+		    		<div class="input-box">
+		    		    <div class="v-fix">
+		    			<input type="text" pattern="\d*" title="<?php echo $this->__('Card Verification Number') ?>" class="input-text cvv required-entry validate-cc-cvn" id="<?php echo $_code ?>_cc_cid" name="<?php echo $_code ?>[cc_cid]" value="" />
+		    		    </div>
+		    		</div>
+		    	    </li>
+			<?php 
+			    endif;
+			endif; 
+			?>
+		    </ul>
+	        </dd>
+	    <?php elseif ($_method->getCode() && (in_array($_method->getCode(), $_ccRedirectMethod) || in_array($_method->getCode(), $_adminRequiredActionMethod))): ?>
+	        <dd>
+		    <ul class="form-list" id="payment_form_<?php echo $_code ?>" style="display:none;">
+			<?php if ($_method->getCode() == Mage_Paypal_Model_Config::METHOD_WPS): ?>
+			    <li class="form-alt">
+				<?php echo $this->__('You will be redirected to the PayPal website when you place an order.'); ?>
+			    </li>
+			    
+			<?php elseif ($_method->getCode() == 'cashondelivery' && $cashOnDeliveryInstructions): ?>
+			    <li>
+				<div class="cashondelivery-instructions-content">
+				    <?php echo nl2br($cashOnDeliveryInstructions) ?>
+				</div>
+			    </li>
+			    
+			<?php 
+			    elseif ($_method->getCode() == 'checkmo'):
+				if ($checkPaybleto): 
+			?>
+				    <li>
+					<label>
+					    <?php echo $this->__('Make Check payable to: ') ?>
+					</label>
+
+					<?php echo $checkPaybleto ?>
+				    </li>
+			<?php
+				endif; 
+			    if ($checkMailingAddress):
+			?>
+		    	    <li>
+				<label>
+				    <?php echo $this->__('Send Check to: ') ?>
+				</label>
+				
+				<address class="checkmo-mailing-address">
+				    <?php echo nl2br($checkPaybleto) ?>
+				</address>
+			    </li>
+			<?php 
+			    endif; 
+			endif; 
+			?>
+		    </ul>
+	        </dd>
+	<?php endif; ?>
+	<script type="text/javascript">
+	    if($('<?php echo $_code ?>_payment_id')) {
+		$('<?php echo $_code ?>_payment_id').observe("change", function (event) {
+		    var sourceElement = Event.findElement(event);
+		    var currentValue  = $(sourceElement).getValue();
+		    var cVVElement    = $('<?php echo $_code ?>_cc_cid');
+
+		    $$(".<?php echo $_code ?>_new").each(function (newCardData) {
+			if (currentValue == 'new') {
+			    $(newCardData).show();
+
+			    newCardData.select('input', 'select', 'textarea').each(function (elm) {
+				if (elm.disabled == true) {
+				    elm.disabled = false;
+				}
+			    });
+			} else {
+			    $(newCardData).hide();
+
+			    newCardData.select('input', 'select', 'textarea').each(function (elm) {
+				elm.disabled = true;
+			    });
+			}
+		    });
+
+		    if (cVVElement) {
+			cVVElement.show();
+
+			if (currentValue == 'new') {
+			    cVVElement.addClassName('validate-cc-cvn');
+			} else {
+			    cVVElement.removeClassName('validate-cc-cvn');
+			}
+		    }
+		});
+	    }
+	</script>
+    <?php endforeach; ?>
+	<script type="text/javascript">
+	    function toggleSagepayDiv(value, code) {
+		targetElement = null;
+		switch (value) {
+		    case 0:
+			$$(".addnew" + code)[0].show();
+			
+			targetElement = $$("tokensage" + code)[0];
+			var pElement  = $$(".paymentsage" + code)[0];
+			
+			pElement.select("li").each(function (e) {
+			    $(e).setStyle({display: "none"});
+			});
+			break;
+		    case 1:
+			$$(".addnew" + code)[0].hide();
+			
+			var targetElement = $$(".paymentsage" + code)[0];
+			
+			targetElement.select("li").each(function (e) {
+			    $(e).setStyle({display: "block"});
+			});
+			break;
+		}
+	    }
+        </script>
+    </dl>    
+<?php endif; ?>

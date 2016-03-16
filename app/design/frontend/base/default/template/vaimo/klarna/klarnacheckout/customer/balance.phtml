@@ -1,0 +1,43 @@
+<?php
+/**
+ * Copyright (c) 2009-2014 Vaimo AB
+ *
+ * Vaimo reserves all rights in the Program as delivered. The Program
+ * or any portion thereof may not be reproduced in any form whatsoever without
+ * the written consent of Vaimo, except as provided by licence. A licence
+ * under Vaimo's rights in the Program may be available directly from
+ * Vaimo.
+ *
+ * Disclaimer:
+ * THIS NOTICE MAY NOT BE REMOVED FROM THE PROGRAM BY ANY USER THEREOF.
+ * THE PROGRAM IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+ * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL
+ * THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE PROGRAM OR THE USE OR OTHER DEALINGS
+ * IN THE PROGRAM.
+ *
+ * @category    Vaimo
+ * @package     Vaimo_Klarna
+ * @copyright   Copyright (c) 2009-2014 Vaimo AB
+ */
+?>
+
+<?php if ($this->isDisplayContainer()): ?>
+<div class="checkout-onepage-payment-additional-customerbalance" id="customerbalance_placer">
+    <form id="klarna-checkout-customer-balance" action="<?php echo $this->getUrl('checkout/klarna/customerBalancePost') ?>" method="post">
+        <input type="hidden" name="payment[use_customer_balance]" value="0" />
+        <input type="checkbox" class="checkbox" name="use_customer_balance" value="1" id="use_customer_balance" <?php echo ($this->isCustomerBalanceUsed() ? 'checked' : '') ?>/>
+
+        <?php $balance = Mage::helper('core')->currency($this->getBalance()); ?>
+        <label for="use_customer_balance">
+            <strong>
+                <?php echo Mage::helper('enterprise_customerbalance')->__('Use Store Credit'); ?>
+                (<span id="customerbalance_available_amount"><?php echo $balance; ?></span>
+                <?php echo Mage::helper('enterprise_customerbalance')->__('available'); ?>)
+            </strong>
+        </label>
+    </form>
+</div>
+<?php endif; ?>

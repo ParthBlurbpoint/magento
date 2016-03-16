@@ -1,0 +1,301 @@
+<?xml version="1.0"?>
+<config>
+  <modules>
+    <Etailthis_Productimport>
+      <version>0.1.0</version>
+    </Etailthis_Productimport>
+  </modules>
+  <default>
+  	<etailthis>
+		<sinch_ftp>
+			<ftp_server>ftp.ftps.etailthis.com</ftp_server>
+			<login>et04@ftps.etailthis.com</login>
+			<password>GL^gvvT6KS$@</password>
+			<cronjob>0 4 * * 0</cronjob>
+		</sinch_ftp>
+		<sinch_import_fullstatus>
+			<cronjob>0 4 * * 0</cronjob>
+		</sinch_import_fullstatus>
+	</etailthis>
+	
+  </default>
+  <global>
+    <helpers>
+      <productimport>
+        <class>Etailthis_Productimport_Helper</class>
+      </productimport>
+    </helpers>
+	<resources>
+	  <productimport_setup>
+		<setup>
+		  <module>Etailthis_Productimport</module>
+		</setup>
+		<connection>
+		  <use>core_setup</use>
+		</connection>
+	  </productimport_setup>
+	  <productimport_write>
+		<connection>
+		  <use>core_write</use>
+		</connection>
+	  </productimport_write>
+	  <productimport_read>
+		<connection>
+		  <use>core_read</use>
+		</connection>
+	  </productimport_read>
+	</resources>
+	<blocks>
+     <productimport>
+         <class>Etailthis_Productimport_Block</class>
+     </productimport>                         
+ </blocks>
+ <models>
+	  <productimport>
+		<class>Etailthis_Productimport_Model</class>
+		<resourceModel>productimport_mysql4</resourceModel>
+	  </productimport>
+	</models>
+  </global>
+  <frontend>
+        <routers>
+            <productimport>
+                <use>standard</use>
+                <args>
+                    <module>Etailthis_Productimport</module>
+                    <frontName>productimport</frontName>
+                </args>
+            </productimport>
+        </routers>
+		
+		<layout>
+		  <updates>
+			<productimport>
+			  <file>productimport.xml</file>
+			</productimport>
+		  </updates>
+		</layout>
+    </frontend>    
+  <admin>
+	<routers>
+	  <productimport>
+	    <use>admin</use>
+		<args>
+		  <module>Etailthis_Productimport</module>
+		  <frontName>admin_productimport</frontName>
+		</args>
+	  </productimport>
+	</routers>
+  </admin>
+  <adminhtml>
+	<menu>
+	  <productimport module="productimport">
+		<title>eTailThis</title>
+		<sort_order>100</sort_order>
+		<children>
+		  <productimportbackend module="productimport">
+			<title>eTailThis Configuration</title>
+			<sort_order>0</sort_order>
+			<action>adminhtml/system_config/edit/section/etailthis</action>
+		  </productimportbackend>
+		</children>
+	  </productimport>
+	</menu>
+	<acl>
+	  <resources>
+		<all>
+		  <title>Allow Everything</title>
+		</all>
+		<admin>
+		  <children>
+			<productimport translate="title" module="productimport">
+			  <title>Productimport</title>
+			  <sort_order>1000</sort_order>
+			  <children>
+		  <productimportbackend translate="title">
+			<title>eTailThis</title>
+		  </productimportbackend>
+			  </children>
+			</productimport>
+		  </children>
+		</admin>
+	  </resources>
+	</acl>
+	<layout>
+	  <updates>
+		<productimport>
+		  <file>productimport.xml</file>
+		</productimport>
+	  </updates>
+	</layout>
+  </adminhtml>  
+  <crontab>
+        <jobs>  
+		   <full_import>
+				<schedule>
+					<schedule><cron_expr>0 4 * * 0</cron_expr></schedule>
+				</schedule>
+				<run>
+					<model>productimport/cron::fullImportFinal</model>
+				</run>
+		   </full_import>  
+		   <!--<full_import_second>
+				<schedule>
+					<schedule><cron_expr>0 4 * * 0</cron_expr></schedule>
+				</schedule>
+				<run>
+					<model>productimport/cron::fullImport2</model>
+				</run>
+		   </full_import_second>--> 
+		   <productimport>
+                <schedule>
+                    <cron_expr>0 4 * * 0</cron_expr>
+                </schedule>
+                <run>
+                    <model>productimport/observer::setStatus</model>
+                </run>
+            </productimport> 
+			   <fullImportFinal1>
+                <schedule>
+                    <cron_expr>0 4 * * 0</cron_expr>
+                </schedule>
+                <run>
+                    <model>productimport/observer::fullImportFinal1</model>
+                </run>
+            </fullImportFinal1> 
+			   <fullImport2>
+                <schedule>
+                    <cron_expr>0 4 * * 0</cron_expr>
+                </schedule>
+                <run>
+                    <model>productimport/observer::fullImport2</model>
+                </run>
+            </fullImport2> 
+			   <fullImport3>
+                <schedule>
+                    <cron_expr>0 4 * * 0</cron_expr>
+                </schedule>
+                <run>
+                    <model>productimport/observer::fullImport3</model>
+                </run>
+             </fullImport3> 
+			   <fullImport4>
+                <schedule>
+                    <cron_expr>0 4 * * 0</cron_expr>
+                </schedule>
+                <run>
+                    <model>productimport/observer::fullImport4</model>
+                </run>
+            </fullImport4> 
+			   <fullImport5>
+                <schedule>
+                    <cron_expr>0 4 * * 0</cron_expr>
+                </schedule>
+                <run>
+                    <model>productimport/observer::fullImport4</model>
+                </run>
+            </fullImport5> 
+			   <fullImport6>
+                <schedule>
+                    <cron_expr>0 4 * * 0</cron_expr>
+                </schedule>
+                <run>
+                    <model>productimport/observer::fullImport6</model>
+                </run>
+            </fullImport6> 
+			   <fullImport7>
+                <schedule>
+                    <cron_expr>0 4 * * 0</cron_expr>
+                </schedule>
+                <run>
+                    <model>productimport/observer::fullImport7</model>
+                </run>
+            </fullImport7> 
+			   <fullImport8>
+                <schedule>
+                    <cron_expr>0 4 * * 0</cron_expr>
+                </schedule>
+                <run>
+                    <model>productimport/observer::fullImport8</model>
+                </run>
+            </fullImport8> 
+			   <fullImport9>
+                <schedule>
+                    <cron_expr>0 4 * * 0</cron_expr>
+                </schedule>
+                <run>
+                    <model>productimport/observer::fullImport9</model>
+                </run>
+            </fullImport9> 
+			<fullImport10>
+                <schedule>
+                    <cron_expr>0 4 * * 0</cron_expr>
+                </schedule>
+                <run>
+                    <model>productimport/observer::fullImport10</model>
+                </run>
+            </fullImport10> 
+			<stock_update>
+				<schedule>
+                    <cron_expr>0 8 * * *</cron_expr>
+                </schedule>
+                <run>
+                    <model>productimport/cron::StockImport</model>
+                </run>
+			</stock_update>
+			<price_update>
+				<schedule>
+                    <cron_expr>0 8 * * *</cron_expr>
+                </schedule>
+                <run>
+                    <model>productimport/cron::PricingImport</model>
+                </run>
+			</price_update>
+			<imageupdate>
+				<schedule>
+                    <cron_expr>0 10 * * 0</cron_expr>
+                </schedule>
+                <run>
+                    <model>productimport/observer::assignRelatedProducts</model>
+                </run>
+			</imageupdate>
+			<relatedupdate>
+				<schedule>
+                    <cron_expr>0 12 * * 0</cron_expr>
+                </schedule>
+                <run>
+                    <model>productimport/observer::addImages</model>
+                </run>
+			</relatedupdate>
+			<merge_file>
+				<schedule>
+                    <cron_expr>0 1 * * 0</cron_expr>
+                </schedule>
+                <run>
+                    <model>productimport/observer::mergeAllFiles</model>
+                </run>
+			</merge_file>
+			<attributes>
+				<schedule>
+                    <cron_expr>0 2 * * 0</cron_expr>
+                </schedule>
+                <run>
+                    <model>productimport/observer::AttributeUpdate</model>
+                </run>
+			</attributes>
+			<category>
+				<schedule>
+                    <cron_expr>0 2 * * 0</cron_expr>
+                </schedule>
+                <run>
+                    <model>productimport/observer::categoryUpdate</model>
+                </run>
+			</category>
+			
+		
+        </jobs>
+    </crontab> 
+ 
+	
+
+</config> 

@@ -1,0 +1,33 @@
+div.kodematix-socialconnect-register,
+div.kodematix-socialconnect-checkout,
+div.kodematix-socialconnect-login {
+    margin-top: 28px;
+}
+
+div.kodematix-socialconnect-login .content {
+    min-height: 100px;
+}
+
+div.kodematix-socialconnect-register .fieldset {
+    margin: 0px;
+}
+
+div.kodematix-socialconnect-account .col3-set .col-1 {
+    width: 29%
+}
+
+div.kodematix-socialconnect-account .col3-set .col-2 {
+    width: 49%
+}
+
+div.kodematix-socialconnect-account .col3-set .col-3 {
+    width: 19%
+}
+
+div.kodematix-socialconnect-account .col2-set .col-1 {
+    width: 79%
+}
+
+div.kodematix-socialconnect-account .col2-set .col-2 {
+    width: 19%
+}

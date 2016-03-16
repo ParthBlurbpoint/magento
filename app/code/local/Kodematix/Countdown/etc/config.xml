@@ -1,0 +1,91 @@
+<?xml version="1.0"?>
+<config>
+    <modules>
+        <Kodematix_Countdown>
+            <version>0.1.0</version>
+        </Kodematix_Countdown>
+    </modules>
+    <frontend>
+        <routers>
+            <countdown>
+                <use>standard</use>
+                <args>
+                    <module>Kodematix_Countdown</module>
+                    <frontName>countdown</frontName>
+                </args>
+            </countdown>
+        </routers>
+        <layout>
+            <updates>
+                <countdown>
+                    <file>countdown.xml</file>
+                </countdown>
+            </updates>
+        </layout>
+    </frontend>  
+    <global>
+        <models>
+            <countdown>
+                <class>Kodematix_Countdown_Model</class>
+                <resourceModel>countdown_mysql4</resourceModel>
+            </countdown>
+        </models>
+        <resources>
+            <countdown_setup>
+                <setup>
+                    <module>Kodematix_Countdown</module>
+                    <class>Mage_Catalog_Model_Resource_Setup</class>
+                </setup>
+                <connection>
+                    <use>core_setup</use>
+                </connection>
+            </countdown_setup>
+            <countdown_write>
+                <connection>
+                    <use>core_write</use>
+                </connection>
+            </countdown_write>
+            <countdown_read>
+                <connection>
+                    <use>core_read</use>
+                </connection>
+            </countdown_read>
+        </resources>
+        <blocks>
+            <countdown>
+                <class>Kodematix_Countdown_Block</class>
+            </countdown>
+        </blocks>
+        <helpers>
+            <countdown>
+                <class>Kodematix_Countdown_Helper</class>
+            </countdown>
+        </helpers>
+    </global>
+	
+	
+	<adminhtml>
+
+		<acl>
+			<resources>
+				<admin>
+					<children>
+						<system>
+							<children>
+								<config>
+									<children>
+										<countdown translate="title" module="countdown">
+											<title>CountDown Section</title>
+										</countdown>
+									</children>
+								</config>
+							</children>
+						</system>
+					</children>
+				</admin>
+			</resources>
+		</acl>
+    </adminhtml>
+	
+	
+</config>

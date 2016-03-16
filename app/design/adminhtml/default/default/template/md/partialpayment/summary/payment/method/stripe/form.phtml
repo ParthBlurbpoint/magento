@@ -1,0 +1,233 @@
+<?php
+/**
+ * Magedelight
+ * Copyright (C) 2015 Magedelight <info@magedelight.com>
+ *
+ * NOTICE OF LICENSE
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see http://opensource.org/licenses/gpl-3.0.html.
+ *
+ * @category MD
+ * @package MD_Stripe
+ * @copyright Copyright (c) 2015 Mage Delight (http://www.magedelight.com/)
+ * @license http://opensource.org/licenses/gpl-3.0.html GNU General Public License,version 3 (GPL-3.0)
+ * @author Magedelight <info@magedelight.com>
+ */
+?>
+<?php
+$_code		  = MD_Stripe_Model_Cardspayment::METHOD_CODE;
+$helper		  = Mage::helper('md_stripe');
+$defaultCardId    = null;
+$currentCustomer  = $this->getCustomer();
+$stripeCustomerId = $currentCustomer->getMdStripeCustomerId();
+$cards		  = $requestData = array();
+$paymentConfig	  = Mage::getSingleton('payment/config');
+$ccTypes	  = $paymentConfig->getCcTypes();
+$months		  = $paymentConfig->getMonths();
+$years		  = $paymentConfig->getYears();
+$storeId	  = (Mage::getSingleton('adminhtml/session_quote')->getStoreId() > 0) ? Mage::getSingleton('adminhtml/session_quote')->getStoreId() : Mage::app()->getStore()->getId();
+
+if (Mage::getModel("md_stripe/config", array(MD_Stripe_Model_Cardspayment::METHOD_CODE, $storeId))->getIsActive()):
+    if ($stripeCustomerId):
+	$requestData['id'] = $stripeCustomerId;
+	$restApiObject	   = Mage::getModel('md_stripe/api_rest')
+		->setApiType(MD_Stripe_Model_Cardspayment::METHOD_CODE)
+		->setStore($storeId);
+
+	$restResponse	   = $restApiObject->getCustomerCards($requestData);
+
+	if (array_key_exists('result_data', $restResponse)):
+	    $restResponseObject = $restResponse['result_data'];
+	    $cards		= $restResponseObject->sources->data;
+	    $defaultCardId	= (string) $restResponseObject->default_source;
+	endif;
+    endif;
+endif;
+?>
+
+<tr>
+    <td class="label">
+	<label for="<?php echo $_code ?>_card_id">
+	    <?php echo $this->__("Select From Saved Card") ?>
+	</label>
+    </td>
+    <td class="value">
+	<div class="input-box">
+	    <select name="payment[md_stripe_card_id]" id="<?php echo $_code ?>_card_id" class="required-entry">
+		<option value="">
+		    <?php echo $this->__('--Please Select--'); ?>
+		</option>
+		<?php
+		foreach ($cards as $_card):
+		    if ($helper->isInUnsavedList($stripeCustomerId, $_card->id)):
+			continue;
+		    endif;
+		    ?>
+    		<option value="<?php echo $_card->id ?>" <?php if ($defaultCardId == $_card->id): ?>selected="selected"<?php endif; ?>>
+			<?php echo sprintf('XXXX-%s(%s, Expiry: %02d / %04d)', $_card->last4, $_card->brand, $_card->exp_month, $_card->exp_year) ?>
+    		</option>
+		<?php endforeach; ?>
+
+		<option value="new">
+		    <?php echo $this->__("Use other card") ?>
+		</option>
+	    </select>
+	</div>
+    </td>
+</tr>
+
+<?php if ($this->hasVerification()): ?>
+    <tr id="<?php echo $_code ?>_cc_type_cvv_div">
+        <td class="label">
+	    <label for="<?php echo $_code ?>_cc_cid" class="required">
+		<em>*</em><?php echo $this->__('Card Verification Number') ?>
+	    </label>
+        </td>
+        <td class="value">
+	    <div class="input-box">
+		<div class="v-fix">
+		    <input type="text" pattern="\d*" title="<?php echo $this->__('Card Verification Number') ?>" class="input-text cvv required-entry" id="<?php echo $_code ?>_cc_cid" name="payment[cc_cid]" value="" disabled/>
+		</div>
+	    </div>
+        </td>
+    </tr>
+<?php endif; ?>
+<tr class="<?php echo $_code ?>_new" style="display:none;">
+    <td class="label">
+	<label for="<?php echo $_code ?>_cc_type" class="required">
+	    <em>*</em><?php echo $this->__('Credit Card Type') ?>
+	</label>
+    </td>
+    <td class="value">
+	<div class="input-box" style="clear:left">
+	    <select id="<?php echo $_code ?>_cc_type" name="payment[cc_type]" class="required-entry validate-cc-type-select" disabled>
+		<option value="">
+		    <?php echo $this->__('--Please Select--') ?>
+		</option>
+
+		<?php foreach ($ccTypes as $_typeCode => $_typeName): ?>
+    		<option value="<?php echo $_typeCode ?>">
+			<?php echo $_typeName ?>
+    		</option>
+		<?php endforeach ?>
+	    </select>
+	</div>
+    </td>	    
+</tr>
+
+<tr class="<?php echo $_code ?>_new" style="display:none;">
+    <td class="label">
+	<label for="<?php echo $_code ?>_cc_number" class="required">
+	    <em>*</em><?php echo $this->__('Credit Card Number') ?>
+	</label>
+    </td>
+
+    <td class="value">
+	<div class="input-box">
+	    <input type="text" pattern="\d*" id="<?php echo $_code ?>_cc_number" name="payment[cc_number]" title="<?php echo $this->__('Credit Card Number') ?>" class="input-text validate-cc-number validate-cc-type" value="" disabled />
+	</div>
+    </td>
+</tr>
+
+<tr class="<?php echo $_code ?>_new" style="display:none;">
+    <td class="label">
+	<label for="<?php echo $_code ?>_expiration" class="required">
+	    <em>*</em><?php echo $this->__('Expiration Date') ?>
+	</label>
+    </td>
+
+    <td class="value">
+	<div class="input-box">
+	    <div class="v-fix">
+		<select id="<?php echo $_code ?>_expiration" name="payment[cc_exp_month]" class="month validate-cc-exp required-entry" disabled>
+		    <?php foreach ($months as $k => $v): ?>
+    		    <option value="<?php echo $k ? $k : '' ?>">
+			    <?php echo $v ?>
+    		    </option>
+		    <?php endforeach ?>
+		</select>
+	    </div>
+	    <div class="v-fix">
+		<select id="<?php echo $_code ?>_expiration_yr" name="payment[cc_exp_year]" class="year required-entry" disabled>
+		    <?php foreach ($years as $k => $v): ?>
+    		    <option value="<?php echo $k ? $k : '' ?>">
+			<?php echo $v ?>
+    		    </option>
+		    <?php endforeach ?>
+		</select>
+	    </div>
+	</div>
+    </td>
+</tr>
+<?php
+if ($currentCustomer->getId()):
+    if (Mage::getModel("md_stripe/config", array(MD_Stripe_Model_Cardspayment::METHOD_CODE, Mage::app()->getStore()->getId()))->getSaveCardOptional()):
+	?>
+	<tr class="<?php echo $_code ?>_new" style="display:none;">
+	    <td></td>
+	    <td>
+		<label>&nbsp;</label>
+		<input type="checkbox" name="payment[md_stripe_save_card]" id="<?php echo $_code ?>_save_card" value="1" checked="checked" autocomplete="on" />
+		<label for="<?php echo $_code ?>_save_card" style="float:none;font-weight:normal;">
+		    <?php echo $this->__('Save this credit card for future use.'); ?>
+		</label>
+	    </td>
+	</tr>
+	<?php
+    endif;
+
+else: ?>
+    <tr class="<?php echo $_code ?>_new" style="display:none;">
+        <td>
+	    <li class="<?php echo $_code ?>_new" style="display:none;">
+		<input type="hidden" name="payment[md_stripe_save_card]" id="<?php echo $_code ?>_save_card" value="1" />
+	    </li>
+	</td>
+    </tr>
+<?php endif; ?>
+
+<script type="text/javascript">
+    $('<?php echo $_code ?>_card_id').observe("change", function (event) {
+	var sourceElement = Event.findElement(event);
+	var currentValue  = $(sourceElement).getValue();
+	var cVVElement	  = $('<?php echo $_code ?>_cc_cid');
+
+	$$(".<?php echo $_code ?>_new").each(function (newCardData) {
+	    if (currentValue == 'new') {		
+		$(newCardData).show();
+		
+		newCardData.select('input', 'select', 'textarea').each(function (elm) {
+		    if (elm.disabled == true) {
+			elm.disabled = false;
+		    }
+		});
+	    } else {
+		$(newCardData).hide();
+		
+		newCardData.select('input', 'select', 'textarea').each(function (elm) {
+		    elm.disabled = true;
+		});
+	    }
+	});
+
+	if (cVVElement) {
+	    cVVElement.show();
+	    if (currentValue == 'new') {
+		cVVElement.addClassName('validate-cc-cvn');
+	    } else {
+		cVVElement.removeClassName('validate-cc-cvn');
+	    }
+	}
+    });
+</script>

@@ -1,0 +1,32 @@
+#import-wrapper{
+    padding: 1em;
+}
+#import-list{
+    list-style-type: none;
+}
+.import-file{
+    margin-top: 1em;
+    overflow: hidden;
+}
+#upload-form{
+    margin-left: 2em;
+    margin-bottom: 2em;
+}
+
+#import-list .file-name{
+    float:left;
+    padding: 10px 10px 0 0;
+    margin: 0px;
+    font-weight: lighter;
+    font-family: "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
+    color: #95a5a6;
+}
+
+#import-list .file-date{
+    float:right;
+    padding: 10px 10px 0 0;
+    font-size: 90%;
+}
+#import-list .file-name .file-name-span{
+    padding-left: 10px;
+}

@@ -1,0 +1,44 @@
+<div id="profile-wrapper" style="display: none;">
+    <div id="magegiant-profile-content">
+        <select id="profile-library" name="profile_library" onchange="loadProfileActions(this.value);">
+            <option value="0">---<?php echo $this->__('Select profifle template')?>---</option>
+            <?php foreach($this->getProfileActionsLibrary() as $profile):?>
+                <option value="<?php echo $profile['id']?>"><?php echo $profile['title']?></option>
+            <?php endforeach;?>
+        </select>
+    </div>
+</div>
+    <textarea id="profile_0" style="display: none"></textarea>
+<?php foreach($this->getProfileActionsLibrary() as $profile):?>
+    <textarea id="profile_<?php echo $profile['id']?>" style="display: none"><?php echo $profile['actions_xml']?></textarea>
+<?php endforeach;?>
+
+<script type="text/javascript">
+    function loadProfileActions(id) {
+        insertIntoActionsXml($('profile_' + id).getValue());
+    }
+
+    function insertIntoActionsXml(value) {
+        $('_editactions_xml').setValue(value);
+    }
+
+    //Fix issue display selection display 2 times
+    if(typeof(isInserted) != 'undefined'){
+        var isInserted = false;
+    } else{
+        var isInserted = true;
+    }
+
+    function addProfilesToForm(isInserted){
+        if(isInserted == false){
+            $('_editactions_xml').insert({
+                before: $('magegiant-profile-content').outerHTML
+            });
+            isInserted = true;
+        }
+    }
+    addProfilesToForm(isInserted);
+    //End issue
+
+
+</script>

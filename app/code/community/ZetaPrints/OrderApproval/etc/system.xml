@@ -1,0 +1,94 @@
+<?xml version="1.0" ?>
+<config>
+  <sections>
+    <orderapproval translate="label">
+      <label>ZetaPrints Order Approval</label>
+      <tab>sales</tab>
+      <frontend_type>text</frontend_type>
+
+      <show_in_default>1</show_in_default>
+      <show_in_website>1</show_in_website>
+      <show_in_store>1</show_in_store>
+
+      <sort_order>1000</sort_order>
+
+      <groups>
+        <settings>
+          <label>Order Approval Settings</label>
+          <frontend_type>text</frontend_type>
+
+          <show_in_default>1</show_in_default>
+          <show_in_website>1</show_in_website>
+          <show_in_store>1</show_in_store>
+
+          <sort_order>1</sort_order>
+
+          <fields>
+            <store_approver translate="label comment">
+              <label>Store approver</label>
+              <comment>Store approver</comment>
+              <frontend_type>select</frontend_type>
+              <source_model>orderapproval/system_config_source_admins</source_model>
+
+              <show_in_default>1</show_in_default>
+              <show_in_website>1</show_in_website>
+              <show_in_store>1</show_in_store>
+
+              <sort_order>1</sort_order>
+            </store_approver>
+          </fields>
+        </settings>
+
+        <email translate="label">
+          <label>Emails</label>
+          <frontend_type>text</frontend_type>
+
+          <show_in_default>1</show_in_default>
+          <show_in_website>1</show_in_website>
+          <show_in_store>1</show_in_store>
+
+          <sort_order>2</sort_order>
+
+          <fields>
+            <items_to_approve_template translate="label">
+              <label>New Items To Approve Template</label>
+              <frontend_type>select</frontend_type>
+              <source_model>adminhtml/system_config_source_email_template</source_model>
+
+              <show_in_default>1</show_in_default>
+              <show_in_website>1</show_in_website>
+              <show_in_store>1</show_in_store>
+
+              <sort_order>1</sort_order>
+            </items_to_approve_template>
+
+            <approved_items_template translate="label">
+              <label>Approved Items Template</label>
+              <frontend_type>select</frontend_type>
+              <source_model>adminhtml/system_config_source_email_template</source_model>
+
+              <show_in_default>1</show_in_default>
+              <show_in_website>1</show_in_website>
+              <show_in_store>1</show_in_store>
+
+              <sort_order>2</sort_order>
+            </approved_items_template>
+
+            <declined_items_template translate="label">
+              <label>Declined Items Template</label>
+              <frontend_type>select</frontend_type>
+              <source_model>adminhtml/system_config_source_email_template</source_model>
+
+              <show_in_default>1</show_in_default>
+              <show_in_website>1</show_in_website>
+              <show_in_store>1</show_in_store>
+
+              <sort_order>3</sort_order>
+            </declined_items_template>
+          </fields>
+        </email>
+      </groups>
+    </orderapproval>
+
+  </sections>
+</config>

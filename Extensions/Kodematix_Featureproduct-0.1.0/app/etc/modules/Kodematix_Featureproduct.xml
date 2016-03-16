@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<config>
+  <modules>
+    <Kodematix_Featureproduct>
+      <active>true</active>
+      <codePool>community</codePool>
+      <version>0.1.0</version>
+    </Kodematix_Featureproduct>
+  </modules>
+</config>

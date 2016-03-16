@@ -1,0 +1,81 @@
+<?php
+	$c          = $this->getPaymentMethodCode();
+	$tokenCards = $this->getAvailableTokenCards($c);
+	$cTokens    = ($tokenCards->getSize()>0 && $this->getCanUseToken());
+    
+        if(Mage::app()->getStore()->isAdmin()){
+            $tokenCards = Mage::helper("md_partialpayment")->loadCustomerCards($this->getRequest()->getParam("id",null),$c);
+        }
+        
+    	$defToken = $this->helper('sagepaysuite/token')->getDefaultToken();
+    ?>
+<div id="tokencards-payment-<?php echo $c; ?>"<?php if($c == 'sagepayserver'): ?> class="nothide"<?php endif; ?>>
+    <ul class="form-list tokensage">
+        <li class="tokencard-radio">
+            <select name="<?php echo $c; ?>[sagepay_token_cc_id]" id="<?php echo $c; ?>-token-selection" class="select">
+                <option value=""><?php echo $this->__("Select New Card") ?></option>
+                <?php foreach($tokenCards as $_tcard): ?>
+                <?php
+                    $radioId = $c . '_tokencard_' . $_tcard->getId();
+                    $isDef = $_tcard->getId() == $defToken->getId();
+                ?>
+                <option value="<?php echo $_tcard->getId(); ?>" id="<?php echo $radioId; ?>"><?php echo $this->__('%s, Exp. %s', $_tcard->getCcNumber(), $_tcard->getExpireDate()); ?> <?php if($_tcard->Nickname !== NULL){ echo ' - '.$_tcard->Nickname; } ?></option>
+                <?php endforeach; ?>
+            </select>
+        </li>
+        <li id="cc2-<?php echo $c; ?>">
+            <label class="required" for="<?php echo $c ?>_token_cvv_<?php echo $_tcard->getId(); ?>"><em>*</em><?php echo $this->__('CV2'); ?></label>
+            <input style="width:3em !important;" type="text" name="<?php echo $c; ?>[token_cvv]" title="<?php echo $this->__('Credit Card CV2') ?>" class="input-text required-entry validate-digits cvv tokencvv"/>
+        </li>
+    </ul>
+</div>
+<script type="text/javascript">
+    document.observe("dom:loaded", function() {
+        $("<?php echo $c; ?>-token-selection").select("option").each(function(){
+            var ElementValue = $("<?php echo $c; ?>-token-selection").getValue();
+            var diveElement = $$(".paymentsage<?php echo $c; ?>")[0];
+            if(ElementValue == ''){
+                diveElement.setStyle({display:"block"});
+                diveElement.select("input","select").each(function(tElement){
+                    $(tElement).disabled = false;
+                });
+                $("cc2-<?php echo $c; ?>").setStyle({display:"none"});
+                $("cc2-<?php echo $c; ?>").select("input[type=\"text\"]").each(function(cvvElement){
+                    $(cvvElement).disabled = true;
+                });
+            }else{
+                diveElement.setStyle({display:"none"});
+                diveElement.select("input","select").each(function(tElement){
+                    $(tElement).disabled = true;
+                });
+                $("cc2-<?php echo $c; ?>").setStyle({display:"block"});
+                $("cc2-<?php echo $c; ?>").select("input[type=\"text\"]").each(function(cvvElement){
+                    $(cvvElement).disabled = false;
+                });
+            }
+        });
+        $("<?php echo $c; ?>-token-selection").observe("change",function(event){
+            var ElementValue = $("<?php echo $c; ?>-token-selection").getValue();
+            var diveElement = $$(".paymentsage<?php echo $c; ?>")[0];
+            if(ElementValue == ''){
+                diveElement.setStyle({display:"block"});
+                diveElement.select("input","select").each(function(tElement){
+                    $(tElement).disabled = false;
+                });
+                $("cc2-<?php echo $c; ?>").setStyle({display:"none"});
+                $("cc2-<?php echo $c; ?>").select("input[type=\"text\"]").each(function(cvvElement){
+                    $(cvvElement).disabled = true;
+                });
+            }else{
+                diveElement.setStyle({display:"none"});
+                diveElement.select("input","select").each(function(tElement){
+                    $(tElement).disabled = true;
+                });
+                $("cc2-<?php echo $c; ?>").setStyle({display:"block"});
+                $("cc2-<?php echo $c; ?>").select("input[type=\"text\"]").each(function(cvvElement){
+                    $(cvvElement).disabled = false;
+                });
+            }
+        });
+    });
+</script>

@@ -1,0 +1,60 @@
+<?php
+/**
+ * Copyright (c) 2009-2014 Vaimo AB
+ *
+ * Vaimo reserves all rights in the Program as delivered. The Program
+ * or any portion thereof may not be reproduced in any form whatsoever without
+ * the written consent of Vaimo, except as provided by licence. A licence
+ * under Vaimo's rights in the Program may be available directly from
+ * Vaimo.
+ *
+ * Disclaimer:
+ * THIS NOTICE MAY NOT BE REMOVED FROM THE PROGRAM BY ANY USER THEREOF.
+ * THE PROGRAM IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+ * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL
+ * THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE PROGRAM OR THE USE OR OTHER DEALINGS
+ * IN THE PROGRAM.
+ *
+ * @category    Vaimo
+ * @package     Vaimo_Klarna
+ * @copyright   Copyright (c) 2009-2014 Vaimo AB
+ */
+
+?>
+
+<?php if ($this->needExtraPaymentPlanInformaton()): ?>
+    <?php $information = $this->getDefaultPaymentPlanInformation($this->getMethodCode()); ?>
+
+        <script type="text/javascript">
+
+        $('<?php echo $this->getMethodCode(); ?>_pclasses').on('change', 'input', function(event) {
+            doPaymentPlanInformation('<?php echo $this->getAjaxPaymentPlanInformationUrl() ?>', '<?php echo $this->getMethodCode(); ?>', event.target.value, '<?php echo $this->getStoreId(); ?>');
+        });
+
+        </script>
+
+        <li class="payment_plan_info_wrapper">
+            <div class="update-paymentplan-information-indicator" style="display:none;" id="<?php echo $this->getMethodCode(); ?>_update_paymentplan_information_span">
+                <img alt="Search" style="margin:0 5px" src="<?php echo $this->getSkinUrl('images/opc-ajax-loader.gif') ?>"/>
+            </div>
+            <div class="payment_plan_details" id="<?php echo $this->getMethodCode(); ?>_update_paymentplan_information_message">
+                <?php if ($information): ?>
+                    <dl>
+                        <dt><?php echo Mage::helper('klarna')->__('Monthly cost'); ?></dt>
+                        <dd><?php echo $this->formatPrice($information['monthly_cost']); ?></dd>
+                        <dt><?php echo Mage::helper('klarna')->__('Total cost'); ?></dt>
+                        <dd><?php echo $this->formatPrice($information['total_cost']); ?></dd>
+                        <dt><?php echo Mage::helper('klarna')->__('Invoice fee'); ?></dt>
+                        <dd><?php echo $this->formatPrice($information['invoicefee']); ?></dd>
+                        <dt><?php echo Mage::helper('klarna')->__('Start fee'); ?></dt>
+                        <dd><?php echo $this->formatPrice($information['startfee']); ?></dd>
+                    </dl>
+                <?php endif; ?>
+            </div>
+        </li>
+
+<?php endif; ?>
+

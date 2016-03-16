@@ -1,0 +1,57 @@
+<div class="kodematix-socialconnect-account">
+    <div class="page-title">
+        <h1><?php echo $this->__('Twitter Connect') ?></h1>
+    </div>
+
+    <?php if($this->_hasUserInfo()): ?>
+
+    <?php
+        $twitterId = $this->_getTwitterId();
+        $status = $this->_getStatus();
+        $picture = $this->_getPicture();
+        $name = $this->_getName();
+    ?>
+
+    <div class="col3-set">
+        <div class="box">
+            <div class="box-content">
+                <div class="col-1">
+                    <?php if(!empty($picture)): ?>
+                    <p>
+                        <img src="<?php echo $picture; ?>" alt="<?php echo $this->htmlEscape($name); ?>" />
+                    </p>
+                    <?php endif; ?>
+                </div>
+                <div class="col-2">
+                    <?php if(!empty($status)): ?>
+                    <p>
+                        <?php printf($this->__('Connected as %s', '<strong>'.$status.'</strong>')) ?>
+                    </p>
+                    <?php endif; ?>
+                    <?php if(!empty($twitterId)): ?>
+                    <p>
+                        <?php printf($this->__('Twitter #: %s', '<strong>'.$twitterId.'</strong>')) ?>
+                    </p>
+                    <?php endif; ?>
+                </div>
+                <div class="col-3">
+                    <?php echo $this->getChildHtml('kodematix_socialconnect_account_twitter_login'); ?>
+                </div>
+            </div>
+        </div>
+    </div>
+    <?php else: ?>
+    <div class="col2-set">
+        <div class="box-content">
+            <div class="col-1">
+                <p>
+                    <?php echo $this->__('You can connect store account with your Twitter account.') ?>
+                </p>
+            </div>
+            <div class="col-2">
+                <?php echo $this->getChildHtml('kodematix_socialconnect_account_twitter_login'); ?>
+            </div>
+        </div>
+    </div>
+    <?php endif; ?>
+</div>

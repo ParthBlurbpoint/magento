@@ -1,0 +1,81 @@
+<?php
+/**
+ * Copyright (c) 2009-2014 Vaimo AB
+ *
+ * Vaimo reserves all rights in the Program as delivered. The Program
+ * or any portion thereof may not be reproduced in any form whatsoever without
+ * the written consent of Vaimo, except as provided by licence. A licence
+ * under Vaimo's rights in the Program may be available directly from
+ * Vaimo.
+ *
+ * Disclaimer:
+ * THIS NOTICE MAY NOT BE REMOVED FROM THE PROGRAM BY ANY USER THEREOF.
+ * THE PROGRAM IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+ * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL
+ * THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE PROGRAM OR THE USE OR OTHER DEALINGS
+ * IN THE PROGRAM.
+ *
+ * @category    Vaimo
+ * @package     Vaimo_Klarna
+ * @copyright   Copyright (c) 2009-2014 Vaimo AB
+ */
+
+    $serviceMethods = $this->getCheckoutService();
+    $_firstf = true;
+    $_typeString = ' type="radio" ';
+?>
+
+
+    <li class="payment_plan_wrapper">
+        <ul id="<?php echo $this->getMethodCode(); ?>_pclasses" class="payment_plan">
+            <?php foreach ($serviceMethods as $serviceMethod): ?>
+                <li>
+                    <label for="pclass_<?php echo $serviceMethod['pclass_id']?>">
+
+                        <?php if ($_firstf) :?>
+                            <?php $checkedstr = 'checked="checked"'; ?>
+                        <?php else: ?>
+                            <?php $checkedstr = ''; ?>
+                        <?php endif; ?>
+
+                        <?php if ($this->getMethodCode()==Vaimo_Klarna_Helper_Data::KLARNA_METHOD_SPECIAL): ?>
+                            <input id="pclass_<?php echo $serviceMethod['pclass_id']?>" onclick="toggleInformationBoxes('<?php echo $serviceMethod['pclass_id']; ?>');" type="hidden" name="payment[<?php echo $this->getMethodCode(); ?>_payment_plan]" value='<?php echo $serviceMethod['pclass_id']; ?>' <?php echo $checkedstr ?> />
+                        <?php elseif ($this->getMethodCode()==Vaimo_Klarna_Helper_Data::KLARNA_METHOD_ACCOUNT): ?>
+                            <input id="pclass_<?php echo $serviceMethod['pclass_id']?>" onclick="toggleInformationBoxes('<?php echo $serviceMethod['pclass_id']; ?>');" type="radio" name="payment[<?php echo $this->getMethodCode(); ?>_payment_plan]" value='<?php echo $serviceMethod['pclass_id']; ?>' <?php echo $checkedstr ?> />
+                            <?php echo $serviceMethod['title']; ?>
+                        <?php endif; ?>
+
+                    </label>
+                </li>
+
+                    <?php if (sizeof($serviceMethod['details'])>0): ?>
+                        <li class="payment_plan_info_wrapper" id="infobox_pclass_<?php echo $serviceMethod['pclass_id']?>" <?php if (!$_firstf): ?> style="display: none;" <?php endif; ?>>
+                            <div class="payment_plan_details" id="<?php echo $this->getMethodCode(); ?>_update_paymentplan_information_message">
+                            <dl>
+                                <?php foreach ($serviceMethod['details'] as $detail): ?>
+                                    <dt><?php echo $detail['label']; ?></dt>
+                                    <dd>
+                                        <?php echo $detail['value']; ?>
+                                        <?php if (isset($detail['symbol'])): ?>
+                                            <?php echo ' ' . $detail['symbol']; ?>
+                                        <?php endif; ?>
+                                    </dd>
+                                <?php endforeach; ?>
+                            <?php if (isset($serviceMethod['use_case'])): ?>
+                                <?php if ($serviceMethod['use_case']): ?>
+                                    <dt> &nbsp;</dt>
+                                    <dt> <?php echo $serviceMethod['use_case']; ?> </dt>
+                                <?php endif; ?>
+                            <?php endif; ?>
+                            </dl>
+                            </div>
+                        </li>
+                    <?php endif; ?>
+                <?php $_firstf = false; ?>
+            <?php endforeach; ?>
+        </ul>
+    </li>
+

@@ -1,0 +1,26 @@
+<?xml version="1.0"?>
+<package>
+    <name>Auctionmaid_Matrxrate</name>
+    <version>5.0.1</version>
+    <stability>stable</stability>
+    <license uri="http://www.opensource.org/licenses/osl-3.0.php)">OSL v3.0</license>
+    <channel>community</channel>
+    <extends/>
+    <summary>Multiple Table Rates via CSV. Filter by country, region,city, zipcode. Numeric Postcode ranges, and enhanced pattern matching supported. Ability to exclude items from free shipping, and specify collection only.</summary>
+    <description>Supports following:&#xD;
+&#xD;
+- multiple table rates&#xD;
+- country, region, city, postcode filtering&#xD;
+- partial postcode filtering, including pattern matching&#xD;
+- numerical postcode ranges&#xD;
+- option to exclude items from free shipping&#xD;
+- collection only option</description>
+    <notes>Minor changes to postcode filtering.&#xD;
+Added extra options around free shipping.</notes>
+    <authors><author><name>Karen Baker</name><user>birches</user><email>sales@webshopapps.com</email></author></authors>
+    <date>2011-09-27</date>
+    <time>21:52:27</time>
+    <contents><target name="magecommunity"><dir name="Webshopapps"><dir name="Matrixrate"><dir name="Block"><dir name="Adminhtml"><dir name="Shipping"><dir name="Carrier"><dir name="Matrixrate"><file name="Grid.php" hash="791db18cd9af2d9df91a5a70eb272611"/></dir></dir></dir><dir name="System"><dir name="Config"><dir name="Form"><dir name="Field"><file name="Exportmatrix.php" hash="4ed1f6634f15727205da4e479e84bd91"/></dir></dir></dir></dir></dir></dir><dir name="Helper"><file name="Data.php" hash="97307283fd4c85ed72a699ab4be68661"/></dir><dir name="Model"><dir name="Adminhtml"><dir name="System"><dir name="Config"><dir name="Backend"><dir name="Shipping"><file name="Matrixrate.php" hash="d8b6999f8ad837a232ece7a69bc5893f"/></dir></dir><dir name="Source"><dir name="Shipping"><file name="Matrixrate.php" hash="f2914f0d8d36206646e7551ad69736fa"/></dir></dir></dir></dir></dir><dir name="Carrier"><file name="Matrixrate.php" hash="fcbcecf2ab5e39fa1236e2ea0286547d"/></dir><dir name="Mysql4"><dir name="Carrier"><dir name="Matrixrate"><file name="Collection.php" hash="7a4c5d64156700dc82799c5828e4f65c"/></dir><file name="Matrixrate.php" hash="6815bcddf029de5a1871b0baa4e2b19c"/></dir></dir></dir><file name="changelog.txt" hash="7fd8a2c21b764027cef340103ca450be"/><dir name="controllers"><dir name="System"><file name="ConfigController.php" hash="5ee3cdd9ea3277607d7a17c327acc9e2"/></dir></dir><dir name="etc"><file name="config.xml" hash="e55ee4a9369ae362599e5c848e76f99a"/><file name="system.xml" hash="f1d6839b3929fa0cfacecfaa7f5b6ad5"/></dir><dir name="sql"><dir name="matrixrate_setup"><file name="mysql4-install-2.0.1.php" hash="52a413f99ce3d571a067cdfb677bbf32"/><file name="mysql4-install-2.0.2.php" hash="b6530f7e95e610db357ed46bc23629b9"/><file name="mysql4-upgrade-2.0.1-2.0.2.php" hash="b6530f7e95e610db357ed46bc23629b9"/></dir></dir></dir></dir></target><target name="mageetc"><dir name="modules"><file name="Webshopapps_Matrixrate.xml" hash="ac8b13f26402b2f0e7f6b22c3430fec8"/></dir></target></contents>
+    <compatible/>
+    <dependencies><required><php><min>5.2.0</min><max>6.0.0</max></php></required></dependencies>
+</package>

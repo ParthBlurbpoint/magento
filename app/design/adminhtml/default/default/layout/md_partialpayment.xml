@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<layout>
+    <adminhtml_sales_order_view>
+        <reference name="sales_order_tabs">
+            <action method="addTab">
+		<name>order_view_tab_installmentsummary</name>
+		<block>md_partialpayment/adminhtml_sales_order_view_tab_installmentsummary</block>
+	    </action>
+        </reference>
+    </adminhtml_sales_order_view>
+    <adminhtml_catalog_product_edit>
+	<reference name="head">
+	    <action method="addJs" ifconfig="md_partialpayment/general/enabled">
+		<script>md/partialpayment/main.js</script>
+	    </action>
+	</reference>
+    </adminhtml_catalog_product_edit>
+    <adminhtml_catalog_product_new>
+	<reference name="head">
+	    <action method="addJs" ifconfig="md_partialpayment/general/enabled">
+		<script>md/partialpayment/main.js</script>
+	    </action>
+	</reference>
+    </adminhtml_catalog_product_new>
+    
+    <md_partialpayment_adminhtml_partialplan_conditionproducts>
+	<block type="core/text_list" name="root" output="toHtml">
+	    <block type="md_partialpayment/adminhtml_partialplan_edit_tab_conditionproducts" name="admin.conditionproducts"/>
+	</block>
+    </md_partialpayment_adminhtml_partialplan_conditionproducts>
+    
+    <md_partialpayment_adminhtml_summary_index>
+	<reference name="content">
+	    <block type="md_partialpayment/adminhtml_summary" name="md.partialpayment.summary.grid" />
+	</reference>
+    </md_partialpayment_adminhtml_summary_index>
+    
+    <md_partialpayment_adminhtml_partialplan_index>
+	<reference name="content">
+	    <block type="md_partialpayment/adminhtml_partialplan" name="md.partialpayment.partialplan.grid" />
+	</reference>
+    </md_partialpayment_adminhtml_partialplan_index>
+    
+    <md_partialpayment_adminhtml_partialplan_edit>
+	<update handle="editor"/>
+	<reference name="menu">
+	    <action method="setActive">
+		<menupath>md_partialpayment/partialplan</menupath>
+	    </action>
+	</reference>
+	<reference name="content">
+	    <block type="md_partialpayment/adminhtml_partialplan_edit" name="partialplan_edit"></block>
+	</reference>
+	<reference name="left">
+	    <block type="md_partialpayment/adminhtml_partialplan_edit_tabs" name="partialplan_tabs"></block>
+	</reference>
+	<reference name="head">
+	    <action method="setCanLoadExtJs">
+		<flag>1</flag>
+	    </action>
+	    <action method="setCanLoadRulesJs">
+		<flag>1</flag>
+	    </action>
+	</reference>
+	<reference name="content">
+	</reference>
+    </md_partialpayment_adminhtml_partialplan_edit>
+    
+    <md_partialpayment_adminhtml_summary_view>
+	<reference name="content">
+	    <block type="md_partialpayment/adminhtml_summary_view" name="md.partialpayment.summary.view"></block>
+	</reference>
+    </md_partialpayment_adminhtml_summary_view>
+    <md_partialpayment_adminhtml_summary_report>
+	<reference name="content">
+	    <block type="md_partialpayment/adminhtml_report" template="md/partialpayment/report/grid.phtml" name="md.partialpayment.report.grid.container">
+		<block type="md_partialpayment/adminhtml_report_form" name="grid.filter.form">
+		    <action method="setFieldVisibility">
+			<field>report_type</field>
+			<visibility>0</visibility>
+		    </action>
+		    <action method="setFieldVisibility">
+			<field>show_order_statuses</field>
+			<visibility>0</visibility>
+		    </action>
+		    <action method="setFieldVisibility">
+			<field>order_statuses</field>
+			<visibility>0</visibility>
+		    </action>
+		</block>
+	    </block>
+	</reference>
+    </md_partialpayment_adminhtml_summary_report>
+    <!-- added by Reena starts -->
+    <adminhtml_sales_order_create_index>
+	<reference name="head">
+	       <action method="addJs" ifconfig="md_partialpayment/general/enabled"><script>md/partialpayment/adminhtml/sales.js</script></action>
+	</reference>
+	<reference name="data">
+	      <action method="setTemplate"><template>md/partialpayment/sales/order/create/data.phtml</template></action>
+	</reference>
+	<reference name="items_grid">
+	    <action method="setTemplate"><template>md/partialpayment/sales/order/create/items/grid.phtml</template></action>
+	</reference>
+	<reference name="gift_options_link">
+	    <action method="setTemplate"><template>md/partialpayment/giftmessage/sales/order/create/giftoptions.phtml</template></action>
+	</reference>
+    </adminhtml_sales_order_create_index>
+    
+    <adminhtml_sales_order_create_load_block_data>
+	 <reference name="order_item_extra_info">
+	    <block type="md_partialpayment/adminhtml_sales_order_create_partialpayment" name="partialpayment" template="md/partialpayment/sales/order/create/cart_full.phtml" /> 
+	</reference>
+	<reference name="data">
+	      <action method="setTemplate"><template>md/partialpayment/sales/order/create/data.phtml</template></action>
+	</reference>
+	<reference name="items_grid">
+	    <action method="setTemplate"><template>md/partialpayment/sales/order/create/items/grid.phtml</template></action>
+	</reference>
+	<reference name="gift_options_link">
+	    <action method="setTemplate"><template>md/partialpayment/giftmessage/sales/order/create/giftoptions.phtml</template></action>
+	</reference>
+    </adminhtml_sales_order_create_load_block_data>
+    
+    <adminhtml_sales_order_create_load_block_partialpayment>
+	<reference name="content">
+	    <block type="md_partialpayment/adminhtml_sales_order_create_partialpayment" template="md/partialpayment/sales/order/create/cart_full.phtml" name="partialpayment" />
+	</reference>
+    </adminhtml_sales_order_create_load_block_partialpayment>
+    
+    <adminhtml_sales_order_create_load_block_items>
+	<reference name="items_grid">
+	    <action method="setTemplate"><template>md/partialpayment/sales/order/create/items/grid.phtml</template></action>
+	</reference>
+	<reference name="gift_options_link">
+	    <action method="setTemplate"><template>md/partialpayment/giftmessage/sales/order/create/giftoptions.phtml</template></action>
+	</reference>
+    </adminhtml_sales_order_create_load_block_items>
+    <!-- added by Reena ends -->
+</layout>

@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<config>
+    <modules>
+        <Kodematix_Socialconnect>
+            <version>0.1.0</version>
+        </Kodematix_Socialconnect>
+    </modules>
+    
+		<frontend>              
+        <layout>
+            <updates>
+                <kodematix_socialconnect>
+                    <file>kodematix_socialconnect.xml</file>
+                </kodematix_socialconnect>
+            </updates>
+        </layout>
+    </frontend>    
+    <global>
+        <models>
+            <kodematix_socialconnect>
+                <class>Kodematix_Socialconnect_Model</class>
+            </kodematix_socialconnect>
+        </models>
+        <blocks>
+            <kodematix_socialconnect>
+                <class>Kodematix_Socialconnect_Block</class>
+            </kodematix_socialconnect>            
+        </blocks>
+        <helpers>
+            <kodematix_socialconnect>
+                <class>Kodematix_Socialconnect_Helper</class>
+            </kodematix_socialconnect>
+        </helpers>
+        <resources>
+            <socialconnect_setup>
+                <setup>
+                    <module>Kodematix_Socialconnect</module>
+                    <class>Kodematix_Socialconnect_Model_Resource_Setup</class>
+                </setup>
+            </socialconnect_setup>
+        </resources>        
+    </global>
+    <frontend>
+        <routers>
+            <kodematix_socialconnect>
+                <use>standard</use>
+                <args>
+                    <module>Kodematix_Socialconnect</module>
+                    <frontName>socialconnect</frontName>
+                </args>
+            </kodematix_socialconnect>
+        </routers>  
+    </frontend>    
+</config>

@@ -1,0 +1,224 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<config>
+    <tabs>
+        <kodematix translate="label" module="featureproduct">
+            <label>Kodematix Extension</label>
+            <sort_order>1000</sort_order>
+        </kodematix>
+    </tabs>
+    <sections>
+        <featureproduct translate="label" module="featureproduct">
+            <label>Feature Product</label>
+            <tab>kodematix</tab>
+            <frontend_type>text</frontend_type>
+            <sort_order>10</sort_order>
+            <show_in_default>1</show_in_default>
+            <show_in_website>1</show_in_website>
+            <show_in_store>1</show_in_store>
+           <groups>
+                <featureproduct_general translate="label">
+                    <label>General</label>
+                    <frontend_type>text</frontend_type>
+                    <sort_order>100</sort_order>
+                    <show_in_default>1</show_in_default>
+                    <show_in_website>1</show_in_website>
+                    <show_in_store>1</show_in_store>
+					<fields>
+                        <enabled translate="label">
+                            <label>Enabled Feature Product Extension</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>adminhtml/system_config_source_yesno</source_model>
+                            <sort_order>100</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <comment>Select Yes to enable.</comment>
+                        </enabled>	
+						</fields>
+				</featureproduct_general>
+				<homepage_setting>
+					 <label>Home Page</label>
+                    <frontend_type>text</frontend_type>
+                    <sort_order>100</sort_order>
+                    <show_in_default>1</show_in_default>
+                    <show_in_website>1</show_in_website>
+                    <show_in_store>1</show_in_store>
+					<fields>
+                         <enabled_homepage translate="label">
+                            <label>Enabled Home page Slider</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>adminhtml/system_config_source_yesno</source_model>
+                            <sort_order>101</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <comment>Select Yes to enable.</comment>
+                        </enabled_homepage>		
+						</fields>
+				</homepage_setting>
+				<rightblock_setting>
+					 <label>Right Block Slider</label>
+                    <frontend_type>text</frontend_type>
+                    <sort_order>101</sort_order>
+                    <show_in_default>1</show_in_default>
+                    <show_in_website>1</show_in_website>
+                    <show_in_store>1</show_in_store>
+					<fields>
+                         <enabled_rightblock translate="label">
+                            <label>Enabled Right Side Slider(All Page)</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>adminhtml/system_config_source_yesno</source_model>
+                            <sort_order>102</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <comment>Select Yes to enable.</comment>
+                        </enabled_rightblock>		
+						</fields>
+				</rightblock_setting>
+				<content_setting>
+					 <label>Content Block Slider</label>
+                    <frontend_type>text</frontend_type>
+                    <sort_order>101</sort_order>
+                    <show_in_default>1</show_in_default>
+                    <show_in_website>1</show_in_website>
+                    <show_in_store>1</show_in_store>
+					<fields>
+                         <enabled_contentblock translate="label">
+                            <label>Enabled Content Block Slider(All Page)</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>adminhtml/system_config_source_yesno</source_model>
+                            <sort_order>103</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <comment>Select Yes to enable.</comment>
+                        </enabled_contentblock>					
+						</fields>
+				</content_setting>
+				<jquery_enable>
+					 <label> Jquery Library Enable</label>
+                    <frontend_type>text</frontend_type>
+                    <sort_order>400</sort_order>
+                    <show_in_default>1</show_in_default>
+                    <show_in_website>1</show_in_website>
+                    <show_in_store>1</show_in_store>
+					<fields>
+                        <enabled_jquery translate="label">
+                            <label> Jquery Library Enable</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>adminhtml/system_config_source_yesno</source_model>
+                            <sort_order>200</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <comment>Example:jquery-1.10.2.min.js(false for disable)</comment>
+                        </enabled_jquery>		
+						</fields>
+				</jquery_enable>
+				<horizontal_carousels_setting translate="label">
+                    <label>Carousels Settings</label>
+                    <frontend_type>text</frontend_type>
+                    <sort_order>200</sort_order>
+                    <show_in_default>1</show_in_default>
+                    <show_in_website>1</show_in_website>
+                    <show_in_store>0</show_in_store>
+                    <fields>
+                        <title translate="label comment">
+                            <label>Title </label>
+                            <comment>Show your title here</comment>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>1</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </title>
+                        <product_no translate="label comment">
+                            <label>Set number of featured products to show on</label>
+                            <comment>Default: 20 (products).</comment>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>2</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </product_no>
+						<slide_itemsonpage translate="label comment">
+							<label>Show items number on one slide page</label>
+                            <comment>Default: 3 products</comment>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>3</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </slide_itemsonpage>
+						 <slideWidth translate="label">
+                            <label>SlideWidth</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>200</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <comment>You can Adjust the Width of slider</comment>
+                        </slideWidth>
+						 <minSlides translate="label">
+                            <label>Number of Display Product in Right Slider</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>200</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <comment>Default: 1 Product</comment>
+                        </minSlides>
+						 <maxSlides translate="label">
+                            <label>Maximum Display Product in Home page Slider</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>200</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <comment>Default: 1 Product</comment>
+                        </maxSlides>
+						 <autoslider translate="label">
+                            <label>Auto Slider Enable</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>adminhtml/system_config_source_yesno</source_model>
+                            <sort_order>201</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <comment>Select Yes to enable.</comment>
+                        </autoslider>	
+						 <slider_mode translate="label">
+                            <label>Slider Mode(Vertical/Horizontal)</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>adminhtml/system_config_source_custom</source_model>
+                            <sort_order>202</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <comment>Select Vertical/Horizontal mode.</comment>
+                        </slider_mode>
+						 <slider_speed translate="label">
+                            <label>Slider Speed</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>205</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <comment>You may Specify the slider speed.</comment>
+                        </slider_speed>
+						<slide_Margin translate="label">
+                            <label>Products Margin in Slider</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>206</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <comment>You may Specify the slider Margin Between Products.</comment>
+                        </slide_Margin>
+				 	</fields>
+                </horizontal_carousels_setting>
+            </groups>
+        </featureproduct>
+    </sections>
+</config>

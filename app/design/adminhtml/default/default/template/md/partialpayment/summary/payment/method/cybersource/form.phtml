@@ -1,0 +1,220 @@
+<?php
+/**
+ * Magedelight
+ * Copyright (C) 2015 Magedelight <info@magedelight.com>
+ *
+ * NOTICE OF LICENSE
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see http://opensource.org/licenses/gpl-3.0.html.
+ *
+ * @category MD
+ * @package MD_Cybersource
+ * @copyright Copyright (c) 2015 Mage Delight (http://www.magedelight.com/)
+ * @license http://opensource.org/licenses/gpl-3.0.html GNU General Public License,version 3 (GPL-3.0)
+ * @author Magedelight <info@magedelight.com>
+ */
+?>
+<?php 
+$cardInfoData  = false; 
+$items	       = array();
+$_code	       = $this->getMethodCode();
+$paymentId     = $this->getRequest()->getParam('id');
+$quote	       = Mage::getSingleton('checkout/session')->getQuote();
+$paymentConfig = Mage::getSingleton('payment/config');
+$payments      = Mage::getModel('md_partialpayment/payments')->load($paymentId);
+$customerId    = $payments->getCustomerId();
+$_ccType       = $paymentConfig->getCcTypes();
+$_ccExpMonth   = $paymentConfig->getMonths();
+$_ccExpYear    = $paymentConfig->getYears();
+$cards	       = Mage::getModel('md_cybersource/cards')->getCollection()
+                 ->addFieldToFilter('customer_id',$customerId)
+                 ->getData();
+?>
+
+<tr>
+    <td class="label">
+	<label for="<?php echo $_code ?>_subscription_id">
+	    <?php echo $this->__("Select From Saved Cards") ?>
+	</label>
+    </td>
+    <td class="value">
+	<div class="input-box">
+	    <select name="payment[subscription_id]" id="<?php echo $_code ?>_subscription_id" class="required-entry">
+		    <option value="">
+			<?php echo $this->__('--Please Select--'); ?>
+		    </option>
+		    <?php 
+		    foreach ($cards as $_card):
+			$cardReplaced = "XXXX-" . $_card['cc_last4']; 
+		    ?>
+			<option value="<?php echo Mage::helper('core')->encrypt($_card['subscription_id']); ?>">
+			    <?php echo sprintf('%s, %s %s', $cardReplaced, $_card['firstname'], $_card['lastname']) ?>
+			</option>
+		    <?php endforeach; ?>
+		<option value="new"><?php echo $this->__("Use other card") ?></option>
+	    </select>
+	</div>
+    </td>
+</tr>
+    
+<tr class="<?php echo $_code ?>_new" <?php if(!$cardInfoData): ?>style="display:none;"<?php endif; ?>>
+    <td class="label">
+	<label for="<?php echo $_code ?>_cc_type" class="required">
+	    <em>*</em><?php echo $this->__('Credit Card Type') ?>
+	</label>
+    </td>
+    <td class="value">
+	<div class="input-box" style="clear:left">
+            <select id="<?php echo $_code ?>_cc_type" name="payment[cc_type]" class="required-entry validate-cc-type-select" disabled>
+                <option value=""><?php echo $this->__('--Please Select--') ?></option>
+		<?php 
+		foreach ($this->getCcAvailableTypes() as $_typeCode => $_typeName): 
+		?>
+		    <option value="<?php echo $_typeCode ?>"<?php if ($_typeCode == $_ccType): ?> selected="selected"<?php endif ?>>
+			<?php echo $_typeName ?>
+		    </option>
+		<?php endforeach ?>
+            </select>
+        </div>
+    </td>
+</tr>
+
+<tr class="<?php echo $_code ?>_new" <?php if(!$cardInfoData): ?>style="display:none;"<?php endif; ?>>
+    <td class="label">
+	<label for="<?php echo $_code ?>_cc_number" class="required">
+	    <em>*</em><?php echo $this->__('Credit Card Number') ?>
+	</label>
+    </td>
+    <td class="value">
+	<div class="input-box">
+            <input disabled type="text" pattern="\d*" id="<?php echo $_code ?>_cc_number" name="payment[cc_number]" title="<?php echo $this->__('Credit Card Number') ?>" class="input-text validate-cc-number validate-cc-type" value="" />
+        </div>
+    </td>
+</tr>
+<tr class="<?php echo $_code ?>_new" <?php if(!$cardInfoData): ?>style="display:none;"<?php endif; ?>>
+    <td class="label">
+	<label for="<?php echo $_code ?>_expiration" class="required">
+	    <em>*</em><?php echo $this->__('Expiration Date') ?>
+	</label>
+    </td>
+    <td class="value">
+	<div class="input-box">
+            <div class="v-fix">
+                <select disabled id="<?php echo $_code ?>_expiration" name="payment[cc_exp_month]" class="month validate-cc-exp required-entry">
+		    <?php foreach ($this->getCcMonths() as $k => $v): ?>
+			<option value="<?php echo $k ? $k : '' ?>"<?php if ($k == $_ccExpMonth): ?> selected="selected"<?php endif ?>>
+			    <?php echo $v ?>
+			</option>
+		    <?php endforeach ?>
+                </select>
+            </div>
+            <div class="v-fix">
+                <select disabled id="<?php echo $_code ?>_expiration_yr" name="payment[cc_exp_year]" class="year required-entry">
+		    <?php foreach ($this->getCcYears() as $k => $v): ?>
+    		    <option value="<?php echo $k ? $k : '' ?>"<?php if ($k == $_ccExpYear): ?> selected="selected"<?php endif ?>>
+			<?php echo $v ?>
+		    </option>
+		    <?php endforeach ?>
+                </select>
+            </div>
+        </div>
+    </td>
+</tr>
+<?php 
+if ($this->hasVerification()): ?>
+    <tr id="<?php echo $_code ?>_cc_type_cvv_div">	
+	<td class="label">
+	    <label for="<?php echo $_code ?>_cc_cid" class="required">
+		<em>*</em><?php echo $this->__('Card Verification Number') ?>
+	    </label>
+	</td>
+	<td class="value">
+	    <div class="input-box">
+		<div class="v-fix">
+		    <input type="text" pattern="\d*" title="<?php echo $this->__('Card Verification Number') ?>" class="input-text cvv required-entry" id="<?php echo $_code ?>_cc_cid" name="payment[cc_cid]" value="" />
+		</div>
+		<a href="#" class="cvv-what-is-this"><?php echo $this->__('What is this?') ?></a>
+	    </div>
+	</td>
+    </tr>
+<?php 
+endif; 
+    
+// We need to be able to identify whether they're a guest or 'registering'...
+if ($quote && $quote->getId()) :
+    $items = $quote->getAllItems();
+endif;
+   
+if ((!isset($items[0]) || !$items[0]->isNominal()) && Mage::getModel("md_cybersource/config")->getSaveCardOptional()): ?>
+    <tr class="<?php echo $_code ?>_new" <?php if(!$cardInfoData): ?>style="display:none;"<?php endif; ?>>
+	<td class="label"></td>
+	<td class="value">
+	    <label>&nbsp;</label>
+	    <input type="checkbox" disabled name="payment[save_card]" id="<?php echo $_code ?>_save_card" value="1" checked="checked" autocomplete="on" />
+	    <label for="<?php echo $_code ?>_save_card" style="float:none;font-weight:normal;">
+		<?php echo $this->__('Save this credit card for future use.'); ?>
+	    </label>
+        </td>
+    </tr>
+    <?php elseif (isset($items[0]) && $items[0]->isNominal()): ?>
+    <tr class="<?php echo $_code ?>_new" <?php if(!$cardInfoData): ?>style="display:none;"<?php endif; ?>>
+	<td class="label"></td>
+        <td class="value">
+	    <input type="hidden" disabled name="payment[save_card]" id="<?php echo $_code ?>_save_card" value="1" /> 
+	    <?php echo $this->__('<strong>Note:</strong> For your convenience, this card will be stored securely via Cybersource.'); ?>
+        </td>
+    </tr>
+    <?php else: ?>
+	<tr class="<?php echo $_code ?>_new" <?php if(!$cardInfoData): ?>style="display:none;"<?php endif; ?>>
+	    <td class="label">
+		<input type="hidden" disabled name="payment[save_card]" id="<?php echo $_code ?>_save_card" value="1" />
+	    </td>
+	    <td></td>
+	</tr>
+    <?php endif; ?>
+<?php if (count($cards) > 0): ?>
+    <script type="text/javascript">
+        $('<?php echo $_code ?>_subscription_id').observe("change", function (event) {
+	    var sourceElement = Event.findElement(event);
+	    var currentValue  = $(sourceElement).getValue();
+	    var cVVElement    = $('<?php echo $_code ?>_cc_cid');
+
+	    $$(".<?php echo $_code ?>_new").each(function (newCardData) {
+		if (currentValue == 'new') {
+		    $(newCardData).show();
+
+		    newCardData.select('input', 'select', 'textarea').each(function (elm) {
+			if (elm.disabled == true) {
+			    elm.disabled = false;
+			}
+		    });
+		} else {
+		    $(newCardData).hide();
+		    newCardData.select('input', 'select', 'textarea').each(function (elm) {
+			elm.disabled = true;
+		    });
+		}
+	    });
+	    
+	    if (cVVElement) {
+		cVVElement.show();
+		if (currentValue == 'new') {
+		    cVVElement.addClassName('validate-cc-cvn');
+		} else {
+		    cVVElement.removeClassName('validate-cc-cvn');
+		}
+	    }
+        });
+    </script>
+<?php endif; ?>

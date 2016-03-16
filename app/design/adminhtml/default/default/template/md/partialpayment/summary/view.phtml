@@ -1,0 +1,428 @@
+<?php
+$helper		   = Mage::helper('md_partialpayment');
+$payment	   = $this->getPayment();
+$store		   = Mage::app()->getStore($payment->getStoreId());
+$order		   = $payment->getOrder();
+$orderItem	   = $payment->getOrderItem();
+$summaryCollection = $payment->getPaymentSummaryCollection();
+$ids		   = $summaryCollection->getAllIds();
+$summaryStatusMap  = array(
+    MD_Partialpayment_Model_Summary::PAYMENT_FAIL => array(
+	"label"    => $helper->__('Failed'), 
+	"class"	   => "grid-severity-critical"
+    ),
+    MD_Partialpayment_Model_Summary::PAYMENT_PENDING => array(
+	"label"	   => $helper->__('Pending'), 
+	"class"	   => "grid-severity-minor"
+    ),
+    MD_Partialpayment_Model_Summary::PAYMENT_SUCCESS => array(
+	"label"	   => $helper->__('Paid'), 
+	"class"	   => "grid-severity-notice"
+    ),
+    MD_Partialpayment_Model_Summary::PAYMENT_HOLD => array(
+	"label"	   => $helper->__('Hold'), 
+	"class"	   => "grid-severity-critical"
+    ),
+    MD_Partialpayment_Model_Summary::PAYMENT_DECLINED => array(
+	"label"	   => $helper->__('Declined'), 
+	"class"	   => "grid-severity-critical"
+    ),
+    MD_Partialpayment_Model_Summary::PAYMENT_PROCESS => array(
+	"label"	   => $helper->__('Processing'), 
+	"class"    => "grid-severity-critical"
+    ),
+);
+
+$name = array(
+    $store->getWebsite()->getName(),
+    $store->getGroup()->getName(),
+    $store->getName()
+);
+?>
+<div class="content-header">
+    <h3><?php echo $this->getTitle(); ?></h3>
+    <div class="content-buttons-placeholder">
+        <p class="content-buttons form-buttons">
+            <button title="<?php echo $this->__('Back') ?>" type="button" class="scalable back" onclick="setLocation('<?php echo $this->getUrl('*/*/index') ?>')" style=""><span><span><span><?php echo $this->__('Back') ?></span></span></span></button>
+        </p>
+    </div>
+</div>
+<div class="entry-edit">
+    <div class="entry-edit-head">
+        <h4>
+	    <a href="<?php echo $this->getViewUrl($order->getId()) ?>">
+	    <?php 
+	    $paymentInfoTitle  = $helper->__('Order # ');
+	    $paymentInfoTitle .= $order->getIncrementId();
+	    
+	    echo $paymentInfoTitle; 
+	    ?>
+	    </a>
+	    <?php echo $helper->__(' - Payment Information'); ?>
+	</h4>
+    </div>
+    <fieldset>
+        <div class="box-left" style="width:100%;">
+            <table border="0" width="100%">
+                <tr>
+                    <td width="45%">
+                        <table class="form-list">
+                            <tbody>
+                                <tr>
+                                    <td class="label"><label><?php echo $helper->__('Customer Name') ?></label></td>
+                                    <td class="value">
+					<?php if ($this->getCustomerViewUrl()): ?>
+    					<a href="<?php echo $this->getCustomerViewUrl() ?>" target="_blank"><strong><?php echo $payment->getCustomerName() ?></strong></a>
+					<?php else: ?>
+    					<strong><?php echo $payment->getCustomerName() ?></strong>
+					<?php endif; ?>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="label"><label><?php echo $helper->__('Customer Email') ?></label></td>
+                                    <td class="value"><a href="mailto:<?php echo $payment->getCustomerEmail() ?>"><strong><?php echo $payment->getCustomerEmail() ?></strong></a></td>
+                                </tr>
+                                <tr>
+                                    <td class="label"><label><?php echo $helper->__('Purchased From') ?></label></td>
+                                    <td class="value"><strong><?php echo implode('<br/>', $name) ?></strong></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </td>
+                    <td width="10%">&nbsp;</td>
+                    <td width="45%">
+                        <table class="form-list">
+                            <tbody>
+                                <tr>
+                                    <td class="label"><label><?php echo $helper->__('Total Paid Amount') ?></label></td>
+                                    <td class="value"><strong><?php echo $order->formatPrice($payment->getPaidAmount()) ?></strong></td>
+                                </tr>
+                                <tr>
+                                    <td class="label"><label><?php echo $helper->__('Total Due Amount') ?></label></td>
+                                    <td class="value"><strong><?php echo $order->formatPrice(max(0, $payment->getDueAmount())) ?></strong></td>
+                                </tr>
+                                <tr>
+                                    <td class="label"><label><?php echo $helper->__('Paid Installments') ?></label></td>
+                                    <td class="value"><strong><?php echo $payment->getPaidInstallments() ?></strong></td>
+                                </tr>
+                                <tr>
+                                    <td class="label"><label><?php echo $helper->__('Due Installments') ?></label></td>
+                                    <td class="value"><strong id="dueinstallments"><?php echo max(0, $payment->getDueInstallments()) ?></strong></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </td>
+                </tr>
+            </table>
+
+        </div>
+    </fieldset>
+</div>
+<div class="entry-edit" style="width:100%;">
+    <div class="entry-edit-head">
+        <h4><?php echo $helper->__('Payment Installment Summary') ?></h4>
+        <div class="form-buttons">
+            <button style="margin-top:5px;" type="button" class="scalable " title="<?php echo $helper->__('Send Schedule Email') ?>" onclick="setLocation('<?php echo $this->getUrl('*/*/sendEmail', array('action' => 'schedule', 'payment_id' => $payment->getId())) ?>')">
+                <span>
+                    <span>
+                        <span><?php echo $helper->__('Send Schedule Email') ?></span>
+                    </span>
+                </span>
+            </button>
+        </div>
+    </div>
+</div>
+<form method="post" id="payment-summary-form" name="payment.summary.form" action="<?php echo Mage::helper('adminhtml')->getUrl('md_partialpayment/adminhtml_summary/pay', array("payment_id" => $payment->getId())) ?>">
+    <input type="hidden" id="total_due" value="<?php echo $order->getdata('total_due'); ?>" />
+    <input type="hidden" name="form_key" value="<?php echo $this->getFormKey(); ?>" />
+
+    <div class="grid np" id="paymentsummarytable">
+        <div class="hor-scroll">
+            <table cellspacing="0" class="data order-tables" style="width:100%;" id="my-summary-table">
+                <colgroup>
+                    <col width="1"/>
+                    <col width="1"/>
+                    <col />
+                    <col />
+                    <col />
+                    <col />
+                    <col width="1"/>
+                    <col/>
+                </colgroup>
+                <thead>
+                    <tr class="headings">
+                        <th>&nbsp;</th>
+                        <th class="a-center"><?php echo $helper->__('Amount') ?></th>
+                        <th class="a-center"><?php echo $helper->__('Due Date') ?></th>
+                        <th class="a-center"><?php echo $helper->__('Paid Date') ?></th>
+                        <th class="a-center"><?php echo $helper->__('Status') ?></th>
+                        <th class="a-center"><?php echo $helper->__('Payment Method') ?></th>
+                        <th class="a-center"><?php echo $helper->__('Details') ?></th>
+                        <th class="a-center"><?php echo $helper->__('Action') ?></th>
+                    </tr>
+                </thead>
+                <tbody>
+		    <?php $unpaid = true; ?>
+		    <?php foreach ($summaryCollection as $summary): ?>
+
+			<?php
+			$transactionDetails = $summary->getTransactionDetails();
+			$transactionDetails = (!empty($summary->getTransactionDetails())) ? implode('<br />', unserialize($summary->getTransactionDetails())) : '-'; ?>
+    		    <tr>
+    			<td class="a-center">
+
+				<?php $disabled = (in_array($summary->getStatus(), array(MD_Partialpayment_Model_Summary::PAYMENT_SUCCESS, MD_Partialpayment_Model_Summary::PAYMENT_PROCESS))) ? true : false; ?>
+
+    			    <input class="validate-one-required-by-name" type="radio" name="payment_summary" id="payment_summary_<?php echo $summary->getId() ?>" value="<?php echo $summary->getId() ?>" <?php if ($disabled): ?>disabled="disabled"<?php endif; ?>/>
+
+    			</td>
+    			<td class="a-left" style="width: 200px">
+
+    			    <div id="orgsummaryparent_<?php echo $summary->getData('summary_id'); ?>">
+				    <?php echo Mage::app()->getLocale()->currency($order->getOrderCurrencyCode())->getSymbol(); ?>
+    				<span id="changeamount_<?php echo $summary->getData('summary_id'); ?>">
+					<?php echo number_format((float) $summary->getAmount(), 2, '.', '') ?>
+    				</span>
+				    <?php if (!$disabled): ?>&nbsp;
+
+					<a onclick="hidesummarylabel('orgsummaryparent_<?php echo $summary->getData('summary_id'); ?>', 'changesummaryparent_<?php echo $summary->getData('summary_id'); ?>')" style="cursor: pointer;"><?php echo $this->__('Change Amount') ?></a>
+				    <?php endif; ?>
+    			    </div>
+    			    <div id="changesummaryparent_<?php echo $summary->getData('summary_id'); ?>" style="display: none;">
+				    <?php echo Mage::app()->getLocale()->currency($order->getOrderCurrencyCode())->getSymbol(); ?>
+    				<input type="text" name="summarychange_<?php echo $summary->getData('summary_id'); ?>" value="<?php echo number_format((float) $summary->getAmount(), 2, '.', '') ?>" id="summarychange_<?php echo $summary->getData('summary_id'); ?>"  onkeypress="return isNumber(event)"  />
+
+    				<button onclick="changeSummaryamount('summarychange_<?php echo $summary->getData('summary_id'); ?>', '<?php echo $summary->getData('summary_id'); ?>', '<?php echo number_format((float) $summary->getAmount(), 2, '.', '') ?>')" title="<?php echo $this->__('Change Amount') ?>" class="scalable " type="button">
+    				    <span>
+    					<span>
+    					    <span><?php echo $this->__('Change Amount') ?></span>
+    					</span>
+    				    </span>
+    				</button>                                 
+    				<button onclick="notChangeSummaryamount('orgsummaryparent_<?php echo $summary->getData('summary_id'); ?>', 'changesummaryparent_<?php echo $summary->getData('summary_id'); ?>')" title="<?php echo $this->__('Cancel') ?>" class="scalable " type="button">
+    				    <span>
+    					<span>
+    					    <span><?php echo $this->__('Cancel') ?></span>
+    					</span>
+    				    </span>
+    				</button>    
+    			    </div>
+
+
+    			</td>
+    			<td class="a-center">
+				<?php $date = ($summary->getDueDate()) ? date('M d, Y', strtotime($summary->getDueDate())) : 'N / A'; ?>
+				<?php echo $date ?>
+    			</td>
+    			<td class="a-center">
+				<?php $date = ($summary->getPaidDate()) ? date('M d, Y', strtotime($summary->getPaidDate())) : 'N / A'; ?>
+				<?php echo $date ?>
+    			</td>
+    			<td class="a-left">
+    			    <span class="<?php echo $summaryStatusMap[$summary->getStatus()]['class'] ?>">
+    				<span><?php echo $summaryStatusMap[$summary->getStatus()]['label'] ?></span>
+    			    </span>
+    			</td>
+    			<td class="a-left">
+				<?php echo Mage::getStoreConfig('payment/' . $summary->getPaymentMethod() . '/title') ?>
+    			</td>
+    			<td class="a-center">
+				<?php if ($transactionDetails !== '-'): ?>
+				    <a href="javascript:void(0)" class="summary-details" id="link_<?php echo $summary->getId() ?>"><?php echo $helper->__('Details') ?></a>
+				    <div id="trans_details_<?php echo $summary->getId() ?>" style="display:none;">
+					<div class="entry-edit">
+					    <div class="entry-edit-head">
+						<h4 class="icon-head fieldset-legend"><?php echo $helper->__('Payment Details') ?></h4>
+					    </div>
+					    <div class="content">
+						<?php echo $transactionDetails; ?>
+					    </div>
+					</div>
+				    </div>
+				<?php else: ?>
+				    <?php echo $transactionDetails; ?>
+				<?php endif; ?>
+    			</td>
+    			<td class="a-center">
+				<?php if ($summary->getStatus() == MD_Partialpayment_Model_Summary::PAYMENT_PROCESS): ?>
+				    <button type="button" class="scalable " title="<?php echo $helper->__('Confirm') ?>" onclick="confirmSetLocation('<?php echo $helper->__('Are you sure want to confirm this installment?') ?>', '<?php echo $this->getUrl('*/*/confirmPayment', array('summary_id' => $summary->getId(), 'payment_id' => $summary->getPaymentId())) ?>')">
+					<span>
+					    <span>
+						<span><?php echo $helper->__('Confirm') ?></span>
+					    </span>
+					</span>
+				    </button>&nbsp;&nbsp;
+				    <button style="margin-top:5px;" type="button" class="scalable " title="<?php echo $helper->__('Reject') ?>" onclick="confirmSetLocation('<?php echo $helper->__('Are you sure want to reject this installment?') ?>', '<?php echo $this->getUrl('*/*/rejectPayment', array('summary_id' => $summary->getId(), 'payment_id' => $summary->getPaymentId())) ?>')">
+					<span>
+					    <span>
+						<span><?php echo $helper->__('Reject') ?></span>
+					    </span>
+					</span>
+				    </button>
+				<?php elseif ($summary->getStatus() == MD_Partialpayment_Model_Summary::PAYMENT_SUCCESS): ?>
+				    <button type="button" class="scalable " title="<?php echo $helper->__('Send Email') ?>" onclick="setLocation('<?php echo $this->getUrl('*/*/sendEmail', array('action' => 'success', 'summary_id' => $summary->getId(), 'payment_id' => $summary->getPaymentId())) ?>')">
+					<span>
+					    <span>
+						<span><?php echo $helper->__('Send Email') ?></span>
+					    </span>
+					</span>
+				    </button>
+				<?php elseif ($summary->getStatus() == MD_Partialpayment_Model_Summary::PAYMENT_FAIL): ?>
+				    <button type="button" class="scalable " title="<?php echo $helper->__('Send Email') ?>" onclick="setLocation('<?php echo $this->getUrl('*/*/sendEmail', array('action' => 'failed', 'summary_id' => $summary->getId(), 'payment_id' => $summary->getPaymentId())) ?>')">
+					<span>
+					    <span>
+						<span><?php echo $helper->__('Send Email') ?></span>
+					    </span>
+					</span>
+				    </button>
+				<?php elseif ($summary->getStatus() == MD_Partialpayment_Model_Summary::PAYMENT_PENDING): ?>
+				    <button type="button" class="scalable " title="<?php echo $helper->__('Send Reminder') ?>" onclick="setLocation('<?php echo $this->getUrl('*/*/sendEmail', array('action' => 'reminder', 'summary_id' => $summary->getId(), 'payment_id' => $summary->getPaymentId())) ?>')">
+					<span>
+					    <span>
+						<span><?php echo $helper->__('Send Reminder') ?></span>
+					    </span>
+					</span>
+				    </button>
+				<?php endif; ?>
+    			</td>
+
+    		    </tr>
+
+		    <?php endforeach; ?>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <br />
+    <script type="text/javascript">
+	Event.observe(window, 'load', function () {
+	    var idsJson = '<?php echo Mage::helper('core')->jsonEncode($ids) ?>'.evalJSON(true);
+
+	    $$(".summary-details").each(function (summaryElement) {
+		Event.observe($(summaryElement), 'click', function (event) {
+		    var sourceElement = event.element();
+		    var sourceElementId = $(sourceElement).id;
+		    var splitedId = sourceElementId.split('_');
+
+		    if ($('trans_details_' + splitedId[1]).getStyle('display') == 'none') {
+			$('trans_details_' + splitedId[1]).setStyle({display: 'block', position: 'absolute', zIndex: '100', background: '#FFFFFF', textAlign: 'left'});
+		    } else {
+			$('trans_details_' + splitedId[1]).setStyle({display: 'none'});
+		    }
+		    for (var idx = 0; idx < idsJson.length; idx++) {
+			if (splitedId[1] !== idsJson[idx]) {
+			    if ($('trans_details_' + idsJson[idx])) {
+				$('trans_details_' + idsJson[idx]).setStyle({display: 'none'});
+			    }
+			}
+
+		    }
+		});
+	    });
+	});
+    </script>
+    <?php if ($payment->canAllowToDoPayments()): ?>
+        <div class="entry-edit">
+    	<div class="entry-edit-head">
+    	    <h4><?php echo $helper->__('Payment Methods') ?></h4>
+    	    <div class="form-buttons">
+    		<button disabled="disabled" type="submit" class="scalable disabled" title="<?php echo $helper->__('Make Payment') ?>"><span><span><span><?php echo $helper->__('Make Payment') ?></span></span></span></button>
+    	    </div>
+    	</div>
+    	<fieldset>
+    	    <div class="hor-scroll">
+		    <?php echo $this->getLayout()->createBlock('md_partialpayment/summary_payment_methods')->toHtml() ?>
+    		<script type="text/javascript">
+    		    var partialPaymentForm = new varienForm('payment-summary-form');
+    		    $$('.partial-payment-methods')[0].select('input[type="radio"]').each(function (element) {
+    			Event.observe($(element), 'change', function (event) {
+    			    var tElement = event.element();
+    			    $$('.partial-payment-methods')[0].select('input[type="radio"]').each(function (tmpElement) {
+    				if (tmpElement.value == tElement.value) {
+    				    $('payment_form_' + tmpElement.value).setStyle({display: "block"});
+    				    $('payment-summary-form').select('button[type="submit"]')[0].disabled = false;
+    				    $('payment-summary-form').select('button[type="submit"]')[0].removeClassName('disabled');
+    				    $('payment_form_' + tmpElement.value).select('input[type="text"]', 'select').each(function (listElement) {
+    					listElement.disabled = false;
+    				    });
+    				} else {
+    				    $('payment_form_' + tmpElement.value).setStyle({display: "none"});
+    				    $('payment_form_' + tmpElement.value).select('input[type="text"]', 'select').each(function (listElement) {
+    					listElement.disabled = true;
+    				    });
+    				}
+    			    });
+    			});
+    		    });
+    		</script>
+    	    </div>
+    	</fieldset>
+        </div>
+    <?php endif; ?>
+</form>
+
+<script type="text/javascript">
+
+    function hidesummarylabel(summarylabelparent, summarytextboxparent) {
+	$(summarylabelparent).hide();
+	$(summarytextboxparent).show();
+    }
+    function changeSummaryamount(changevalueid, summaryid, orgsummaryamt)
+    {
+	var changeamount = $(changevalueid).value;
+	if (changeamount) {
+	    if (!isNaN(changeamount)) {
+		var getordergradtotal = $("total_due").value;
+		if (parseFloat(changeamount) <= parseFloat(getordergradtotal)) {
+		    var confirmcheck = confirm("Are you sure want to change summary amount ?")
+		    if (confirmcheck == true) {
+			var changeaction = '<?php echo $this->getUrl("md_partialpayment/adminhtml_summary/summaryChange", array("id" => Mage::app()->getRequest()->getParam('id'))) ?>';
+			new Ajax.Request(changeaction, {
+			    method: 'get',
+			    parameters: {newamount: changeamount, orgamt: orgsummaryamt, summaryid: summaryid, dueamount: getordergradtotal},
+			    onSuccess: function (transport) {
+				var responsesummary = transport.responseText.evalJSON();
+				if (responsesummary.result == "true") {
+				    $('paymentsummarytable').innerHTML = responsesummary.data;
+				    if (responsesummary.dueinstallments) {
+					$('dueinstallments').innerHTML = responsesummary.dueinstallments;
+				    }
+				} else {
+				    alert(responsesummary.data);
+				}
+			    },
+			    onFailure: function (transport) {
+				alert("Please try after some time");
+			    }
+			});
+		    }
+
+		} else {
+		    alert("You can not enter amount greater then Total Due Amount");
+		}
+
+	    } else {
+		alert("Please enter valid amount");
+	    }
+	}
+	else {
+	    alert("Please enter amount");
+	}
+
+    }
+    function notChangeSummaryamount(summarylabelparent, summarytextboxparent) {
+	$(summarytextboxparent).hide();
+	$(summarylabelparent).show();
+    }
+    function isNumber(evt) {
+	evt = (evt) ? evt : window.event;
+	var charCode = (evt.which) ? evt.which : evt.keyCode;
+	if (charCode > 31 && (charCode < 48 || charCode > 57)) {
+	    if (charCode === 46 || charCode === 37 || charCode === 38 || charCode === 39 || charCode === 40 || charCode === 46 || charCode === 35 || charCode === 36)
+		return true;
+	    else
+		return false;
+	}
+	return true;
+    }
+</script>

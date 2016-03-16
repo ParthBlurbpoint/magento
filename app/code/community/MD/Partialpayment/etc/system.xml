@@ -1,0 +1,350 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 
+/**
+* Magedelight
+* Copyright (C) 2014 Magedelight <info@magedelight.com>
+*
+* NOTICE OF LICENSE
+*
+* This program is free software: you can redistribute it and/or modify
+* it under the terms of the GNU General Public License as published by
+* the Free Software Foundation, either version 3 of the License, or
+* (at your option) any later version.
+*
+* This program is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+* GNU General Public License for more details.
+*
+* You should have received a copy of the GNU General Public License
+* along with this program. If not, see http://opensource.org/licenses/gpl-3.0.html.
+*
+* @category MD
+* @package MD_Partialpayment
+* @copyright Copyright (c) 2014 Mage Delight (http://www.magedelight.com/)
+* @license http://opensource.org/licenses/gpl-3.0.html GNU General Public License,version 3 (GPL-3.0)
+* @author Magedelight <info@magedelight.com>
+*/
+-->
+<config>
+    <tabs>
+	<magedelight translate="label" module="md_partialpayment">
+	    <label>Mage Delight</label>
+	    <sort_order>100</sort_order>
+	</magedelight>
+    </tabs>
+    <sections>
+	<md_partialpayment translate="label" module="md_partialpayment">
+	    <label>Partial Payment</label>
+	    <tab>magedelight</tab>
+	    <sort_order>1000</sort_order>
+	    <show_in_default>1</show_in_default>
+	    <show_in_website>1</show_in_website>
+	    <show_in_store>1</show_in_store>
+	    <groups>
+		<license translate="label" module="md_partialpayment">
+		    <label>License Configuration</label>
+		    <frontend_type>text</frontend_type>
+		    <sort_order>1</sort_order>
+		    <show_in_default>1</show_in_default>
+		    <show_in_website>1</show_in_website>
+		    <show_in_store>1</show_in_store>
+		    <fields>
+			<serial_key translate="label">
+			    <label>Serial Key</label>
+			    <frontend_type>text</frontend_type>
+			    <sort_order>1</sort_order>
+			    <show_in_default>1</show_in_default>
+			    <show_in_website>1</show_in_website>
+			    <show_in_store>1</show_in_store>
+			    <comment><![CDATA[Enter the serial key that you received at time of purchase.]]></comment>
+			</serial_key>
+			<activation_key translate="label">
+			    <label>Activation Key</label>
+			    <frontend_type>text</frontend_type>
+			    <sort_order>2</sort_order>
+			    <show_in_default>1</show_in_default>
+			    <show_in_website>1</show_in_website>
+			    <show_in_store>1</show_in_store>
+			    <comment><![CDATA[Enter the activation key that you received at time of purchase.]]></comment>
+			</activation_key>
+		    </fields>
+		</license>
+		<general translate="label">
+		    <label>Products General Configuration</label>
+		    <frontend_type>text</frontend_type>
+		    <sort_order>1</sort_order>
+		    <show_in_default>1</show_in_default>
+		    <show_in_website>1</show_in_website>
+		    <show_in_store>1</show_in_store>
+		    <fields>
+			<enabled translate="label">
+			    <label>Enable Partial Payment On Frontend</label>
+			    <frontend_type>select</frontend_type>
+			    <source_model>adminhtml/system_config_source_yesno</source_model>
+			    <sort_order>1</sort_order>
+			    <show_in_default>1</show_in_default>
+			    <show_in_website>1</show_in_website>
+			    <show_in_store>1</show_in_store>
+			</enabled>
+			<initial_payment_type translate="label">
+			    <label>Initial Payment Amount Type</label>
+			    <frontend_type>select</frontend_type>
+			    <source_model>md_partialpayment/system_config_source_payment_type</source_model>
+			    <sort_order>4</sort_order>
+			    <show_in_default>1</show_in_default>
+			    <show_in_website>1</show_in_website>
+			    <show_in_store>1</show_in_store>
+			</initial_payment_type>
+			<initial_payment_amount translate="label">
+			    <label>Initial Payment Amount</label>
+			    <frontend_type>text</frontend_type>
+			    <sort_order>5</sort_order>
+			    <validate>required-entry validate-zero-or-greater</validate>
+			    <show_in_default>1</show_in_default>
+			    <show_in_website>1</show_in_website>
+			    <show_in_store>1</show_in_store>
+			</initial_payment_amount>
+                            
+			<frequency_of_payments translate="label">
+			    <label>Frequency of Payment</label>
+			    <frontend_type>select</frontend_type>
+			    <source_model>md_partialpayment/system_config_source_frequency</source_model>
+			    <sort_order>6</sort_order>
+			    <show_in_default>1</show_in_default>
+			    <show_in_website>1</show_in_website>
+			    <show_in_store>1</show_in_store>
+			</frequency_of_payments>
+			<total_installments translate="label">
+			    <label>No. Of Installments</label>
+			    <frontend_type>text</frontend_type>
+			    <frontend_model>md_partialpayment/adminhtml_installments</frontend_model>
+			    <backend_model>adminhtml/system_config_backend_serialized_array</backend_model>
+			    <sort_order>7</sort_order>
+			    <show_in_default>1</show_in_default>
+			    <show_in_website>1</show_in_website>
+			    <show_in_store>1</show_in_store>
+			</total_installments>
+			<terms translate="label">
+			    <label>Terms and Conditions</label>
+			    <frontend_type>select</frontend_type>
+			    <source_model>md_partialpayment/system_config_source_terms</source_model>
+			    <sort_order>6</sort_order>
+			    <show_in_default>1</show_in_default>
+			    <show_in_website>1</show_in_website>
+			    <show_in_store>1</show_in_store>
+			</terms>
+			<customer_groups translate="label">
+			    <label>Allowed Customer Groups</label>
+			    <frontend_type>multiselect</frontend_type>
+			    <source_model>md_partialpayment/system_config_source_groups</source_model>
+			    <sort_order>8</sort_order>
+			    <validate>validate-select</validate>
+			    <show_in_default>1</show_in_default>
+			    <show_in_website>1</show_in_website>
+			    <show_in_store>1</show_in_store>
+			    <can_be_empty>1</can_be_empty>
+			</customer_groups>
+			<allow_autocapture translate="lable">
+			    <label>Allow Auto Capture Installment Due Amount</label>
+			    <frontend_type>select</frontend_type>
+			    <source_model>adminhtml/system_config_source_yesno</source_model>
+			    <sort_order>9</sort_order>
+			    <comment>Select 'yes' for auto capture installment panding amount on due date.</comment>
+			    <show_in_default>1</show_in_default>
+			    <show_in_website>1</show_in_website>
+			    <show_in_store>1</show_in_store>
+			</allow_autocapture>
+			<enable_full_cart translate="label">
+			    <label>Display Partial Payment Options</label>
+			    <frontend_type>select</frontend_type>
+			    <source_model>md_partialpayment/system_config_source_display</source_model>
+			    <sort_order>10</sort_order>
+			    <show_in_default>1</show_in_default>
+			    <show_in_website>1</show_in_website>
+			    <show_in_store>1</show_in_store>
+			</enable_full_cart>
+			<minimum_cart_total translate="label">
+			    <label>Minimum Cart Total for Whole Cart</label>
+			    <frontend_type>text</frontend_type>
+			    <sort_order>11</sort_order>
+			    <validate>required-entry validate-zero-or-greater validate-number</validate>
+			    <show_in_default>1</show_in_default>
+			    <show_in_website>1</show_in_website>
+			    <show_in_store>1</show_in_store>
+			</minimum_cart_total>
+			<minimum_total_type translate="label">
+			    <label>Apply Minimum Cart Total on</label>
+			    <frontend_type>select</frontend_type>
+			    <source_model>md_partialpayment/system_config_source_minimumcarttotaltype</source_model>
+			    <sort_order>12</sort_order>
+			    <show_in_default>1</show_in_default>
+			    <show_in_website>1</show_in_website>
+			    <show_in_store>1</show_in_store>
+			    <validate>required-entry</validate>
+			</minimum_total_type>
+			
+			<shipping_tax_installment translate="label">
+			    <label>Include Shipping and Tax Amounts in Installments</label>
+			    <frontend_type>select</frontend_type>
+			    <source_model>adminhtml/system_config_source_yesno</source_model>
+			    <sort_order>12</sort_order>
+			    <show_in_default>1</show_in_default>
+			    <show_in_website>1</show_in_website>
+			    <show_in_store>1</show_in_store>
+			    <validate>required-entry</validate>
+			</shipping_tax_installment>
+			
+			<disable_guest_checkout>
+			    <label>Disable Guest Checkout if Cart Contains Partial Payment Items</label>
+			    <frontend_type>select</frontend_type>
+			    <source_model>adminhtml/system_config_source_yesno</source_model>
+			    <sort_order>13</sort_order>
+			    <show_in_default>1</show_in_default>
+			    <show_in_website>1</show_in_website>
+			    <show_in_store>1</show_in_store>
+			</disable_guest_checkout>
+			
+			<allow_customer_update_installment>
+			    <label>Allow Customer To Update Installment</label>
+			    <frontend_type>select</frontend_type>
+			    <source_model>adminhtml/system_config_source_yesno</source_model>
+			    <sort_order>14</sort_order>
+			    <show_in_default>1</show_in_default>
+			    <show_in_website>1</show_in_website>
+			    <show_in_store>1</show_in_store>
+			</allow_customer_update_installment>
+		    </fields>
+		</general>
+		<email translate="label">
+		    <label>Installments Email Configuration</label>
+		    <frontend_type>text</frontend_type>
+		    <sort_order>2</sort_order>
+		    <show_in_default>1</show_in_default>
+		    <show_in_website>1</show_in_website>
+		    <show_in_store>1</show_in_store>
+		    <fields>
+			<installment_schedule translate="label">
+			    <label>Installments Schedule Email Template</label>
+			    <frontend_type>select</frontend_type>
+			    <source_model>adminhtml/system_config_source_email_template</source_model>
+			    <sort_order>1</sort_order>
+			    <show_in_default>1</show_in_default>
+			    <show_in_website>1</show_in_website>
+			    <show_in_store>1</show_in_store>
+			</installment_schedule>
+			<installment_schedule_from translate="label">
+			    <label>Installments Schedule Email Sender</label>
+			    <frontend_type>select</frontend_type>
+			    <source_model>adminhtml/system_config_source_email_identity</source_model>
+			    <sort_order>2</sort_order>
+			    <show_in_default>1</show_in_default>
+			    <show_in_website>1</show_in_website>
+			    <show_in_store>1</show_in_store>
+			</installment_schedule_from>
+			<installment_schedule_copy_to translate="label comment">
+			    <label>Send Installments Schedule Email Copy To</label>
+			    <frontend_type>text</frontend_type>
+			    <sort_order>3</sort_order>
+			    <show_in_default>1</show_in_default>
+			    <show_in_website>1</show_in_website>
+			    <show_in_store>1</show_in_store>
+			    <comment>Comma-separated.</comment>
+			</installment_schedule_copy_to>
+			<remind_days_before translate="label comment">
+			    <label>Send Reminder To Customer Before Day(s)</label>
+			    <frontend_type>text</frontend_type>
+			    <sort_order>4</sort_order>
+			    <validate>required-entry validate-number validate-greater-than-zero</validate>
+			    <show_in_default>1</show_in_default>
+			    <show_in_website>0</show_in_website>
+			    <show_in_store>0</show_in_store>
+			    <comment>Comma-separated.</comment>
+			</remind_days_before>
+			<installment_reminder translate="label">
+			    <label>Installments Reminder Email Template</label>
+			    <frontend_type>select</frontend_type>
+			    <source_model>adminhtml/system_config_source_email_template</source_model>
+			    <sort_order>5</sort_order>
+			    <show_in_default>1</show_in_default>
+			    <show_in_website>1</show_in_website>
+			    <show_in_store>1</show_in_store>
+			</installment_reminder>
+			<installment_reminder_from translate="label">
+			    <label>Installments Reminder Email Sender</label>
+			    <frontend_type>select</frontend_type>
+			    <source_model>adminhtml/system_config_source_email_identity</source_model>
+			    <sort_order>6</sort_order>
+			    <show_in_default>1</show_in_default>
+			    <show_in_website>1</show_in_website>
+			    <show_in_store>1</show_in_store>
+			</installment_reminder_from>
+			<installment_reminder_copy_to translate="label">
+			    <label>Send Installments Reminder Email Copy To</label>
+			    <frontend_type>text</frontend_type>
+			    <sort_order>7</sort_order>
+			    <show_in_default>1</show_in_default>
+			    <show_in_website>1</show_in_website>
+			    <show_in_store>1</show_in_store>
+			    <comment>Comma-separated.</comment>
+			</installment_reminder_copy_to>
+			<installment_status translate="label">
+			    <label>Installment Payment Status Email Template</label>
+			    <frontend_type>select</frontend_type>
+			    <source_model>adminhtml/system_config_source_email_template</source_model>
+			    <sort_order>8</sort_order>
+			    <show_in_default>1</show_in_default>
+			    <show_in_website>1</show_in_website>
+			    <show_in_store>1</show_in_store>
+			</installment_status>
+			<installment_status_from translate="label">
+			    <label>Installment Payment Status Email Sender</label>
+			    <frontend_type>select</frontend_type>
+			    <source_model>adminhtml/system_config_source_email_identity</source_model>
+			    <sort_order>9</sort_order>
+			    <show_in_default>1</show_in_default>
+			    <show_in_website>1</show_in_website>
+			    <show_in_store>1</show_in_store>
+			</installment_status_from>
+			<installment_status_copy_to translate="label">
+			    <label>Send Installment Payment Status Email Copy To</label>
+			    <frontend_type>text</frontend_type>
+			    <sort_order>10</sort_order>
+			    <show_in_default>1</show_in_default>
+			    <show_in_website>1</show_in_website>
+			    <show_in_store>1</show_in_store>
+			    <comment>Comma-separated.</comment>
+			</installment_status_copy_to>
+			<full_payment translate="label">
+			    <label>Partial Full Payment Email Template</label>
+			    <frontend_type>select</frontend_type>
+			    <source_model>adminhtml/system_config_source_email_template</source_model>
+			    <sort_order>11</sort_order>
+			    <show_in_default>1</show_in_default>
+			    <show_in_website>1</show_in_website>
+			    <show_in_store>1</show_in_store>
+			</full_payment>
+			<full_payment_from translate="label">
+			    <label>Partial Full Payment Email Sender</label>
+			    <frontend_type>select</frontend_type>
+			    <source_model>adminhtml/system_config_source_email_identity</source_model>
+			    <sort_order>12</sort_order>
+			    <show_in_default>1</show_in_default>
+			    <show_in_website>1</show_in_website>
+			    <show_in_store>1</show_in_store>
+			</full_payment_from>
+			<full_payment_copy_to translate="label">
+			    <label>Partial Full Payment Status Email Copy To</label>
+			    <frontend_type>text</frontend_type>
+			    <sort_order>13</sort_order>
+			    <show_in_default>1</show_in_default>
+			    <show_in_website>1</show_in_website>
+			    <show_in_store>1</show_in_store>
+			    <comment>Comma-separated.</comment>
+			</full_payment_copy_to>
+		    </fields>
+		</email>
+	    </groups>
+	</md_partialpayment>
+    </sections>
+</config>

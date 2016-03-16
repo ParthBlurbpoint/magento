@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 
+/**
+* Magedelight
+* Copyright (C) 2014 Magedelight <info@magedelight.com>
+*
+* NOTICE OF LICENSE
+*
+* This program is free software: you can redistribute it and/or modify
+* it under the terms of the GNU General Public License as published by
+* the Free Software Foundation, either version 3 of the License, or
+* (at your option) any later version.
+*
+* This program is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+* GNU General Public License for more details.
+*
+* You should have received a copy of the GNU General Public License
+* along with this program. If not, see http://opensource.org/licenses/gpl-3.0.html.
+*
+* @category MD
+* @package MD_Partialpayment
+* @copyright Copyright (c) 2014 Mage Delight (http://www.magedelight.com/)
+* @license http://opensource.org/licenses/gpl-3.0.html GNU General Public License,version 3 (GPL-3.0)
+* @author Magedelight <info@magedelight.com>
+*/
+-->
+<config>
+    <menu>
+	<report>
+	    <children>
+		<md_partialpayment translate="title" module="md_partialpayment">
+		    <title>Partial Payment</title>
+		    <sort_order>15</sort_order>
+		    <children>
+			<aging_report translate="title" module="md_partialpayment">
+			    <title>Installment Report</title>
+			    <sort_order>1</sort_order>
+			    <action>md_partialpayment/adminhtml_summary/report</action>
+			</aging_report>
+		    </children>
+		</md_partialpayment>
+	    </children>
+	</report>
+	<md_partialpayment translate="title" module="md_partialpayment">
+	    <title>Partial Payment</title>
+	    <sort_order>35</sort_order>
+	    <children>
+		<installment_summary translate="title" module="md_partialpayment">
+		    <title>Installment Summary</title>
+		    <sort_order>1</sort_order>
+		    <action>md_partialpayment/adminhtml_summary/index</action>
+		</installment_summary>
+		
+		<partialplan translate="title" module="md_partialpayment">
+		    <title>Partial Plan</title>
+		    <sort_order>2</sort_order>
+		    <action>md_partialpayment/adminhtml_partialplan/index</action>
+		</partialplan>
+	    </children>
+	</md_partialpayment>
+    </menu>
+    <acl>
+	<resources>
+	    <all>
+		<title>Allow Everything</title>
+	    </all>
+	    <admin>
+		<children>
+		    <report>
+			<children>
+			    <md_partialpayment translate="title" module="md_partialpayment">
+				<title>Partial Payment Installment Reports</title>
+				<sort_order>100</sort_order>
+				<children>
+				    <aging_report translate="title">
+					<title>Partial Payment Installment Reports Menu</title>
+					<sort_order>1</sort_order>
+				    </aging_report>
+				</children>
+			    </md_partialpayment>
+			</children>
+		    </report>
+		    <md_partialpayment translate="title" module="md_partialpayment">
+			<title>Partial Payment Menu</title>
+			<sort_order>15</sort_order>
+			<children>
+			    <installment_summary translate="title" module="md_partialpayment">
+				<title>Installment Summary</title>
+				<sort_order>1</sort_order>
+			    </installment_summary>
+			     <partialplan translate="title" module="md_partialpayment">
+				<title>Partial Plan</title>
+				<sort_order>2</sort_order>
+			    </partialplan>
+			</children>
+		    </md_partialpayment>
+		    <system>
+			<children>
+			    <config>
+				<children>
+				    <md_partialpayment translate="title" module="md_partialpayment">
+					<title>Partial Payment Configuration</title>
+					<sort_order>10</sort_order>
+				    </md_partialpayment>
+				</children>
+			    </config>
+			</children>
+		    </system>
+		</children>
+	    </admin>
+	</resources>
+    </acl>
+</config>

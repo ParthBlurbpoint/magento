@@ -1,0 +1,56 @@
+<?php
+/**
+ * Copyright (c) 2009-2014 Vaimo AB
+ *
+ * Vaimo reserves all rights in the Program as delivered. The Program
+ * or any portion thereof may not be reproduced in any form whatsoever without
+ * the written consent of Vaimo, except as provided by licence. A licence
+ * under Vaimo's rights in the Program may be available directly from
+ * Vaimo.
+ *
+ * Disclaimer:
+ * THIS NOTICE MAY NOT BE REMOVED FROM THE PROGRAM BY ANY USER THEREOF.
+ * THE PROGRAM IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+ * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL
+ * THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE PROGRAM OR THE USE OR OTHER DEALINGS
+ * IN THE PROGRAM.
+ *
+ * @category    Vaimo
+ * @package     Vaimo_Klarna
+ * @copyright   Copyright (c) 2009-2014 Vaimo AB
+ */
+
+    $pclasses = $this->getPClasses();
+?>
+
+<?php if ($pclasses): ?>
+
+    <li class="payment_plan_wrapper">
+        <ul id="<?php echo $this->getMethodCode(); ?>_pclasses" class="payment_plan">
+            <?php foreach ($pclasses as $pclass): ?>
+                <li>
+                    <label for="pclass_<?php echo $pclass['id']?>">
+
+                        <?php if ($pclass['default'] === true) :?>
+                            <?php $checkedstr = 'checked="checked"'; ?>
+                        <?php else: ?>
+                            <?php $checkedstr = ''; ?>
+                        <?php endif; ?>
+
+                        <input id="pclass_<?php echo $pclass['id']?>" type="radio" name="payment[<?php echo $this->getMethodCode(); ?>_payment_plan]" value='<?php echo $pclass['id']; ?>' <?php echo $checkedstr ?> />
+                        <?php
+                            echo $pclass['description'];
+                            if ($pclass['months']) {
+                                echo " - " . $this->formatPrice($pclass['monthly_cost']) ." / " . $this->helper('klarna')->__('month');
+                            }
+                        ?>
+                    </label>
+                </li>
+            <?php endforeach; ?>
+        </ul>
+    </li>
+
+<?php endif; ?>

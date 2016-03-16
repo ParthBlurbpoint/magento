@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+<config>
+    <modules>
+        <Kodematix_Countdown>
+            <active>false</active>
+            <codePool>local</codePool>
+        </Kodematix_Countdown>
+    </modules>
+</config> 

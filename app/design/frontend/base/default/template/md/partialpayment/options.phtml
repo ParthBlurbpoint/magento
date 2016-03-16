@@ -1,0 +1,867 @@
+<?php
+$option		    = $this->getPartialPaymentOption();
+$_product	    = $this->getProduct();
+$slabs		    = $this->getOptionInstallmentOptions();
+$displayOpt	    = Mage::helper("md_partialpayment")->getIsFullCartPartialPaymentEnabled();
+$configInitialType  = Mage::getStoreConfig("md_partialpayment/general/initial_payment_type", $_product->getStoreId());
+$configPrice	    = Mage::getStoreConfig("md_partialpayment/general/initial_payment_amount", $_product->getStoreId());
+$jsPriceFormat	    = Mage::helper('core')->jsonEncode(Mage::app()->getLocale()->getJsPriceFormat());
+$instSlabPriceFixed = MD_Partialpayment_Model_Slabs::INSTALLMENT_SLAB_PRICE_FIXED;
+$displayOptionsArr  = array(MD_Partialpayment_Model_Options::DISPLAY_OPTIONS_PRODUCTS, MD_Partialpayment_Model_Options::DISPLAY_OPTIONS_PRODUCTS_ALL);
+?>
+
+
+<?php if ($option && $option->getId() && $option->isActive() && !is_null($slabs) && in_array($displayOpt,$displayOptionsArr)): ?>
+    </div>
+    <div>
+    <?php 
+	$shouldReloadLable = $this->shouldReloadCheckboxLabel();  
+	$helper		   = Mage::helper('md_partialpayment'); 
+    ?>
+    <script type="text/javascript">
+	<?php if (!$option->getUseConfigForInstallmentOptions()): ?>
+		var slabsJson = <?php echo $this->getSlabJson() ?>;
+	<?php else: ?>
+		var slabsJson = <?php echo Mage::helper('core')->jsonEncode(Mage::helper('md_partialpayment')->getConfigInstallmentOptions()) ?>;
+	<?php endif; ?>
+    </script>
+    <div class="partialpayment-box-container">
+    	<ul class="form-list">
+    	    <li class="control partialpayment">
+    		<div class="input-box">
+		    <input onclick="pisoptions.addValidationClass(this);" class="checkbox" type="checkbox" name="custom_options[partialpayment]" value="1"/>
+		</div>
+    		<label for="custom_options">
+		    <span id="initial_label_<?php echo $_product->getId() ?>">
+			<?php echo $this->getCheckboxLabel() ?>
+		    </span>
+		</label>
+		<?php 
+		$terms = $helper->getTermsContents(); 
+		if (count($terms) > 0 && array_key_exists('link_title', $terms) && array_key_exists('content', $terms)){
+		?>
+		    <a class="link-tip" href="javascript::void(0);" id="partial-terms-link-popup" title="<?php echo $terms['link_title'] ?>">
+			<?php echo $terms['link_title'] ?>
+		    </a>
+		
+		    <div id="partial-terms-popup" class="partial-terms-popup" style="display:none;">
+			<a href="javascript::void(0);" class="partial-terms-popup-close" id="partial-terms-popup-close">
+			    &times;
+			</a>
+			<div class="partial-terms-popup-heading">
+			    <h3><?php echo $this->__('Terms And Conditions') ?></h3>
+			</div>
+			<div class="partial-terms-popup-content">
+			    <?php echo $terms['content'] ?>
+			</div>
+		    </div>
+
+		    <script type="text/javascript">
+			Event.observe(window, 'load', function () {
+			    Event.observe('partial-terms-link-popup', 'click', function ()  {
+				if ($('partial-terms-popup').getStyle('display') == 'none') {
+				    $('partial-terms-popup').setStyle({display: 'block'});
+				} else {
+				    $('partial-terms-popup').setStyle({display: 'none'});
+				}
+			    });
+			    
+			    Event.observe('partial-terms-popup-close', 'click', function () {
+				$('partial-terms-popup').hide();
+			    });
+			});
+		    </script>
+		<?php } ?>
+    	    </li>
+	    <?php if ($slabs->count() > 1) { ?>
+		<li class="control partialpayment">
+		    <label for="custom_options">
+			<?php echo $helper->__('Select Installment (%s)', $helper->getFrequencyLabel()) ?>
+			
+			<select style="background-color: #eee" disabled="disabled" name="custom_options[installments]" id="installments_options" class="select disabled" onchange="pisoptions.selectionChange(this);">
+			    
+			    <option value=""><?php echo "------Select Installments------"; ?></option>
+
+			    <?php 
+			    foreach ($slabs->getItems() as $_slab) { 
+				if($_slab->getData('price_type') == $instSlabPriceFixed) {
+				   $price = Mage::helper('core')->currency($_slab->getData('price'), true, false);
+				} else {
+				   $price = Mage::helper('core')->currency($_slab->getData('price'), false, false) . '%'; 
+				}
+				 
+				$label = sprintf("%d installments with %s installment fees", (int) $_slab->getData('unit'), $price) 
+			    ?>
+			    <option value="<?php echo (int) $_slab->getData('unit') ?>"><?php echo $label; ?></option>
+			    <?php } ?>
+			</select>
+			<br />
+		    </label>
+		    <br />
+		</li>
+	    <?php } else { ?>
+		<li class="login-message">
+		    <?php 
+		    $_slab     = $slabs->getFirstItem(); 
+		    
+		    if($_slab->getData('price_type') == $instSlabPriceFixed) {
+			$price = Mage::helper('core')->currency($_slab->getData('price'), true, false);
+		    } else {
+			$price = Mage::helper('core')->currency($_slab->getData('price'), false, false) . '%'; 
+		    } 
+		    $label = sprintf("(%d installments with %s additional charges)", (int) $_slab->getData('unit'), $price); 
+		    ?>
+		    <b>
+			<span id="dropdown_<?php echo $_product->getId() ?>">
+			    <?php echo $label ?>
+			</span>
+		    </b>
+		    <br />
+		    <input disabled="disabled" type="hidden" name="custom_options[installments]" value="<?php echo $_slab->getData('unit') ?>" />
+		    <input disabled="disabled" type="hidden" name="custom_options[price]" value="<?php echo $_slab->getData('price') ?>" />
+		    <input disabled="disabled" type="hidden" name="custom_options[price_type]" value="<?php echo $_slab->getData('price_type') ?>" />
+		</li>
+	    <?php } ?>
+    	</ul>
+        </div>
+        <script type='text/javascript'>
+	    var configAmount	     = parseFloat(<?php echo $configPrice ?>);
+	    var configType	     = '<?php echo $configInitialType ?>';
+	    var customPartial	     = $$('input[name="custom_options[partialpayment]"]')[0];
+	    var installmentDropdown  = $('installments_options');
+	    var installmentPriceType = $$('input[name="custom_options[price_type]"]')[0];
+	    var installmentPrice     = $$('input[name="custom_options[price]"]')[0];
+	    var installments	     = $$('input[name="custom_options[installments]"]')[0];
+	    var paymentFixed	     = '<?php echo MD_Partialpayment_Model_Options::PAYMENT_FIXED ?>';
+	
+	<?php if (!is_null($option->getInitialPaymentAmount())) { ?>
+		var initialType		 = 'product';
+		var productInitialAmount = parseFloat(<?php echo $option->getInitialPaymentAmount() ?>);
+	<?php } else { ?>
+		var initialType  = 'config';
+		
+		if (typeof optionsPrice.productPrice != "undefined") {
+		    if(configType == paymentFixed){
+			var productInitialAmount = configAmount;
+		    } else {
+			var productInitialAmount = (optionsPrice.productPrice * configAmount) / 100;
+		    }			 
+		} else {
+		    if(configType == paymentFixed){
+			var productInitialAmount = configAmount;
+		    } else {
+			var productInitialAmount = (parseFloat(<?php echo $_product->getFinalPrice() ?>) * configAmount) / 100;
+		    }
+
+		}
+	<?php } 
+	if (in_array($this->getProduct()->getTypeId(), array(Mage_Catalog_Model_Product_Type::TYPE_SIMPLE, Mage_Catalog_Model_Product_Type::TYPE_VIRTUAL, Mage_Catalog_Model_Product_Type::TYPE_CONFIGURABLE))) { ?>
+	    document.observe("dom:loaded", function () {		
+		if (typeof optionsPrice.productPrice != "undefined") {
+		    var currentSelectionPrice = parseFloat(optionsPrice.productPrice);
+		} else {
+		    var currentSelectionPrice = parseFloat(<?php echo $_product->getFinalPrice() ?>);
+		}
+
+		Object.values(optionsPrice.customPrices).each(function (el) {
+		    currentSelectionPrice += parseFloat(el.price);
+		});
+		
+		dispositionInitialPrice     = 0;
+		dispositionInstallmentCount = 0;
+		
+		switch (initialType) {
+		    case 'product':
+			if (productInitialAmount > 0) {
+			    dispositionInitialPrice	= productInitialAmount;
+			    dispositionInstallmentCount = 0;
+			}
+			break;
+		    case 'config':
+			if (configAmount > 0) {
+			    dispositionInitialPrice = (configType == paymentFixed) ? configAmount : (currentSelectionPrice * configAmount) / 100;
+			    dispositionInstallmentCount = 0;
+			}
+			break;
+
+		}
+		if (dispositionInitialPrice >= currentSelectionPrice) {
+		    dispositionInitialPrice	= 0;
+		    dispositionInstallmentCount = 0;
+		    if (typeof customPartial != "undefined") {
+			$(customPartial).checked  = false;
+			$(customPartial).disabled = true;
+		    }
+
+		    if (typeof installmentDropdown != "undefined") {
+			if (typeof installmentPriceType != "undefined") {
+			    $(price_type).remove();
+			}
+			if (typeof installmentPrice != "undefined") {
+			    $(price).remove();
+			}
+			if (typeof installments != "undefined") {
+			    $(installments).remove();
+			}
+			$(installmentDropdown).removeClassName('validate-select');
+			$(installmentDropdown).disabled = true;
+			$(installmentDropdown).setStyle({backgroundColor: '#eee'});
+			$(installmentDropdown).addClassName('disabled');
+			$(installmentDropdown).select('option[value=""]')[0].selected = true;
+		    } else {
+			if (typeof installmentPriceType != "undefined") {
+			    $(price_type).disabled = true;
+			}
+			
+			if (typeof installmentPrice != "undefined") {
+			    $(price).disabled = true;
+			}
+			
+			if (typeof installments != "undefined") {
+			    $(installments).disabled = true;
+			}
+		    }
+		} else {
+		    if (typeof customPartial != "undefined") {
+			$(customPartial).disabled = false;
+		    }
+		}
+		
+		if ($('installments_options')) {
+		    for (var i = 0; i < $('installments_options').options.length; i++) {
+			var optValue = $('installments_options').options[i].value;
+
+			if (optValue != '') {
+			    for (var j in slabsJson) {
+				if (parseInt(optValue) == slabsJson[j].unit) {
+				    var calculationPrice = 0;
+				    var optionPrice = 0;
+				    
+				    if (slabsJson[j].price_type == '<?php echo MD_Partialpayment_Model_Slabs::INSTALLMENT_SLAB_PRICE_PERCENTAGE ?>') {
+					calculationPrice = (currentSelectionPrice * parseFloat(slabsJson[j].price)) / 100;
+					optionPrice	 = currentSelectionPrice + parseFloat(calculationPrice);
+				    } else {
+					calculationPrice = parseFloat(slabsJson[j].price);
+					optionPrice	 = currentSelectionPrice + parseFloat(calculationPrice);
+				    }
+				    
+				    var installments = formatCurrency((optionPrice - dispositionInitialPrice) / (slabsJson[j].unit - dispositionInstallmentCount),<?php echo $jsPriceFormat ?>);
+				    var formatedPrice = formatCurrency(optionPrice,<?php echo $jsPriceFormat ?>);
+
+				    $('installments_options').options[i].innerHTML = (slabsJson[j].unit - dispositionInstallmentCount) + " Installments of " + installments + " at Total Price " + formatedPrice;
+				}
+			    }
+			}
+		    }
+		    if ($('initial_label_<?php echo $_product->getId() ?>') && dispositionInitialPrice > 0) {
+			$('initial_label_<?php echo $_product->getId() ?>').update('Pay Now ' + formatCurrency(dispositionInitialPrice,<?php echo $jsPriceFormat ?>) + ' and rest with easy installments.');
+		    }
+		} else {
+		    if ($('dropdown_<?php echo $_product->getId() ?>') && typeof slabsJson[0] != "undefined") {
+			var calculationPrice = 0;
+			var optionPrice	     = 0;
+			if (slabsJson[0].price_type == '<?php echo MD_Partialpayment_Model_Slabs::INSTALLMENT_SLAB_PRICE_PERCENTAGE ?>') {
+			    calculationPrice = (currentSelectionPrice * parseFloat(slabsJson[0].price)) / 100;
+			    optionPrice	     = currentSelectionPrice + parseFloat(calculationPrice);
+			} else {
+			    calculationPrice = parseFloat(slabsJson[0].price);
+			    optionPrice	     = currentSelectionPrice + parseFloat(calculationPrice);
+			}
+			var installments     = formatCurrency((optionPrice - dispositionInitialPrice) / (slabsJson[0].unit - dispositionInstallmentCount),<?php echo $jsPriceFormat ?>);
+			var formatedPrice    = formatCurrency(optionPrice,<?php echo $jsPriceFormat ?>);
+			
+			$('dropdown_<?php echo $_product->getId() ?>').update((slabsJson[0].unit - dispositionInstallmentCount) + " Installments of " + installments + " at Total Price " + formatedPrice);
+			
+			if ($('initial_label_<?php echo $_product->getId() ?>') && dispositionInitialPrice > 0) {
+			    $('initial_label_<?php echo $_product->getId() ?>').update('Pay Now ' + formatCurrency(dispositionInitialPrice,<?php echo $jsPriceFormat ?>) + ' and rest with easy installments.');
+			}
+		    }
+		}
+	    });
+	<?php } ?>
+	<?php if ($this->getProduct()->getTypeId() == Mage_Catalog_Model_Product_Type::TYPE_BUNDLE): ?>
+
+		    $(document).observe("bundle:reload-price", function (event) {
+			var eventMemo		  = event.memo;
+			var currentSelectionPrice = eventMemo.price;
+			
+			Object.values(optionsPrice.customPrices).each(function (el) {
+			    currentSelectionPrice += parseFloat(el.price);
+			});
+			
+			dispositionInitialPrice     = 0;
+			dispositionInstallmentCount = 0;
+			
+			switch (initialType) {
+			    case 'product':
+				if (productInitialAmount > 0) {
+				    dispositionInitialPrice = productInitialAmount;
+				    dispositionInstallmentCount = 0;
+				}
+				break;
+			    case 'config':
+				if (configAmount > 0) {
+				    dispositionInitialPrice = (configType == paymentFixed) ? configAmount : (currentSelectionPrice * configAmount) / 100;
+				    dispositionInstallmentCount = 0;
+				}
+				break;
+
+			}
+			if (dispositionInitialPrice >= currentSelectionPrice) {
+			    dispositionInitialPrice	= 0;
+			    dispositionInstallmentCount = 0;
+			    
+			    if (typeof customPartial != "undefined") {
+				$(customPartial).checked = false;
+				$(customPartial).disabled = true;
+			    }
+			    
+			    if (typeof installmentDropdown != "undefined")	{
+				if (typeof installmentPriceType != "undefined") {
+				    $(price_type).remove();
+				}
+				
+				if (typeof installmentPrice != "undefined") {
+				    $(price).remove();
+				}
+				
+				if (typeof installments != "undefined") {
+				    $(installments).remove();
+				}
+				
+				$(installmentDropdown).removeClassName('validate-select');
+				$(installmentDropdown).disabled = true;
+				$(installmentDropdown).setStyle({backgroundColor: '#eee'});
+				$(installmentDropdown).addClassName('disabled');
+				$(installmentDropdown).select('option[value=""]')[0].selected = true;
+			    } else {
+				if (typeof installmentPriceType != "undefined") {
+				    $(price_type).disabled = true;
+				}
+				if (typeof installmentPrice != "undefined") {
+				    $(price).disabled = true;
+				}
+				if (typeof installments != "undefined") {
+				    $(installments).disabled = true;
+				}
+			    }
+			} else {
+			    if (typeof customPartial != "undefined") {
+				$(customPartial).disabled = false;
+			    }
+			}
+			if ($('installments_options')) {
+			    for (var i = 0; i < $('installments_options').options.length; i++) {
+				var optValue = $('installments_options').options[i].value;
+
+				if (optValue != '') {
+				    for (var j in slabsJson) {
+					if (parseInt(optValue) == slabsJson[j].unit) {
+					    var calculationPrice = 0;
+					    var optionPrice = 0;
+					    if (slabsJson[j].price_type == '<?php echo MD_Partialpayment_Model_Slabs::INSTALLMENT_SLAB_PRICE_PERCENTAGE ?>') {
+
+						calculationPrice = (currentSelectionPrice * parseFloat(slabsJson[j].price)) / 100;
+						optionPrice = currentSelectionPrice + calculationPrice;
+
+
+					    } else {
+						calculationPrice = parseFloat(slabsJson[j].price);
+						optionPrice	 = currentSelectionPrice + calculationPrice;
+					    }
+
+
+					    var installments = optionsPrice.formatPrice((optionPrice - dispositionInitialPrice) / (slabsJson[j].unit - dispositionInstallmentCount));
+					    var formatedPrice = optionsPrice.formatPrice(optionPrice);
+
+					    $('installments_options').options[i].innerHTML = (slabsJson[j].unit - dispositionInstallmentCount) + " Installments of " + installments + " at Total Price " + formatedPrice;
+					}
+				    }
+				}
+			    }
+			    if ($('initial_label_<?php echo $_product->getId() ?>') && dispositionInitialPrice > 0) {
+				$('initial_label_<?php echo $_product->getId() ?>').update('Pay Now ' + optionsPrice.formatPrice(dispositionInitialPrice) + ' and rest with easy installments.');
+			    }
+			} else {
+			    if ($('dropdown_<?php echo $_product->getId() ?>') && typeof slabsJson[0] != "undefined") {
+				var calculationPrice = 0;
+				var optionPrice = 0;
+				if (slabsJson[0].price_type == '<?php echo MD_Partialpayment_Model_Slabs::INSTALLMENT_SLAB_PRICE_PERCENTAGE ?>') {
+				    calculationPrice = (currentSelectionPrice * parseFloat(slabsJson[0].price)) / 100;
+				    optionPrice	     = currentSelectionPrice + parseFloat(calculationPrice);
+				} else {
+				    calculationPrice = parseFloat(slabsJson[0].price);
+				    optionPrice	     = currentSelectionPrice + parseFloat(calculationPrice);
+				}
+				var installments = formatCurrency((optionPrice - dispositionInitialPrice) / (slabsJson[0].unit - dispositionInstallmentCount),<?php echo $jsPriceFormat ?>);
+				var formatedPrice = formatCurrency(optionPrice,<?php echo $jsPriceFormat ?>);
+				$('dropdown_<?php echo $_product->getId() ?>').update((slabsJson[0].unit - dispositionInstallmentCount) + " Installments of " + installments + " at Total Price " + formatedPrice);
+				
+				if ($('initial_label_<?php echo $_product->getId() ?>') && dispositionInitialPrice > 0) {
+				    $('initial_label_<?php echo $_product->getId() ?>').update('Pay Now ' + formatCurrency(dispositionInitialPrice,<?php echo $jsPriceFormat ?>) + ' and rest with easy installments.');
+				}
+			    }
+			}
+		    });
+	<?php endif; ?>
+	<?php if ($this->getProduct()->getTypeId() == Mage_Catalog_Model_Product_Type::TYPE_CONFIGURABLE): ?>
+		    $(document).observe("configurable:reload-price", function (event) {
+			var eventMemo		  = event.memo;
+			var price		  = parseFloat(eventMemo.price);
+			var configurableConfig	  = eventMemo.configurable;
+			var basePrice		  = parseFloat(configurableConfig.config.basePrice);
+			var currentSelectionPrice = basePrice + price;
+			
+			Object.values(optionsPrice.customPrices).each(function (el) {
+			    currentSelectionPrice += parseFloat(el.price);
+			});
+			
+			dispositionInitialPrice	    = 0;
+			dispositionInstallmentCount = 0;
+			
+			switch (initialType) {
+			    case 'product':
+				if (productInitialAmount > 0) {
+				    dispositionInitialPrice	= productInitialAmount;
+				    dispositionInstallmentCount = 0;
+				}
+				break;
+			    case 'config':
+				if (configAmount > 0) {
+				    dispositionInitialPrice = (configType == paymentFixed) ? configAmount : (currentSelectionPrice * configAmount) / 100;
+				    dispositionInstallmentCount = 0;
+				}
+				break;
+
+			}
+			if (dispositionInitialPrice >= currentSelectionPrice) {
+			    dispositionInitialPrice	= 0;
+			    dispositionInstallmentCount = 0;
+			    
+			    if (typeof customPartial != "undefined") {
+				$(customPartial).checked  = false;
+				$(customPartial).disabled = true;
+			    }
+			    
+			    if (typeof installmentDropdown != "undefined") {
+				if (typeof installmentPriceType != "undefined") {
+				    $(price_type).remove();
+				}
+			
+				if (typeof installmentPrice != "undefined") {
+				    $(price).remove();
+				}
+				
+				if (typeof installments != "undefined") {
+				    $(installments).remove();
+				}
+				
+				$(installmentDropdown).removeClassName('validate-select');
+				$(installmentDropdown).disabled = true;
+				$(installmentDropdown).setStyle({backgroundColor: '#eee'});
+				$(installmentDropdown).addClassName('disabled');
+				$(installmentDropdown).select('option[value=""]')[0].selected = true;
+			    } else {
+				if (typeof installmentPriceType != "undefined") {
+				    $(price_type).disabled = true;
+				}
+				
+				if (typeof installmentPrice != "undefined") {
+				    $(price).disabled = true;
+				}
+				
+				if (typeof installments != "undefined") {
+				    $(installments).disabled = true;
+				}
+			    }
+			} else {
+			    if (typeof customPartial != "undefined") {
+				$(customPartial).disabled = false;
+			    }
+			}
+			if ($('installments_options')) {
+			    for (var i = 0; i < $('installments_options').options.length; i++) {
+				var optValue = $('installments_options').options[i].value;
+				if (optValue != '') {
+				    for (var j in slabsJson) {
+					if (parseInt(optValue) == slabsJson[j].unit) {
+					    var calculationPrice = 0;
+					    var optionPrice = 0;
+					    if (slabsJson[j].price_type == '<?php echo MD_Partialpayment_Model_Slabs::INSTALLMENT_SLAB_PRICE_PERCENTAGE ?>')
+					    {
+
+						calculationPrice = (currentSelectionPrice * parseFloat(slabsJson[j].price)) / 100;
+						optionPrice = currentSelectionPrice + calculationPrice;
+
+
+					    } else {
+						calculationPrice = parseFloat(slabsJson[j].price);
+						optionPrice	 = currentSelectionPrice + calculationPrice;
+					    }
+
+
+					    var installments  = optionsPrice.formatPrice((optionPrice - dispositionInitialPrice) / (slabsJson[j].unit - dispositionInstallmentCount));
+					    var formatedPrice = optionsPrice.formatPrice(optionPrice);
+
+					    $('installments_options').options[i].innerHTML = (slabsJson[j].unit - dispositionInstallmentCount) + " Installments of " + installments + " at Total Price " + formatedPrice;
+					}
+				    }
+				}
+			    }
+			    if ($('initial_label_<?php echo $_product->getId() ?>') && dispositionInitialPrice > 0) {
+				$('initial_label_<?php echo $_product->getId() ?>').update('Pay Now ' + optionsPrice.formatPrice(dispositionInitialPrice) + ' and rest with easy installments.');
+			    }
+			} else {
+			    if ($('dropdown_<?php echo $_product->getId() ?>') && typeof slabsJson[0] != "undefined") {
+				var calculationPrice = 0;
+				var optionPrice = 0;
+				if (slabsJson[0].price_type == '<?php echo MD_Partialpayment_Model_Slabs::INSTALLMENT_SLAB_PRICE_PERCENTAGE ?>')
+				{
+				    calculationPrice = (currentSelectionPrice * parseFloat(slabsJson[0].price)) / 100;
+				    optionPrice = currentSelectionPrice + parseFloat(calculationPrice);
+				} else {
+				    calculationPrice = parseFloat(slabsJson[0].price);
+				    optionPrice = currentSelectionPrice + parseFloat(calculationPrice);
+				}
+				var installments = formatCurrency((optionPrice - dispositionInitialPrice) / (slabsJson[0].unit - dispositionInstallmentCount),<?php echo $jsPriceFormat ?>);
+				var formatedPrice = formatCurrency(optionPrice,<?php echo $jsPriceFormat ?>);
+				$('dropdown_<?php echo $_product->getId() ?>').update((slabsJson[0].unit - dispositionInstallmentCount) + " Installments of " + installments + " at Total Price " + formatedPrice);
+				if ($('initial_label_<?php echo $_product->getId() ?>') && dispositionInitialPrice > 0) {
+				    $('initial_label_<?php echo $_product->getId() ?>').update('Pay Now ' + formatCurrency(dispositionInitialPrice,<?php echo $jsPriceFormat ?>) + ' and rest with easy installments.');
+				}
+			    }
+			}
+		    });
+	<?php endif; ?>
+	<?php if ($this->getProduct()->getTypeId() == Mage_Downloadable_Model_Product_Type::TYPE_DOWNLOADABLE): ?>
+		    $(document).observe("downloadable:reload-price", function (event) {
+			var eventMemo = event.memo;
+			var price = parseFloat(eventMemo.price);
+			var basePrice = parseFloat(optionsPrice.productPrice);
+			var currentSelectionPrice = basePrice + price;
+			Object.values(optionsPrice.customPrices).each(function (el) {
+			    currentSelectionPrice += parseFloat(el.price);
+			});
+			dispositionInitialPrice = 0;
+			dispositionInstallmentCount = 0;
+			switch (initialType) {
+			    case 'product':
+				if (productInitialAmount > 0) {
+				    dispositionInitialPrice = productInitialAmount;
+				    dispositionInstallmentCount = 0;
+				}
+				break;
+			    case 'config':
+				if (configAmount > 0) {
+				    dispositionInitialPrice = (configType == paymentFixed) ? configAmount : (currentSelectionPrice * configAmount) / 100;
+				    dispositionInstallmentCount = 0;
+				}
+				break;
+
+			}
+			if (dispositionInitialPrice >= currentSelectionPrice) {
+			    dispositionInitialPrice = 0;
+			    dispositionInstallmentCount = 0;
+			    //debugger;
+			    if (typeof customPartial != "undefined") {
+				$(customPartial).checked = false;
+				$(customPartial).disabled = true;
+			    }
+			    if (typeof installmentDropdown != "undefined") {
+				if (typeof installmentPriceType != "undefined") {
+				    $(price_type).remove();
+				}
+				if (typeof installmentPrice != "undefined") {
+				    $(price).remove();
+				}
+				if (typeof installments != "undefined") {
+				    $(installments).remove();
+				}
+				$(installmentDropdown).removeClassName('validate-select');
+				$(installmentDropdown).disabled = true;
+				$(installmentDropdown).setStyle({backgroundColor: '#eee'});
+				$(installmentDropdown).addClassName('disabled');
+				$(installmentDropdown).select('option[value=""]')[0].selected = true;
+			    } else {
+				if (typeof installmentPriceType != "undefined") {
+				    $(price_type).disabled = true;
+				}
+				if (typeof installmentPrice != "undefined") {
+				    $(price).disabled = true;
+				}
+				if (typeof installments != "undefined") {
+				    $(installments).disabled = true;
+				}
+			    }
+			} else {
+			    if (typeof customPartial != "undefined") {
+				$(customPartial).disabled = false;
+			    }
+			}
+			if ($('installments_options')) {
+			    for (var i = 0; i < $('installments_options').options.length; i++) {
+				var optValue = $('installments_options').options[i].value;
+				if (optValue != '') {
+				    for (var j in slabsJson) {
+					if (parseInt(optValue) == slabsJson[j].unit) {
+					    var calculationPrice = 0;
+					    var optionPrice = 0;
+					    if (slabsJson[j].price_type == '<?php echo MD_Partialpayment_Model_Slabs::INSTALLMENT_SLAB_PRICE_PERCENTAGE ?>')
+					    {
+
+						calculationPrice = (currentSelectionPrice * parseFloat(slabsJson[j].price)) / 100;
+						optionPrice = currentSelectionPrice + calculationPrice;
+
+
+					    } else {
+						calculationPrice = parseFloat(slabsJson[j].price);
+						optionPrice = currentSelectionPrice + calculationPrice;
+					    }
+
+
+					    var installments = optionsPrice.formatPrice((optionPrice - dispositionInitialPrice) / (slabsJson[j].unit - dispositionInstallmentCount));
+					    var formatedPrice = optionsPrice.formatPrice(optionPrice);
+
+					    $('installments_options').options[i].innerHTML = (slabsJson[j].unit - dispositionInstallmentCount) + " Installments of " + installments + " at Total Price " + formatedPrice;
+					}
+				    }
+
+				}
+			    }
+			    if ($('initial_label_<?php echo $_product->getId() ?>') && dispositionInitialPrice > 0) {
+				$('initial_label_<?php echo $_product->getId() ?>').update('Pay Now ' + optionsPrice.formatPrice(dispositionInitialPrice) + ' and rest with easy installments.');
+			    }
+			} else {
+			    if ($('dropdown_<?php echo $_product->getId() ?>') && typeof slabsJson[0] != "undefined") {
+				var calculationPrice = 0;
+				var optionPrice = 0;
+				if (slabsJson[0].price_type == '<?php echo MD_Partialpayment_Model_Slabs::INSTALLMENT_SLAB_PRICE_PERCENTAGE ?>')
+				{
+				    calculationPrice = (currentSelectionPrice * parseFloat(slabsJson[0].price)) / 100;
+				    optionPrice = currentSelectionPrice + parseFloat(calculationPrice);
+				} else {
+				    calculationPrice = parseFloat(slabsJson[0].price);
+				    optionPrice = currentSelectionPrice + parseFloat(calculationPrice);
+				}
+				var installments = formatCurrency((optionPrice - dispositionInitialPrice) / (slabsJson[0].unit - dispositionInstallmentCount),<?php echo $jsPriceFormat ?>);
+				var formatedPrice = formatCurrency(optionPrice,<?php echo $jsPriceFormat ?>);
+				$('dropdown_<?php echo $_product->getId() ?>').update((slabsJson[0].unit - dispositionInstallmentCount) + " Installments of " + installments + " at Total Price " + formatedPrice);
+				if ($('initial_label_<?php echo $_product->getId() ?>') && dispositionInitialPrice > 0) {
+				    $('initial_label_<?php echo $_product->getId() ?>').update('Pay Now ' + formatCurrency(dispositionInitialPrice,<?php echo $jsPriceFormat ?>) + ' and rest with easy installments.');
+				}
+			    }
+			}
+		    });
+	<?php endif; ?>
+	    $(document).observe("custom-options:reload-price", function (event) {
+		var currentMemo = event.memo;
+		var basePrice = parseFloat(optionsPrice.productPrice);
+		var currentSelectionPrice = basePrice;
+		Object.values(currentMemo.price).each(function (el) {
+		    currentSelectionPrice += parseFloat(el.price);
+		});
+		$H(optionsPrice.optionPrices).each(function (pair) {
+		    if ('undefined' != typeof (pair.value.price) && 'undefined' != typeof (pair.value.oldPrice)) {
+			currentSelectionPrice += parseFloat(pair.value.price);
+		    } else {
+			if (pair.key != 'nontaxable' && pair.key != 'priceInclTax' && pair.key != 'optionsPriceInclTax') {
+			    currentSelectionPrice += parseFloat(pair.value);
+			}
+		    }
+		});
+		dispositionInitialPrice = 0;
+		dispositionInstallmentCount = 0;
+		switch (initialType) {
+		    case 'product':
+			if (productInitialAmount > 0) {
+			    dispositionInitialPrice = productInitialAmount;
+			    dispositionInstallmentCount = 0;
+			}
+			break;
+		    case 'config':
+			if (configAmount > 0) {
+			    dispositionInitialPrice = (configType == paymentFixed) ? configAmount : (currentSelectionPrice * configAmount) / 100;
+			    dispositionInstallmentCount = 0;
+			}
+			break;
+
+		}
+		if (dispositionInitialPrice >= currentSelectionPrice) {
+		    dispositionInitialPrice = 0;
+		    dispositionInstallmentCount = 0;
+		    if (typeof customPartial != "undefined") {
+			$(customPartial).checked = false;
+			$(customPartial).disabled = true;
+		    }
+		    if (typeof installmentDropdown != "undefined") {
+			if (typeof installmentPriceType != "undefined") {
+			    $(price_type).remove();
+			}
+			if (typeof installmentPrice != "undefined") {
+			    $(price).remove();
+			}
+			if (typeof installments != "undefined") {
+			    $(installments).remove();
+			}
+			$(installmentDropdown).removeClassName('validate-select');
+			$(installmentDropdown).disabled = true;
+			$(installmentDropdown).setStyle({backgroundColor: '#eee'});
+			$(installmentDropdown).addClassName('disabled');
+			$(installmentDropdown).select('option[value=""]')[0].selected = true;
+		    } else {
+			if (typeof installmentPriceType != "undefined") {
+			    $(price_type).disabled = true;
+			}
+			if (typeof installmentPrice != "undefined") {
+			    $(price).disabled = true;
+			}
+			if (typeof installments != "undefined") {
+			    $(installments).disabled = true;
+			}
+		    }
+		} else {
+		    if (typeof customPartial != "undefined") {
+			$(customPartial).disabled = false;
+		    }
+		}
+		if ($('installments_options')) {
+		    for (var i = 0; i < $('installments_options').options.length; i++) {
+			var optValue = $('installments_options').options[i].value;
+			if (optValue != '') {
+			    for (var j in slabsJson) {
+				if (parseInt(optValue) == slabsJson[j].unit) {
+				    var calculationPrice = 0;
+				    var optionPrice = 0;
+				    if (slabsJson[j].price_type == '<?php echo MD_Partialpayment_Model_Slabs::INSTALLMENT_SLAB_PRICE_PERCENTAGE ?>')
+				    {
+					calculationPrice = (currentSelectionPrice * parseFloat(slabsJson[j].price)) / 100;
+					optionPrice = currentSelectionPrice + calculationPrice;
+				    } else {
+					calculationPrice = parseFloat(slabsJson[j].price);
+					optionPrice = currentSelectionPrice + calculationPrice;
+				    }
+				    var installments = optionsPrice.formatPrice((optionPrice - dispositionInitialPrice) / (slabsJson[j].unit - dispositionInstallmentCount));
+				    var formatedPrice = optionsPrice.formatPrice(optionPrice);
+
+				    $('installments_options').options[i].innerHTML = (slabsJson[j].unit - dispositionInstallmentCount) + " Installments of " + installments + " at Total Price " + formatedPrice;
+				}
+			    }
+			}
+		    }
+		    if ($('initial_label_<?php echo $_product->getId() ?>')) {
+			$('initial_label_<?php echo $_product->getId() ?>').update('Pay Now ' + optionsPrice.formatPrice(dispositionInitialPrice) + ' and rest with easy installments.');
+		    }
+		} else {
+		    if ($('dropdown_<?php echo $_product->getId() ?>') && typeof slabsJson[0] != "undefined") {
+			var calculationPrice = 0;
+			var optionPrice = 0;
+			if (slabsJson[0].price_type == '<?php echo MD_Partialpayment_Model_Slabs::INSTALLMENT_SLAB_PRICE_PERCENTAGE ?>')
+			{
+			    calculationPrice = (currentSelectionPrice * parseFloat(slabsJson[0].price)) / 100;
+			    optionPrice = currentSelectionPrice + parseFloat(calculationPrice);
+			} else {
+			    calculationPrice = parseFloat(slabsJson[0].price);
+			    optionPrice = currentSelectionPrice + parseFloat(calculationPrice);
+			}
+			var installments = formatCurrency((optionPrice - dispositionInitialPrice) / (slabsJson[0].unit - dispositionInstallmentCount),<?php echo $jsPriceFormat ?>);
+			var formatedPrice = formatCurrency(optionPrice,<?php echo $jsPriceFormat ?>);
+			$('dropdown_<?php echo $_product->getId() ?>').update((slabsJson[0].unit - dispositionInstallmentCount) + " Installments of " + installments + " at Total Price " + formatedPrice);
+			if ($('initial_label_<?php echo $_product->getId() ?>') && dispositionInitialPrice > 0) {
+			    $('initial_label_<?php echo $_product->getId() ?>').update('Pay Now ' + formatCurrency(dispositionInitialPrice,<?php echo $jsPriceFormat ?>) + ' and rest with easy installments.');
+			}
+		    }
+		}
+	    });
+	    var pisoptions = {
+		addValidationClass: function (element) {
+		    //var sourceElement = event.element();
+		    var targetElement = $$('select[name^="custom_options"]')[0];
+		    var price_type = $$('input[name="custom_options[price_type]"]')[0];
+		    var price = $$('input[name="custom_options[price]"]')[0];
+		    var installments = $$('input[name="custom_options[installments]"]')[0];
+		    if (targetElement) {
+			if ($(element).checked) {
+	<?php if (!$helper->isAllowGroups()): ?>
+				    alert("<?php echo $this->__("You are not allowed to purchase this product with partial payment option.") ?>");
+				    $(element).checked = false;
+				    return false;
+	<?php endif; ?>
+			    if ($(targetElement)) {
+				$(targetElement).addClassName('validate-select');
+				$(targetElement).disabled = false;
+				$(targetElement).setStyle({backgroundColor: '#ffffff'});
+				$(targetElement).removeClassName('disabled');
+				if (!price_type) {
+				    $(targetElement).insert({after: '<input type="hidden" name="custom_options[price_type]" />'});
+				}
+				if (!price) {
+				    $(targetElement).insert({after: '<input type="hidden" name="custom_options[price]" />'});
+				}
+				if (!installments) {
+				    $(targetElement).insert({after: '<input type="hidden" name="custom_options[installments]" />'});
+				}
+			    }
+			} else {
+			    if ($(targetElement)) {
+				$(targetElement).removeClassName('validate-select');
+				$(targetElement).disabled = true;
+				$(targetElement).setStyle({backgroundColor: '#eee'});
+				$(targetElement).addClassName('disabled');
+				$(targetElement).select('option[value=""]')[0].selected = true;
+				if (price_type) {
+				    $(price_type).remove();
+				}
+				if (price) {
+				    $(price).remove();
+				}
+				if (installments) {
+				    $(installments).remove();
+				}
+			    }
+			}
+		    } else {
+			if ($(element).checked) {
+			    if (price_type) {
+				$(price_type).disabled = false;
+			    }
+			    if (price) {
+				$(price).disabled = false;
+			    }
+			    if (installments) {
+				$(installments).disabled = false;
+			    }
+			} else {
+			    if (price_type) {
+				$(price_type).disabled = true;
+			    }
+			    if (price) {
+				$(price).disabled = true;
+			    }
+			    if (installments) {
+				$(installments).disabled = true;
+			    }
+			}
+		    }
+		},
+		selectionChange: function (element) {
+		    var price_type = $$('input[name="custom_options[price_type]"]')[0];
+		    var price = $$('input[name="custom_options[price]"]')[0];
+		    var installments = $$('input[name="custom_options[installments]"]')[0];
+		    for (var i in slabsJson) {
+			if (parseInt(element.value) == slabsJson[i].unit) {
+
+			    if (price_type) {
+				$(price_type).writeAttribute("value", slabsJson[i].price_type);
+			    }
+			    if (price) {
+				$(price).writeAttribute("value", slabsJson[i].price);
+			    }
+			    if (installments) {
+				$(installments).writeAttribute("value", parseInt(element.value));
+			    }
+			}
+		    }
+		}
+	    };
+        </script>
+    <?php endif; ?>

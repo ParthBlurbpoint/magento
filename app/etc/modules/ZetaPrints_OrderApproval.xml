@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+
+<config>
+  <modules>
+    <ZetaPrints_OrderApproval>
+      <active>true</active>
+      <codePool>community</codePool>
+    </ZetaPrints_OrderApproval>
+  </modules>
+</config>

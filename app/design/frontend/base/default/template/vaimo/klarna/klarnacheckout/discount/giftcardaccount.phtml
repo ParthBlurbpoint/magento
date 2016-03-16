@@ -1,0 +1,71 @@
+<?php
+/**
+ * Copyright (c) 2009-2014 Vaimo AB
+ *
+ * Vaimo reserves all rights in the Program as delivered. The Program
+ * or any portion thereof may not be reproduced in any form whatsoever without
+ * the written consent of Vaimo, except as provided by licence. A licence
+ * under Vaimo's rights in the Program may be available directly from
+ * Vaimo.
+ *
+ * Disclaimer:
+ * THIS NOTICE MAY NOT BE REMOVED FROM THE PROGRAM BY ANY USER THEREOF.
+ * THE PROGRAM IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+ * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL
+ * THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE PROGRAM OR THE USE OR OTHER DEALINGS
+ * IN THE PROGRAM.
+ *
+ * @category    Vaimo
+ * @package     Vaimo_Klarna
+ * @copyright   Copyright (c) 2009-2014 Vaimo AB
+ */
+?>
+
+<div class="giftcard">
+	<h3><?php echo $this->__('Giftcard') ?> <label for="giftcard_code"><?php echo $this->__('Enter the gift card code') ?></label></h3>
+    <div id="giftcard_balance_lookup"></div>
+    <form id="giftcard-form" action="<?php echo $this->getUrl('checkout/klarna/addGiftCard') ?>" method="post">
+        <fieldset>
+            <div class="v-fix"><input class="required-entry input-text" id="giftcard_code" name="giftcard_code" value="" /></div>
+            <button class="button" onclick="giftcardForm.submit()" type="button" value="<?php echo $this->__('Add Gift Card') ?>"><span><span><?php echo $this->__('Add Gift Card') ?></span></span></button>
+            <img src="<?php echo $this->getSkinUrl('images/opc-ajax-loader.gif')?>" alt="" style="display:none;" id="giftcard-loader" />
+            <?php /*<button class="button check-gc-status" onclick="quickCheckout.checkGiftCardStatus(); return false;" type="button" value="<?php echo $this->__('Check Gift Card status and balance') ?>"><span><span><?php echo $this->__('Check Gift Card status and balance') ?></span></span></button> */ ?>
+            <img src="<?php echo $this->getSkinUrl('images/opc-ajax-loader.gif')?>" alt="" style="display:none;" id="check-giftcard-status-loader" />
+        </fieldset>
+    </form>
+
+    <div id="applied-gift-cards">
+        <?php
+            $_quote = Mage::getSingleton('checkout/session')->getQuote();
+            $_cards = Mage::helper('enterprise_giftcardaccount')->getCards($_quote); ?>
+        <?php foreach ($_cards as $_c): ?>
+        <div class="item">
+            <span class="left">
+                <?php echo $this->__('Gift Card (%s)', $_c['c']); ?>
+                <?php $_url = Mage::getUrl('checkout/klarna/removeGiftCard', array('code'=>$_c['c'])); ?>
+                <?php $_title = $this->__('Remove'); ?>
+                <a href="<?php echo $_url ?>" title="<?php echo $_title; ?>" class="btn-remove"><img src="<?php echo $this->getSkinUrl('images/btn_remove.gif') ?>" alt="<?php echo $this->__('Remove')?>" /></a>
+            </span>
+            <span class="right">
+                -<?php echo $this->helper('checkout')->formatPrice($_c['a']) ?>
+            </span>
+        </div>
+        <?php endforeach; ?>
+        <img src="<?php echo $this->getSkinUrl('images/opc-ajax-loader.gif')?>" alt="" style="display:none;" id="remove-giftcard-loader" />
+    </div>
+
+    <script type="text/javascript">
+    //<![CDATA[
+    var giftcardForm = new VarienForm('giftcard-form');
+    giftcardForm.submit = function() {
+        return VarienForm.prototype.submit.bind(giftcardForm)();
+    }
+    function removeGiftCard(code) {
+        return true;
+    }
+    //]]>
+    </script>
+</div>

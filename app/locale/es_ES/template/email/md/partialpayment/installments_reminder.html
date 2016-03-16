@@ -1,0 +1,161 @@
+<!--@subject Installment Reminder for Order #{{var orderId}} @-->
+<!--@vars
+{"var paidAmount":"Order Paid Amount",
+"var dueAmount":"Order Due Amount",
+"var installmetAmount":"Installment Amount",
+"var productName":"Order Item Product Name",
+"var customerName":"Customer Name",
+"var customerEmail":"Customer Email",
+"var billingAddress.format('html')":"Billing Address",
+"var shippingAddress.format('html')":"Shipping Address",
+"var dueDate":"Installment Due date",
+"var orderDate":"Order Placed Date",
+"var orderId":"Order Increment Id"}
+@-->
+<!--@styles
+body,td { color:#2f2f2f; font:11px/1.35em Verdana, Arial, Helvetica, sans-serif; }
+@-->
+<div style="background:#F6F6F6; font-family:Verdana, Arial, Helvetica, sans-serif; font-size:12px; margin:0; padding:0;">
+    <table cellspacing="0" cellpadding="0" border="0" height="100%" width="100%">
+        <tbody>
+            <tr>
+                <td valign="top" align="center" style="padding:20px 0 20px 0">
+                    <table width="650" cellspacing="0" cellpadding="10" border="0" bgcolor="#FFFFFF" style="border:1px solid #E0E0E0;">
+                        <thead>
+                        <tr>
+                        <td valign="top">
+                            <a href="{{store url=" "}}"=""><img src="{{var logo_url}}" alt="{{var logo_alt}}" style="margin-bottom:10px;" border="0"></a></td>
+                    </tr>
+        <tr>
+            <th>Partial Payment Installment Reminder</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+                <td>
+                    <h2 style="font-size:18px; font-weight:normal; margin:0;">Installment For Order #{{var orderId}}</h2>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <table cellspacing="0" cellpadding="0" border="0" width="650">
+                        <thead>
+                            <tr>
+                                <th align="left" width="325" bgcolor="#EAEAEA" style="font-size:13px; padding:5px 9px 6px 9px; line-height:1em;">Billing Information:</th>
+                                <th width="10"></th>
+                                <th align="left" width="325" bgcolor="#EAEAEA" style="font-size:13px; padding:5px 9px 6px 9px; line-height:1em;">Shipping Information:</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td valign="top" style="font-size:12px; padding:7px 9px 9px 9px; border-left:1px solid #EAEAEA; border-bottom:1px solid #EAEAEA; border-right:1px solid #EAEAEA;">
+                                {{var billingAddress.format('html')}}&nbsp;
+                            </td>
+                            <td>&nbsp;</td>
+                            <td valign="top" style="font-size:12px; padding:7px 9px 9px 9px; border-left:1px solid #EAEAEA; border-bottom:1px solid #EAEAEA; border-right:1px solid #EAEAEA;">
+                                {{var shippingAddress.format('html')}}
+                                &nbsp;
+                            </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <br/>
+                    <table cellspacing="0" cellpadding="0" border="0" width="650">
+                        <thead>
+                            <tr>
+                                <th align="left" width="325" bgcolor="#EAEAEA" style="font-size:13px; padding:5px 9px 6px 9px; line-height:1em;">Paid Amount:</th>
+                            <th width="10"></th>
+                            <th align="left" width="325" bgcolor="#EAEAEA" style="font-size:13px; padding:5px 9px 6px 9px; line-height:1em;">Due Amount:</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td valign="top" style="font-size:12px; padding:7px 9px 9px 9px; border-left:1px solid #EAEAEA; border-bottom:1px solid #EAEAEA; border-right:1px solid #EAEAEA;">
+                                   {{var paidAmount}}&nbsp;
+                                </td>
+                                <td>&nbsp;</td>
+                                <td valign="top" style="font-size:12px; padding:7px 9px 9px 9px; border-left:1px solid #EAEAEA; border-bottom:1px solid #EAEAEA; border-right:1px solid #EAEAEA;">
+                                    {{var dueAmount}}&nbsp;
+                                </td>
+                                </tr>
+                        </tbody>
+                    </table>
+                    <br />
+                    <table cellspacing="0" cellpadding="0" border="0" width="650">
+                        <thead>
+                            <tr>
+                                <th align="left" width="325" bgcolor="#EAEAEA" style="font-size:13px; padding:5px 9px 6px 9px; line-height:1em;">Installment Amount</th>
+                            <th width="10"></th>
+                            <th align="left" width="325" bgcolor="#EAEAEA" style="font-size:13px; padding:5px 9px 6px 9px; line-height:1em;">Product Name</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td valign="top" style="font-size:12px; padding:7px 9px 9px 9px; border-left:1px solid #EAEAEA; border-bottom:1px solid #EAEAEA; border-right:1px solid #EAEAEA;">
+                                    {{var installmetAmount}}&nbsp;
+                                    &nbsp;
+                                </td>
+                                <td>&nbsp;</td>
+                                <td valign="top" style="font-size:12px; padding:7px 9px 9px 9px; border-left:1px solid #EAEAEA; border-bottom:1px solid #EAEAEA; border-right:1px solid #EAEAEA;">
+                                    {{var productName}}&nbsp;
+                                </td>
+                                </tr>
+                        </tbody>
+                    </table>
+                    <br />
+                    <table cellspacing="0" cellpadding="0" border="0" width="650">
+                        <thead>
+                            <tr>
+                                <th align="left" width="325" bgcolor="#EAEAEA" style="font-size:13px; padding:5px 9px 6px 9px; line-height:1em;">Customer Name</th>
+                            <th width="10"></th>
+                            <th align="left" width="325" bgcolor="#EAEAEA" style="font-size:13px; padding:5px 9px 6px 9px; line-height:1em;">Customer Email</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td valign="top" style="font-size:12px; padding:7px 9px 9px 9px; border-left:1px solid #EAEAEA; border-bottom:1px solid #EAEAEA; border-right:1px solid #EAEAEA;">
+                                     {{var customerName}}&nbsp;
+                                    &nbsp;
+                                </td>
+                                <td>&nbsp;</td>
+                                <td valign="top" style="font-size:12px; padding:7px 9px 9px 9px; border-left:1px solid #EAEAEA; border-bottom:1px solid #EAEAEA; border-right:1px solid #EAEAEA;">
+                                    <a href="mailto:{{var customerEmail}}">{{var customerEmail}}</a>&nbsp;
+                                </td>
+                                </tr>
+                        </tbody>
+                    </table>
+                    <br />
+                    <table cellspacing="0" cellpadding="0" border="0" width="650">
+                        <thead>
+                            <tr>
+                                <th align="left" width="325" bgcolor="#EAEAEA" style="font-size:13px; padding:5px 9px 6px 9px; line-height:1em;">Due Date</th>
+                            <th width="10"></th>
+                            <th align="left" width="325" bgcolor="#EAEAEA" style="font-size:13px; padding:5px 9px 6px 9px; line-height:1em;">Order Date</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td valign="top" style="font-size:12px; padding:7px 9px 9px 9px; border-left:1px solid #EAEAEA; border-bottom:1px solid #EAEAEA; border-right:1px solid #EAEAEA;">
+                                    {{var dueDate}}
+                                    &nbsp;
+                                </td>
+                                <td>&nbsp;</td>
+                                <td valign="top" style="font-size:12px; padding:7px 9px 9px 9px; border-left:1px solid #EAEAEA; border-bottom:1px solid #EAEAEA; border-right:1px solid #EAEAEA;">
+                                    {{var orderDate}}&nbsp;
+                                </td>
+                                </tr>
+                        </tbody>
+                    </table>
+                </td>
+            </tr>
+            <tr>
+                        <td bgcolor="#EAEAEA" align="center" style="background:#EAEAEA; text-align:center;"><center><p style="font-size:12px; margin:0;">Thank you again, <strong>{{var store.getFrontendName()}}</strong></p></center></td>
+                    </tr>
+    </tbody>
+                    </table>
+                </td>
+            </tr>
+        </tbody>
+</table>
+</div>
+

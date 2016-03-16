@@ -1,0 +1,173 @@
+<?php
+/**
+ * Copyright (c) 2009-2014 Vaimo AB
+ *
+ * Vaimo reserves all rights in the Program as delivered. The Program
+ * or any portion thereof may not be reproduced in any form whatsoever without
+ * the written consent of Vaimo, except as provided by licence. A licence
+ * under Vaimo's rights in the Program may be available directly from
+ * Vaimo.
+ *
+ * Disclaimer:
+ * THIS NOTICE MAY NOT BE REMOVED FROM THE PROGRAM BY ANY USER THEREOF.
+ * THE PROGRAM IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+ * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL
+ * THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE PROGRAM OR THE USE OR OTHER DEALINGS
+ * IN THE PROGRAM.
+ *
+ * @category    Vaimo
+ * @package     Vaimo_Klarna
+ * @copyright   Copyright (c) 2009-2014 Vaimo AB
+ */
+
+/** @var Vaimo_Klarna_Block_Form_Address_Search $this */
+
+$addresses = $this->getAddresses();
+$limit_for_radiobuttons = 2; // When you have more addresses than this, create dropdown
+
+?>
+
+<li>
+    <ul id="<?php echo $this->getMethodCode(); ?>_addresses" class="address_search">
+
+        <?php
+        /*
+         *
+         * Address can be presented in three different ways, this is when there is only one address available
+         * Since there are no options, we output the address in plain text
+         *
+         *
+         */
+        ?>
+        <?php if (count($addresses)<1): ?>
+
+            <li class="klarna_notification"><?php echo Mage::helper('klarna')->__('No address found. Verify the personal id and try again'); ?></li>
+
+        <?php elseif (count($addresses)==1): ?>
+
+            <?php foreach ($addresses as $address): ?>
+                <?php $tmp_address = array(); ?>
+                <li>
+
+                    <label class="klarna_address_single" for="address_<?php echo $address['id']?>"><?php echo Mage::helper('klarna')->__('Address'); ?></label>
+                    <input id="address_<?php echo $address['id']?>" type="hidden" name="payment[<?php echo $this->getMethodCode(); ?>_address_id]" value='<?php echo $address['id']; ?>' />
+                    <?php
+                    if (isset($address['company_name']) && $address['company_name']) {
+                        $tmp_address[] = $address['company_name'];
+                    } else {
+                        $tmp_address[] = $address['first_name'] . ' ' . $address['last_name'];
+                    }
+                    $tmp_address[] = $address['street'];
+                    $tmp_address[] = $address['zip'] . ' ' . $address['city'];
+                    ?>
+                    <address class="klarna_address_txt"><span><?php echo implode('</span><span>', $tmp_address); ?></span></address>
+                </li>
+            <?php endforeach; ?>
+
+            <?php if ($this->shippingSameAsBilling()): ?>
+                <li class="klarna_notification"><?php echo Mage::helper('klarna')->__('Please note that both shipping and billing address will be updated to this address when you place your order'); ?></li>
+            <?php else: ?>
+                <li class="klarna_notification"><?php echo Mage::helper('klarna')->__('Please note that shipping address will be updated to this address when you place your order'); ?></li>
+            <?php endif; ?>
+
+            <?php
+            /*
+             *
+             * This is the second alternative, when there is only a few addresses.
+             * Each address is listed as a radio button, you must then choose the address you wish to use
+             *
+             *
+             */
+            ?>
+        <?php elseif (count($addresses)>1 && count($addresses)<=$limit_for_radiobuttons): ?>
+
+            <?php $firstf = true; ?>
+            <li class="klarna_addresses"><label><?php echo Mage::helper('klarna')->__('Address'); ?></label></li>
+            <?php foreach ($addresses as $address): ?>
+                <li>
+
+                    <?php
+                        if ($firstf ) {
+                            $checkedstr = 'checked="checked"';
+                            $firstf = false;
+                        } else {
+                            $checkedstr = '';
+                        }
+                        $tmp_address = array();
+                    ?>
+
+                    <input id="address_<?php echo $address['id']?>" type="radio" name="payment[<?php echo $this->getMethodCode(); ?>_address_id]" value='<?php echo $address['id']; ?>' <?php echo $checkedstr ?> />
+                    <?php
+                        if (isset($address['company_name']) && $address['company_name']) {
+                            $tmp_address[] = $address['company_name'];
+                        } else {
+                            $tmp_address[] = $address['first_name'] . ' ' . $address['last_name'];
+                        }
+                        $tmp_address[] = $address['street'];
+                        $tmp_address[] = $address['zip'] . " " . $address['city'];
+                    ?>
+                    <label for="address_<?php echo $address['id']?>" class="klarna_address">
+                        <address><span><?php echo implode('</span><span>', $tmp_address); ?></span></address>
+                    </label>
+
+                </li>
+            <?php endforeach; ?>
+
+            <?php
+            /*
+             *
+             * This is the last alternative, when there are more than just a few addresses
+             * We open up a dropdown with all addresses inside, you choose one before you proceed
+             *
+             *
+             */
+            ?>
+        <?php else: ?>
+
+            <?php $firstf = true; ?>
+            <li class="klarna_addresses"><label><?php echo Mage::helper('klarna')->__('Address'); ?></label></li>
+            <select class="klarna_address_dropdown" id="address_dropdown" name="payment[<?php echo $this->getMethodCode(); ?>_address_id]" >
+            <?php foreach ($addresses as $address): ?>
+                <li>
+
+                    <?php
+                        if ($firstf ) {
+                            $checkedstr = 'selected="selected"';
+                            $firstf = false;
+                        } else {
+                            $checkedstr = '';
+                        }
+                    ?>
+                    <option value='<?php echo $address['id']; ?>' <?php echo $checkedstr; ?> >
+
+                        <?php
+                            if (isset($address['company_name']) && $address['company_name']) {
+                                echo $address['company_name'] . ", ";
+                            } else {
+                                echo $address['first_name'] . ' ' . $address['last_name'] . ", ";
+                            }
+                            echo $address['street'] . ", " . $address['zip'] . ", " . $address['city'];
+                        ?>
+
+                    </option>
+
+                </li>
+            <?php endforeach; ?>
+            </select>
+
+            <?php if ($this->shippingSameAsBilling()): ?>
+                <li class="klarna_notification"><?php echo Mage::helper('klarna')->__('Please note that both shipping and billing address will be updated to this address when you place your order'); ?></li>
+            <?php else: ?>
+                <li class="klarna_notification"><?php echo Mage::helper('klarna')->__('Please note that shipping address will be updated to this address when you place your order'); ?></li>
+            <?php endif; ?>
+
+
+        <?php endif; ?>
+
+    </ul>
+
+</li>
+

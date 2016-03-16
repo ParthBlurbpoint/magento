@@ -1,0 +1,25 @@
+Functional changes to Klarnas standard Library
+
+setVersion
+Function setVersion in Klarna.php changed from protected to public, to be able to set that variable, without having to inherit the class
+
+checkout
+Renamed folder checkout to checkoutkpm, in order to be able to have Klarna checkout library in the same folder
+This change also meant changes had to be made to all files trying to call checkout/* files/classes:
+File Klarna.php, function initCheckout
+File Klarna.php, function checkoutHTML
+
+KlarnaCheckout
+Added folder Checkout and Checkout.php to Klarna folder
+
+Klarna_Checkout_Connector - create
+Klarna_Checkout_BasicConnector - __construct
+Klarna_Checkout_BasicConnector - userAgent
+Added parameter to library so I could send in module and application version in the userAgent
+
+setConfigVariable
+Added function setConfigVariable to Klarna.php, to set test URL for checkoutService API
+
+
+2014-12-16
+Updated library to v3.2.0

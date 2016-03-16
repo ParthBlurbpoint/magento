@@ -1,0 +1,14 @@
+title:MAGMI by dweeves - version:0.7.21_git
+startup:Import Profile:baseprofile
+startup:Import Mode:create
+step:step:0.5%
+plugin;Magmi_DatapumpDS;pluginhello:DataPump Datasource-1.0.0-Dweeves- 
+plugin;Magmi_DefaultAttributeItemProcessor;pluginhello:Standard Attribute Import-1.0.6-Dweeves- 
+plugin;Magmi_DefaultAttributeItemProcessor;startup:Standard Attribute Import v1.0.6 - Newly created items will have default values for columns:status,page_layout,tax_class_id
+itime:100 - 6.5283079147339 - 6.5283079147339
+dbtime:1394 - 0.63459801673889 - 0.63459801673889 - 1394
+itime:200 - 13.940149068832 - 7.4113841056824
+dbtime:2797 - 1.3463943004608 - 0.71179628372192 - 1403
+itime:200 - 13.990561962128 - 0.049984931945801
+dbtime:2811 - 1.3515951633453 - 0.0052008628845215 - 14
+info:Skus imported OK:200/200

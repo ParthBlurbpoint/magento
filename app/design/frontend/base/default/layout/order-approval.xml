@@ -1,0 +1,121 @@
+<?xml version="1.0"?>
+
+<layout version="0.1.0">
+  <customer_account>
+    <reference name="customer_account_navigation">
+      <action method="addLink" translate="label" module="orderapproval">
+        <name>order-approval</name>
+        <path>order-approval/customercart/all</path>
+        <label>Order Approval</label>
+      </action>
+    </reference>
+  </customer_account>
+
+  <orderapproval_customercart_all translate="label">
+    <label>Order Approval</label>
+
+    <update handle="customer_account"/>
+
+    <reference name="my.account.wrapper">
+      <block type="orderapproval/customercart" name="order-approval.cart">
+        <block type="core/text_list" name="order-approval.cart.info" as="info" translate="label">
+          <label>Carts of customers info</label>
+        </block>
+      </block>
+
+      <block type="customer/account_dashboard" name="customer.account.link.back" template="customer/account/link/back.phtml"/>
+    </reference>
+  </orderapproval_customercart_all>
+
+  <orderapproval_customercart_edit translate="label">
+    <label>Customer's cart</label>
+
+    <update handle="customer_account"/>
+
+    <reference name="head">
+      <action method="addJs"><script>jquery/jquery-min.js</script></action>
+      <action method="addJs"><script>fancybox/jquery-fancybox.js</script></action>
+      <action method="addJs"><script>mage/adminhtml/events.js</script></action>
+      <action method="addJs"><script>mage/adminhtml/grid.js</script></action>
+      <action method="addJs"><script>mage/adminhtml/form.js</script></action>
+
+      <action method="addItem"><type>js_css</type><name>fancybox/jquery-fancybox.css</name></action>
+      <action method="addCss"><name>css/order-approval/styles.css</name></action>
+    </reference>
+
+    <reference name="my.account.wrapper">
+      <block type="core/template" name="order-approval.cart.edit">
+        <action method="setTemplate">
+          <template>order-approval/cart/edit.phtml</template>
+        </action>
+
+        <block type="orderapproval/customercart_edit" name="order-approval.cart.edit-table" />
+      </block>
+
+      <block type="customer/account_dashboard" name="customer.account.link.back" template="customer/account/link/back.phtml"/>
+    </reference>
+  </orderapproval_customercart_edit>
+
+  <orderapproval_customercart_item translate="label">
+    <label>Product preview</label>
+
+    <update handle="customer_account"/>
+
+    <reference name="head">
+      <action method="addJs">
+        <script>jquery/jquery-min.js</script>
+      </action>
+
+      <action method="addCss">
+        <name>css/order-approval/styles.css</name>
+      </action>
+    </reference>
+
+    <reference name="my.account.wrapper">
+      <block type="orderapproval/customercart_item"
+             name="order-approval.cart.item"
+             template="order-approval/cart/item.phtml">
+
+        <block type="core/template"
+               name="order-approval.cart.item.customer-info"
+               as="customer_info"
+               template="order-approval/cart/item/customer_info.phtml" />
+
+      </block>
+
+      <block type="customer/account_dashboard"
+             name="customer.account.link.back"
+             template="customer/account/link/back.phtml" />
+    </reference>
+  </orderapproval_customercart_item>
+
+  <orderapproval_email_items_to_approve>
+    <block type="core/template"
+           name="items"
+           template="email/orderapproval/items.phtml">
+
+      <block type="orderapproval/customercart_item"
+             name="order-approval.cart.item"
+             as="item"
+             template="email/orderapproval/item.phtml">
+
+        <action method="setIsEmailForApprover">
+          <value>true</value>
+        </action>
+
+      </block>
+    </block>
+  </orderapproval_email_items_to_approve>
+
+  <orderapproval_email_items>
+    <block type="core/template"
+           name="items"
+           template="email/orderapproval/items.phtml">
+
+      <block type="orderapproval/customercart_item"
+             name="order-approval.cart.item"
+             as="item"
+             template="email/orderapproval/item.phtml" />
+    </block>
+  </orderapproval_email_items>
+</layout>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<config>
+    <modules>
+        <MD_Partialpayment>
+            <codePool>community</codePool>
+            <active>false</active>
+        </MD_Partialpayment>
+    </modules>
+</config>

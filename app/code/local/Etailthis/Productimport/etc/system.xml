@@ -1,0 +1,177 @@
+<?xml version="1.0"?>
+<config>
+	  <sections>
+		<etailthis  translate="label" module="productimport">                    
+		<label>eTailThis Import</label>
+		<tab>catalog</tab>
+		<frontend_type>text</frontend_type>
+		<sort_order>0</sort_order>
+		<show_in_default>1</show_in_default>
+		<show_in_website>1</show_in_website>
+		<show_in_store>1</show_in_store>            
+					<groups>
+				      <sinch_ftp translate="label">
+                    <label>FTP Login Details</label>
+                    <frontend_type>text</frontend_type>
+                    <comment>Get these details from Stock in the Channel for the pricelist you want this store to use. This is not your Stock in the Channel username and password</comment>
+                    <sort_order>50</sort_order>
+                    <show_in_default>1</show_in_default>
+                    <show_in_website>1</show_in_website>
+                    <show_in_store>1</show_in_store>
+                    <fields>
+                    	<ftp_server translate="label">
+				    		<label>FTP Server</label>
+							 <backend_model>productimport/Productimport</backend_model>
+							<frontend_type>text</frontend_type>
+							<sort_order>10</sort_order>
+			            	<show_in_default>1</show_in_default>
+			            	<show_in_website>1</show_in_website>
+			            	<show_in_store>1</show_in_store>
+                    	</ftp_server>
+                    	<login translate="label">
+				    		<label>FTP User Name</label>
+	                        <frontend_type>text</frontend_type>
+			            	<sort_order>15</sort_order>
+			            	<show_in_default>1</show_in_default>
+			            	<show_in_website>1</show_in_website>
+			            	<show_in_store>1</show_in_store>
+                    	</login>
+                    	<password translate="label">
+				    		<label>FTP Password</label>
+	                        <frontend_type>password</frontend_type>
+			            	<sort_order>20</sort_order>
+			            	<show_in_default>1</show_in_default>
+			            	<show_in_website>1</show_in_website>
+			            	<show_in_store>1</show_in_store>
+                    	</password>
+						<replace_category>
+						<label>Merge or Overwrite Categories</label>
+						<frontend_type>select</frontend_type>
+						 <source_model>productimport/system_config_CatRewrite</source_model>
+						<sort_order>30</sort_order>
+						<show_in_default>1</show_in_default>
+						<show_in_website>1</show_in_website>
+						<show_in_store>1</show_in_store>		
+						</replace_category>
+						<replace_products>
+						<label>Merge or Overwrite Products</label>
+						 <frontend_type>select</frontend_type>
+						     <source_model>productimport/system_config_ProdRewrite</source_model>
+						 <sort_order>40</sort_order>
+						<show_in_default>1</show_in_default>
+						<show_in_website>1</show_in_website>
+						<show_in_store>1</show_in_store>		
+						</replace_products>
+						<cronjob translate="label">
+						<label>Cron job expression </label>
+						<frontend_type>text</frontend_type>
+						<sort_order>41</sort_order>
+						<show_in_default>1</show_in_default>
+						<show_in_website>1</show_in_website>
+						<show_in_store>1</show_in_store>
+                        </cronjob>
+                     </fields>
+                </sinch_ftp>
+			  <serverconfiguration translate="label"> 
+			  <label>Check Server Configuration</label>
+			  <frontend_type>text</frontend_type>
+			  <sort_order>0</sort_order>
+			  <show_in_default>1</show_in_default>
+			  <show_in_website>1</show_in_website>
+			  <show_in_store>1</show_in_store>
+			  </serverconfiguration>
+			  <sinch_import_fullstatus translate="label">
+					<label>Import Full Catalogue</label>
+					<frontend_type>text</frontend_type>
+					<comment>An import of 100000 products will take approximately 1 hour.Larger catalogues will take substantially longer.</comment>
+					<sort_order>150</sort_order>
+					<show_in_default>1</show_in_default>
+					<show_in_website>1</show_in_website>
+					<show_in_store>1</show_in_store>
+					<fields>
+						
+						<start_category_import translate="label">
+							<frontend_type>button</frontend_type>
+							<frontend_model>productimport/startcategoryimportbutton</frontend_model>                            
+							<sort_order>4</sort_order>
+							<show_in_default>1</show_in_default>
+							<show_in_website>0</show_in_website>
+							<show_in_store>0</show_in_store>
+						</start_category_import>
+						<start_sinch_import translate="label">
+							<frontend_type>button</frontend_type>
+							<frontend_model>productimport/startimportbutton</frontend_model>                            
+							<sort_order>5</sort_order>
+							<show_in_default>1</show_in_default>
+							<show_in_website>0</show_in_website>
+							<show_in_store>0</show_in_store>
+						</start_sinch_import>
+						<start_attribute_import translate="label">
+							<frontend_type>button</frontend_type>
+							<frontend_model>productimport/startattributeimportbutton</frontend_model>                            <sort_order>6</sort_order>
+							<show_in_default>1</show_in_default>
+							<show_in_website>0</show_in_website>
+							<show_in_store>0</show_in_store>
+						</start_attribute_import>
+						
+						<cronjob translate="label">
+                            <label>Cron job expression</label>
+							<frontend_type>text</frontend_type>
+                            <sort_order>7</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                          </cronjob> 
+					</fields>
+	   </sinch_import_fullstatus>
+	   <sinch_import_stockpricestatus translate="label">
+                    <label>Import Stock &amp; Prices</label>
+                    <frontend_type>text</frontend_type>
+                    <comment>This will import stock and prices ONLY. This process should not take longer 5 minutes.</comment>
+                    <sort_order>160</sort_order>
+                    <show_in_default>1</show_in_default>
+                    <show_in_website>1</show_in_website>
+                    <show_in_store>1</show_in_store>
+                    <fields>
+                        <start_sinch_import translate="label">
+                            <frontend_type>button</frontend_type>
+							<!-- <label>Force Stock & price Update</label>-->
+                            <frontend_model>productimport/stockandpricebutton</frontend_model>                            
+                            <sort_order>40</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>0</show_in_website>
+                            <show_in_store>0</show_in_store>
+                        </start_sinch_import>
+						<cronjob translate="label">
+                            <label>Cron job expression</label>
+							<frontend_type>text</frontend_type>
+                            <sort_order>41</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                          </cronjob>
+                    </fields>
+              </sinch_import_stockpricestatus>
+	   <sinch_import_history>
+                    <label>Import History</label>
+                    <frontend_type>text</frontend_type>
+                    <comment></comment>
+                    <sort_order>170</sort_order>
+                    <show_in_default>1</show_in_default>
+                    <show_in_website>1</show_in_website>
+                    <show_in_store>1</show_in_store>
+                    <fields>
+                        <sinch_import_hist translate="label">
+                            <frontend_type>button</frontend_type>
+							<frontend_model>productimport/importhistory</frontend_model>
+                            <sort_order>4</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>0</show_in_website>
+                            <show_in_store>0</show_in_store>
+                        </sinch_import_hist>
+                    </fields>
+                </sinch_import_history>
+		</groups>
+		</etailthis>
+	  </sections>
+</config>

@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+<config>
+  <modules>
+    <Kodematix_ProductGift>
+      <active>false</active>
+      <codePool>community</codePool>
+    </Kodematix_ProductGift>
+  </modules>
+</config>

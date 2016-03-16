@@ -1,0 +1,38 @@
+<?xml version="1.0"?>
+<config>
+	<menu>
+	  <storelocator module="storelocator">
+		<title>Storelocator</title>
+		<sort_order>100</sort_order>
+		<children>
+		  <storelocator module="storelocator">
+		    <title>Manage Storelocator</title>
+			<sort_order>0</sort_order>
+			<action>admin_storelocator/adminhtml_storelocator</action>
+		  </storelocator>
+		</children>
+	  </storelocator>
+		</menu>
+	  <acl>
+	  <resources>
+		<all>
+		  <title>Allow Everything</title>
+		</all>
+		<admin>
+		  <children>
+			<storelocator translate="title" module="storelocator">
+			  <title>Storelocator</title>
+			  <sort_order>1000</sort_order>
+			  <children>
+		  <storelocator translate="title" module="storelocator">
+			<title>Manage Storelocator</title>
+			<sort_order>0</sort_order>
+		  </storelocator>
+			  </children>
+			</storelocator>
+		  </children>
+		</admin>
+	  </resources>
+	</acl>
+
+  </config>

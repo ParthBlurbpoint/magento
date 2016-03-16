@@ -1,0 +1,50 @@
+<?php
+/**
+ * Copyright (c) 2009-2014 Vaimo AB
+ *
+ * Vaimo reserves all rights in the Program as delivered. The Program
+ * or any portion thereof may not be reproduced in any form whatsoever without
+ * the written consent of Vaimo, except as provided by licence. A licence
+ * under Vaimo's rights in the Program may be available directly from
+ * Vaimo.
+ *
+ * Disclaimer:
+ * THIS NOTICE MAY NOT BE REMOVED FROM THE PROGRAM BY ANY USER THEREOF.
+ * THE PROGRAM IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+ * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL
+ * THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE PROGRAM OR THE USE OR OTHER DEALINGS
+ * IN THE PROGRAM.
+ *
+ * @category    Vaimo
+ * @package     Vaimo_Klarna
+ * @copyright   Copyright (c) 2009-2014 Vaimo AB
+ */
+
+$info = $this->getPaymentInfo();
+
+?>
+
+    <?php if ($info): ?>
+
+        <?php if ($info->getKlarnaReservationId()): ?>
+            <?php if ($this->somethingLeftToCapture() || $this->getMethodCode()==Vaimo_Klarna_Helper_Data::KLARNA_METHOD_CHECKOUT): ?>
+            <li>
+                <?php echo Mage::helper('klarna')->__('Reservation') . ' ' . $info->getKlarnaReservationId(); ?>
+                <?php
+                    switch ($info->getKlarnaReservationStatus()) {
+                        case Vaimo_Klarna_Helper_Data::KLARNA_STATUS_PENDING:
+                           echo ' <strong style="color:orange">(' . Mage::helper('klarna')->__('Reservation Pending') . ')</strong>';
+                           break;
+                        case Vaimo_Klarna_Helper_Data::KLARNA_STATUS_DENIED:
+                           echo ' <strong style="color:red">(' . Mage::helper('klarna')->__('Reservation Denied') . ')</strong>';
+                           break;
+                    }
+                ?>
+            </li>
+            <?php endif; ?>
+        <?php endif; ?>
+
+    <?php endif; ?>

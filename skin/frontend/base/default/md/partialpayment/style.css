@@ -1,0 +1,32 @@
+.partialpayment-box-container{clear: left;text-align: center;margin-bottom: 10px;padding:0;}
+.partialpayment-box-container .partialpayment-label{display: block;margin-bottom: 10px;margin-left: 0;margin-right: 0;line-height: 1;text-align: center;}
+.partial-terms-popup{background: #FFFFFF;border: 5px solid #cccccc;margin: 12px 0 0;position: absolute;text-align: left;width: 550px;z-index: 100;}
+.partial-terms-popup .partial-terms-popup-close{display: block;position: absolute;top: 0px;right: 0px;height: 36px;width: 36px;font-size: 20px;line-height: 32px;text-align: center;}
+.partial-terms-popup .partial-terms-popup-heading{padding: 8px 10px;margin-right: 40px;width: auto;}
+.partial-terms-popup .partial-terms-popup-heading h3{font-size: 14px;margin: 0;overflow: hidden;white-space: nowrap;word-wrap: break-word;text-align: left;text-overflow: ellipsis;}
+.partial-terms-popup .partial-terms-popup-content{border-top: 1px solid #ededed;padding: 10px;margin: 0 10px;overflow: hidden;text-align: left;overflow: auto;height: 305px;}
+ul.form-list .partialpayment{margin-bottom: 10px;margin-top: 10px;float: left;}
+ul.form-list .partialpayment label{width: auto;max-width: none;min-width: inherit;padding:6px 10px 6px 40px;background-color: #f4f4f4;}
+ul.form-list .partialpayment a.link-tip{font-size: 13px;padding-left: 10px;color:#999 !important;font-weight: normal;}
+ul.form-list .partialpayment .checkbox{float: left;margin-right: -40px !important;margin-top: 3px;margin-left: 15px;z-index: 100;position: relative;}
+ul.form-list .partialpayment .input-box{position: relative;margin: 5px 0 0 0;padding: 0;}
+
+/* Summary view page css */
+#partialpayment_installment_payment{min-height:150px;width:100%;display:block;margin: 10px 0 10px 0;}
+
+/* Payment nethods css */
+.partial-payment-methods dt label{color:#636363;background-color: #f4f4f4;display: inline-block;width: auto;max-width: none;min-width: 285px;float: none;padding: 6px 10px 6px 40px;}
+.partial-payment-methods dt input.radio{float: left;margin-right: -40px;margin-top: 10px;margin-left: 15px;position:relative;}
+.partial-payment-methods dt{margin: 0 0 5px;}
+.partial-payment-methods select.year{width: 96px;}
+.partial-payment-methods select.month{width: 120px;margin-right: 10px;}
+.partial-payment-methods p.required{margin-bottom: 5px;float: right;font-size: 12px;margin-top: 0px;color:red;}
+
+ul.form-list .partialpayment-selection label{
+        padding: 6px 10px 6px 8px;
+		text-align:left;
+        
+    }
+	ul.form-list .partialpayment-selection label select#installments_options{
+		width:230px;
+	}

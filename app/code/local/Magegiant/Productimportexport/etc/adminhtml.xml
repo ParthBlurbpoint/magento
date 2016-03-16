@@ -1,0 +1,104 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Magegiant
+ * 
+ * NOTICE OF LICENSE
+ * 
+ * This source file is subject to the magegiant.com license that is
+ * available through the world-wide-web at this URL:
+ * http://magegiant.com/license-agreement/
+ * 
+ * DISCLAIMER
+ * 
+ * Do not edit or add to this file if you wish to upgrade this extension to newer
+ * version in the future.
+ * 
+ * @category    Magegiant
+ * @package     Magegiant_Productimportexport
+ * @copyright   Copyright (c) 2014 Magegiant (http://magegiant.com/)
+ * @license     http://magegiant.com/license-agreement/
+ */
+-->
+<config>
+    <menu>
+        <ie translate="title">
+            <children>
+                <productimportexport translate="title">
+                    <title>Products Import Export</title>
+                    <sort_order>10</sort_order>
+                    <children>
+                        <gui>
+                            <title>GUI</title>
+                            <sort_order>0</sort_order>
+                            <action>productimportexportadmin/adminhtml_product/index</action>
+                        </gui>
+                        <downloadupload translate="title">
+                            <title>Files History</title>
+                            <sort_order>20</sort_order>
+                            <action>productimportexportadmin/adminhtml_product/files</action>
+                        </downloadupload>
+
+                        <settings module="productimportexport" translate="title">
+                            <title>Settings</title>
+                            <sort_order>1000</sort_order>
+                            <action>adminhtml/system_config/edit/section/productimportexport</action>
+                        </settings>
+
+                    </children>
+                </productimportexport>
+            </children>
+        </ie>
+    </menu>
+    <acl>
+        <resources>
+            <all>
+                <title>Allow Everything</title>
+            </all>
+            <admin>
+                <children>
+                    <system>
+                        <children>
+                            <config>
+                                <children>
+                                    <productimportexport module="productimportexport" translate="title">
+                                        <title>Product import export</title>
+                                        <sort_order>71</sort_order>
+                                    </productimportexport>
+                                </children>
+                            </config>
+                        </children>
+                    </system>
+                    <ie  translate="title">
+                        <children>
+                            <productimportexport translate="title">
+                                <title>Products Import Export</title>
+                                <sort_order>10</sort_order>
+                                <children>
+                                    <gui>
+                                        <title>GUI</title>
+                                        <sort_order>0</sort_order>
+                                        <action>productimportexportadmin/adminhtml_product/index</action>
+                                    </gui>
+                                    <downloadupload translate="title">
+                                        <title>Files History</title>
+                                        <sort_order>20</sort_order>
+                                        <action>productimportexportadmin/adminhtml_product/files</action>
+                                    </downloadupload>
+
+                                    <settings module="productimportexport" translate="title">
+                                        <title>Settings</title>
+                                        <sort_order>1000</sort_order>
+                                        <action>adminhtml/system_config/edit/section/productimportexport</action>
+                                    </settings>
+
+                                </children>
+                            </productimportexport>
+
+                        </children>
+                    </ie>
+                </children>
+            </admin>
+        </resources>
+    </acl>
+</config>

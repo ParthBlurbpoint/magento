@@ -1,0 +1,52 @@
+<?xml version="1.0"?>   
+<layout version="0.0.9">   
+  <cms_index_index>
+   <reference name="content" ifconfig="featureproduct/homepage_setting/enabled_homepage">
+            <block type="featureproduct/index" name="featureproduct" as="featureproduct" before="++">
+			 <action method="setTemplate" ifconfig="featureproduct/homepage_setting/enabled_homepage"><template>featureproduct/featureblock.phtml</template></action>
+			</block>
+        </reference>
+</cms_index_index>
+ 	<default>
+	<reference name="right" ifconfig="featureproduct/rightblock_setting/enabled_rightblock" >
+            <block type="featureproduct/index" name="right.featureproduct" as="right.featureproduct" before="++">
+			 <action method="setTemplate" ifconfig="featureproduct/rightblock_setting/enabled_rightblock"><template>featureproduct/featureblock.phtml</template></action>
+			</block>
+        </reference>
+	 	<reference name="content" ifconfig="featureproduct/content_setting/enabled_contentblock">
+            <block type="featureproduct/index" name="content.featureproduct" as="content.featureproduct" before="++">
+			 <action method="setTemplate" ifconfig="featureproduct/content_setting/enabled_contentblock"><template>featureproduct/featureblock.phtml</template></action>
+			</block>
+        </reference>
+ <reference name="head">
+            <action method="addItem" ifconfig="featureproduct/jquery_enable/enabled_jquery">
+                <type>skin_js</type>
+                <name>js/featuredproduct/jquery-1.10.2.min.js</name>
+                <params/>
+                <if/>
+            </action>
+     </reference>
+	  <reference name="head">
+            <action method="addItem">
+                <type>skin_js</type>
+                <name>js/featuredproduct/jquery.bxslider.js</name>
+                <params/>
+                <if/>
+            </action>
+     </reference>
+	  <reference name="head">
+            <action method="addItem">
+                <type>skin_js</type>
+                <name>js/featuredproduct/noconflict.js</name>
+                <params/>
+                <if/>
+            </action>
+     </reference>
+	 <reference name="head">
+            <action method="addCss">
+                <stylesheet>css/jquery.bxslider.css</stylesheet>
+            </action>
+      </reference>
+	</default>
+</layout>   
+	

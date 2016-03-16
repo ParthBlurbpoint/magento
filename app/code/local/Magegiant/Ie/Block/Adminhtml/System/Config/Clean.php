@@ -1,0 +1,68 @@
+<?php
+/**
+ *
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the  License
+ * that is bundled with this package in the file LICENSE_EE.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://magegiant.com/license-agreement/
+ * If you did not receive a copy of the license and are unable to
+ * obtain it through the world-wide-web, please send an email
+ * to license@magentocommerce.com so we can send you a copy immediately.
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade Magento to newer
+ * versions in the future. If you wish to customize Magento for your
+ * needs please refer to http://www.magentocommerce.com for more information.
+ *
+ * @category    Magegiant
+ * @package     Magegiant_Ie
+ * @copyright   Copyright (c) 2014 Magegiant
+ * @license     http://magegiant.com/license-agreement/
+ */
+
+/**
+ * Clean now import/export file history button renderer
+ *
+ * @category    Magegiant
+ * @package     Magegiant_Ie
+ * @author     Magegiant Developers
+ */
+class Magegiant_Ie_Block_Adminhtml_System_Config_Clean extends Mage_Adminhtml_Block_System_Config_Form_Field
+{
+    /**
+     * Remove scope label
+     *
+     * @param  Varien_Data_Form_Element_Abstract $element
+     * @return string
+     */
+    public function render(Varien_Data_Form_Element_Abstract $element)
+    {
+        $element->unsScope()->unsCanUseWebsiteValue()->unsCanUseDefaultValue();
+        return parent::render($element);
+    }
+
+    /**
+     * Return element html
+     *
+     * @param  Varien_Data_Form_Element_Abstract $element
+     * @return string
+     */
+    protected function _getElementHtml(Varien_Data_Form_Element_Abstract $element)
+    {
+        $url    = $this->getUrl('*/scheduled_operation/logClean', array(
+            'section' => $this->getRequest()->getParam('section')
+        ));
+        $button = $this->getLayout()->createBlock('adminhtml/widget_button')
+            ->setData(array(
+                'id'        => 'clean_now',
+                'label'     => $this->helper('magegiant_ie')->__('Clean Now'),
+                'onclick'   => 'setLocation(\'' . $url . '\')'
+            ));
+
+        return $button->toHtml();
+    }
+}

@@ -1,0 +1,5 @@
+<?php $_item = $this->getItem(); ?>
+
+<span class="cart-price">
+  <?php echo $this->helper('checkout')->formatPrice($_item->getRowTotal()) ?>
+</span>

@@ -1,0 +1,27 @@
+<?php
+    $isTwoColumnLayout = Mage::getStoreConfig('payment/vaimo_klarna_checkout/klarna_layout');
+    $showLoginForm = (bool) Mage::getStoreConfig('payment/vaimo_klarna_checkout/show_login_form');
+    $layoutCls = $isTwoColumnLayout ? 'klarna_layout-2-column row' : 'klarna_layout-default';
+    $bootstrapClsList = $isTwoColumnLayout ? 'col-md-8 col-sm-12' : '';
+?>
+
+<div class="klarna_wrapper <?php echo $layoutCls; ?>" id="klarna_container" data-layout="<?php echo $isTwoColumnLayout; ?>">
+    <?php echo $this->getChildHtml('klarna_header'); ?>
+
+    <?php if ($isTwoColumnLayout && $showLoginForm && !$this->helper('customer')->isLoggedIn()) : ?>
+        <?php echo $this->getChildHtml('klarna_login') ?>
+    <?php endif; ?>
+
+    <div class="klarna_main <?php echo $bootstrapClsList; ?>" id="klarna_main">
+        <?php if (!$isTwoColumnLayout) : ?>
+            <?php echo $this->getChildHtml('klarna_default'); ?>
+        <?php endif; ?>
+
+        <?php echo $this->getChildHtml('klarna_checkout'); ?>
+    </div>
+
+    <?php if ($isTwoColumnLayout) : ?>
+        <?php echo $this->getChildHtml('klarna_sidebar'); ?>
+    <?php endif; ?>
+
+</div>

@@ -1,0 +1,101 @@
+<?php
+/**
+* Magedelight
+* Copyright (C) 2014 Magedelight <info@magedelight.com>
+*
+* NOTICE OF LICENSE
+*
+* This program is free software: you can redistribute it and/or modify
+* it under the terms of the GNU General Public License as published by
+* the Free Software Foundation, either version 3 of the License, or
+* (at your option) any later version.
+*
+* This program is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+* GNU General Public License for more details.
+*
+* You should have received a copy of the GNU General Public License
+* along with this program. If not, see http://opensource.org/licenses/gpl-3.0.html.
+*
+* @category MD
+* @package MD_Partialpayment
+* @copyright Copyright (c) 2014 Mage Delight (http://www.magedelight.com/)
+* @license http://opensource.org/licenses/gpl-3.0.html GNU General Public License,version 3 (GPL-3.0)
+* @author Magedelight <info@magedelight.com>
+*/
+	$c          = $this->getPaymentMethodCode();
+	$tokenCards = $this->getAvailableTokenCards($c);
+	$cTokens    = ($tokenCards->getSize()>0 && $this->getCanUseToken());
+    	$defToken = $this->helper('sagepaysuite/token')->getDefaultToken();
+    ?>
+<div id="tokencards-payment-<?php echo $c; ?>"<?php if($c == 'sagepayserver'): ?> class="nothide"<?php endif; ?>>
+    <ul class="form-list tokensage">
+        <li class="tokencard-radio">
+            <select name="<?php echo $c; ?>[sagepay_token_cc_id]" id="<?php echo $c; ?>-token-selection" class="select">
+                <option value=""><?php echo $this->__("Select New Card") ?></option>
+                <?php foreach($tokenCards as $_tcard): ?>
+                <?php
+                    $radioId = $c . '_tokencard_' . $_tcard->getId();
+                    $isDef = $_tcard->getId() == $defToken->getId();
+                ?>
+                <option value="<?php echo $_tcard->getId(); ?>" id="<?php echo $radioId; ?>"><?php echo $this->__('%s, Exp. %s', $_tcard->getCcNumber(), $_tcard->getExpireDate()); ?> <?php if($_tcard->Nickname !== NULL){ echo ' - '.$_tcard->Nickname; } ?></option>
+                <?php endforeach; ?>
+            </select>
+        </li>
+        <li id="cc2-<?php echo $c; ?>">
+            <label class="required" for="<?php echo $c ?>_token_cvv"><em>*</em><?php echo $this->__('CV2'); ?></label>
+            <input style="width:3em !important;" type="text" name="<?php echo $c; ?>[token_cvv]" title="<?php echo $this->__('Credit Card CV2') ?>" class="input-text required-entry validate-digits cvv tokencvv"/>
+        </li>
+    </ul>
+</div>
+<script type="text/javascript">
+    document.observe("dom:loaded", function() {
+        $("<?php echo $c; ?>-token-selection").select("option").each(function(){
+            var ElementValue = $("<?php echo $c; ?>-token-selection").getValue();
+            var diveElement = $$(".paymentsage<?php echo $c; ?>")[0];
+            if(ElementValue == ''){
+                diveElement.setStyle({display:"block"});
+                diveElement.select("input","select").each(function(tElement){
+                    $(tElement).disabled = false;
+                });
+                $("cc2-<?php echo $c; ?>").setStyle({display:"none"});
+                $("cc2-<?php echo $c; ?>").select("input[type=\"text\"]").each(function(cvvElement){
+                    $(cvvElement).disabled = true;
+                });
+            }else{
+                diveElement.setStyle({display:"none"});
+                diveElement.select("input","select").each(function(tElement){
+                    $(tElement).disabled = true;
+                });
+                $("cc2-<?php echo $c; ?>").setStyle({display:"block"});
+                $("cc2-<?php echo $c; ?>").select("input[type=\"text\"]").each(function(cvvElement){
+                    $(cvvElement).disabled = false;
+                });
+            }
+        });
+        $("<?php echo $c; ?>-token-selection").observe("change",function(event){
+            var ElementValue = $("<?php echo $c; ?>-token-selection").getValue();
+            var diveElement = $$(".paymentsage<?php echo $c; ?>")[0];
+            if(ElementValue == ''){
+                diveElement.setStyle({display:"block"});
+                diveElement.select("input","select").each(function(tElement){
+                    $(tElement).disabled = false;
+                });
+                $("cc2-<?php echo $c; ?>").setStyle({display:"none"});
+                $("cc2-<?php echo $c; ?>").select("input[type=\"text\"]").each(function(cvvElement){
+                    $(cvvElement).disabled = true;
+                });
+            }else{
+                diveElement.setStyle({display:"none"});
+                diveElement.select("input","select").each(function(tElement){
+                    $(tElement).disabled = true;
+                });
+                $("cc2-<?php echo $c; ?>").setStyle({display:"block"});
+                $("cc2-<?php echo $c; ?>").select("input[type=\"text\"]").each(function(cvvElement){
+                    $(cvvElement).disabled = false;
+                });
+            }
+        });
+    });
+</script>

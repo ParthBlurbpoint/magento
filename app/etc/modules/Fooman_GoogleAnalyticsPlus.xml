@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<config>
+    <modules>
+        <Fooman_GoogleAnalyticsPlus>
+            <active>true</active>
+            <codePool>community</codePool>
+            <depends>
+                <Mage_GoogleAnalytics/>
+                <Fooman_Common/>
+            </depends>
+        </Fooman_GoogleAnalyticsPlus>
+    </modules>
+</config>

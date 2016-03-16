@@ -1,0 +1,3 @@
+<?php $_item = $this->getItem(); ?>
+
+<input name="cart[<?php echo $_item->getId() ?>][qty]" value="<?php echo $this->getQty() ?>" size="4" title="<?php echo $this->__('Qty') ?>" class="input-text qty" maxlength="12" readonly="readonly" />

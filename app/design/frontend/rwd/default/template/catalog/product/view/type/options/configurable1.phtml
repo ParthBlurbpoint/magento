@@ -1,0 +1,54 @@
+<?php
+$_product    = $this->getProduct();
+$_attributes = Mage::helper('core')->decorateArray($this->getAllowAttributes());
+?>
+<?php if ($_product->isSaleable() && count($_attributes)):?>
+<dl>
+    <?php foreach($_attributes as $_attribute): ?>
+    <dt><label class="required"><em>*</em><?php echo $_attribute->getLabel() ?></label></dt>
+    <dd<?php if ($_attribute->decoratedIsLast){?> class="last"<?php }?>>
+        <div class="input-box">
+            <select name="super_attribute[<?php echo $_attribute->getAttributeId() ?>]" id="attribute<?php echo $_attribute->getAttributeId() ?>" class="required-entry super-attribute-select"
+                    onchange="return changeSku(<?php echo $_attribute->getAttributeId() ?>, this);">
+                <option><?php echo $this->__('Choose an Option...') ?></option>
+            </select>
+        </div>
+    </dd>
+    <?php endforeach; ?>
+</dl>
+<script type="text/javascript">
+    var spConfig = new Product.Config(<?php echo $this->getJsonConfig() ?>);
+</script>
+
+    <?php endif;?>
+
+<div id="sku-container"></div>
+
+<?php
+$conf = Mage::getModel('catalog/product_type_configurable')->setProduct($_product);
+$col = $conf->getUsedProductCollection()->addAttributeToSelect('*')->addFilterByRequiredOptions();
+
+$productMap = array();
+foreach($col as $simpleProduct){
+    $productMap[$simpleProduct->getId()] = $simpleProduct->getSku();
+}
+?>
+
+<script type="text/javascript">
+
+document.observe("dom:loaded", function() {
+  $("sku-container").update("<strong>Product Id: </strong> Select an option to display Product Id");
+});
+
+function changeSku(confAttributeId, sel) {
+    var productMap = <?php echo Mage::helper('core')->jsonEncode($productMap);?>;
+    var selectedAttributeId = sel.options[sel.selectedIndex].value;
+    if (selectedAttributeId) {
+        var options = spConfig.config.attributes[confAttributeId].options;
+        var productId = options.find(function (option) {return option.id == selectedAttributeId}).products[0]
+        $("sku-container").update("<strong>Product Id: </strong>" + productMap[productId]);
+    } else {
+        $("sku-container").update("<strong>Product Id: </strong> Select an option to display Product Id");
+    }
+}
+</script>

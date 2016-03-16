@@ -1,0 +1,244 @@
+<?php 
+/**
+* Magedelight
+* Copyright (C) 2014 Magedelight <info@magedelight.com>
+*
+* NOTICE OF LICENSE
+*
+* This program is free software: you can redistribute it and/or modify
+* it under the terms of the GNU General Public License as published by
+* the Free Software Foundation, either version 3 of the License, or
+* (at your option) any later version.
+*
+* This program is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+* GNU General Public License for more details.
+*
+* You should have received a copy of the GNU General Public License
+* along with this program. If not, see http://opensource.org/licenses/gpl-3.0.html.
+*
+* @category MD
+* @package MD_Partialpayment
+* @copyright Copyright (c) 2014 Mage Delight (http://www.magedelight.com/)
+* @license http://opensource.org/licenses/gpl-3.0.html GNU General Public License,version 3 (GPL-3.0)
+* @author Magedelight <info@magedelight.com>
+*/
+$quote = Mage::getSingleton("checkout/cart")->getQuote();
+$isFullSelected = (boolean)$quote->getMdPartialpaymentFullCart();
+$currentCount = ($isFullSelected) ? $quote->getMdPartialpaymentInstallmentsCount(): '';
+$currentType = ($isFullSelected) ? $quote->getMdPartialpaymentPriceType(): '';
+$currentPrice = ($isFullSelected) ? $quote->getMdPartialpaymentPrice(): '';
+$configSlabsOptions = Mage::helper('md_partialpayment')->getConfigInstallmentOptions();
+$displayOpt = Mage::helper("md_partialpayment")->getIsFullCartPartialPaymentEnabled();
+$configInitialType = Mage::getStoreConfig("md_partialpayment/general/initial_payment_type",$quote->getStoreId());
+$configPrice = Mage::getStoreConfig("md_partialpayment/general/initial_payment_amount",$quote->getStoreId());
+$jsPriceFormat = Mage::helper('core')->jsonEncode(Mage::app()->getLocale()->getJsPriceFormat());
+						$cartQtyTotal = 0;
+						foreach($quote->getAllVisibleItems() as $_item){
+							$cartQtyTotal += $_item->getQty();
+						}
+?>
+<?php if(is_array($configSlabsOptions) && count($configSlabsOptions) > 0 && in_array($displayOpt,array(MD_Partialpayment_Model_Options::DISPLAY_OPTIONS_CART,MD_Partialpayment_Model_Options::DISPLAY_OPTIONS_BOTH))): ?>
+<style type="text/css">
+    #partialpayment_full_cart .partialpayment-full-cart{
+        margin-bottom: 20px;
+        padding: 10px;
+        background-color: #f4f4f4;
+        border: 1px solid #cccccc;
+    }
+    #partialpayment_full_cart label{
+        font-family: "Raleway", "Helvetica Neue", Verdana, Arial, sans-serif;
+        font-size: 12px;
+        font-weight: 400;
+        text-align: left;
+        text-transform: uppercase;
+        min-width: 105px;
+        display: inline-block;
+        margin-right: 10px;
+    }
+    #partialpayment_full_cart select{
+        max-width: 100%;
+        height: 30px;
+        display: inline-block;
+        border: 1px solid silver;
+        width:325px;
+    }
+    #partialpayment_full_cart .input-box{
+        display:inline-block !important;
+    }
+    #partialpayment_full_cart .button-wrapper{
+        display: inline-block;
+        vertical-align: bottom;
+    }
+    #partialpayment_full_cart .button-wrapper button{
+        float: left;
+    }
+    #partialpayment_full_cart h2{
+        font-size: 12px;
+        font-weight: bold;
+        margin: 0 0 5px;
+    }
+</style>
+<form id="partialpayment_full_cart" action="<?php echo $this->getUrl("md_partialpayment/summary/cartPayment") ?>" method="post">  
+    <div class="partialpayment-full-cart">
+        <h2><?php echo $this->__("Checkout with Partial Payment For Whole Cart") ?></h2>
+        <div class="partialpayment-full-cart-form">
+                <label for="partialpayment_full_cart_options"><span id="full_label_<?php echo $quote->getId() ?>"><?php echo $this->__('Partial Payment Option <b>(%s)</b>',Mage::helper("md_partialpayment")->getFrequencyLabel()) ?></span></label>
+                <div class="input-box">
+                    <?php if(!$isFullSelected): ?>
+                    <select name="partialpayment[options]" id="partialpayment_full_cart_options" class="validate-select">
+                        <option value=""><?php echo "------Select Installments------"; ?></option>
+                        <?php foreach($configSlabsOptions as $_slab): ?>
+                        <?php $price = ($_slab['price_type'] == MD_Partialpayment_Model_Slabs::INSTALLMENT_SLAB_PRICE_FIXED) ? Mage::helper('core')->currency($_slab['price'],true,false): Mage::helper('core')->currency($_slab['price'],false,false).'%'; ?>
+                        <?php $label = sprintf("%d installments with %s installment fees",(int)$_slab['unit'],$price) ?>
+                        <option <?php if($currentCount == $_slab['unit']):  ?>selected="selected" <?php endif; ?> value="<?php echo (int)$_slab['unit'] ?>"><?php echo $label; ?></option>
+                        <?php endforeach; ?>
+                    </select>
+                    <input <?php if($currentCount == ''): ?>disabled="disabled"<?php endif; ?> type="hidden" name="partialpayment[installments]" value="<?php echo $currentCount ?>" />
+                    <input <?php if($currentPrice == ''): ?>disabled="disabled"<?php endif; ?> type="hidden" name="partialpayment[price]" value="<?php echo $currentPrice ?>" />
+                    <input <?php if($currentType == ''): ?>disabled="disabled"<?php endif; ?> type="hidden" name="partialpayment[price_type]" value="<?php echo $currentType ?>" />
+                    <?php else: ?>
+                    <?php
+                        $origSubtotal = 0;
+                        $installmentsCount = (int)$quote->getMdPartialpaymentInstallmentsCount();
+                        $priceType = (int)$quote->getMdPartialpaymentPriceType();
+                        $price = (float)$quote->getMdPartialpaymentPrice();
+                        foreach($quote->getAllVisibleItems() as $_item){
+                            $infoBuyRequestOption = $_item->getOptionByCode("partialpayment_origional_price");
+                            if($infoBuyRequestOption){
+                                $origSubtotal += (float)$infoBuyRequestOption->getValue() * $_item->getQty();
+                            }
+                        }
+                        $initialAmount = ($configInitialType == MD_Partialpayment_Model_Options::PAYMENT_FIXED) ? ($configPrice * $quote->getItemsQty()): ($origSubtotal * $configPrice) / 100;
+                        if($priceType == 1){
+                            $calculationPrice = ($origSubtotal * $price) / 100;
+                            $optionPrice = $origSubtotal + $calculationPrice;
+                        }else{
+                            $calculationPrice = $price * $cartQtyTotal;
+                            $optionPrice = $origSubtotal + $calculationPrice;
+                        }
+                        $currentInstallments = Mage::helper('core')->currency(($optionPrice - $initialAmount) / $installmentsCount,true,false);
+                        $currentFinalPrice = Mage::helper('core')->currency($optionPrice,true,false);
+                        echo sprintf("%d Installments of %s at Total Price %s<br />",$installmentsCount,$currentInstallments,$currentFinalPrice);
+                    ?>
+                    <?php endif; ?>
+                    <div class="button-wrapper">
+                        <?php if($isFullSelected): ?>
+                        <button type="button" title="<?php echo $this->__('Remove') ?>" class="button2" onclick="window.location='<?php echo $this->getUrl("md_partialpayment/summary/removeCartOption") ?>'"><span><span><?php echo $this->__('Remove') ?></span></span></button>
+                        <?php else: ?>
+                        <button type="button" title="<?php echo $this->__('Apply') ?>" class="button2" onclick="cartOptionForm.submit();"><span><span><?php echo $this->__('Apply') ?></span></span></button>
+                        <?php endif; ?>
+                    </div>
+                </div>
+        </div>
+    </div>
+</form>
+<?php if(!$isFullSelected): ?>
+<script type="text/javascript">
+    //<![CDATA[
+    var configAmount = parseFloat(<?php echo $configPrice ?>);
+    var configType = '<?php echo $configInitialType ?>';
+	var productInitialAmount = (configType == '<?php echo MD_Partialpayment_Model_Options::PAYMENT_FIXED ?>') ? configAmount * parseInt(<?php echo $quote->getItemsQty() ?>): (parseFloat(<?php echo $quote->getSubtotal() ?>) * configAmount) / 100;
+	document.observe("dom:loaded", function() {
+		var currentSelectionPrice = parseFloat(<?php echo $quote->getSubtotal() ?>);
+		dispositionInitialPrice = 0;
+		dispositionInstallmentCount = 0;
+		if(productInitialAmount > 0){
+			dispositionInitialPrice = (configType == '<?php echo MD_Partialpayment_Model_Options::PAYMENT_FIXED ?>') ? configAmount * parseInt(<?php echo $quote->getItemsQty() ?>): (currentSelectionPrice * configAmount) / 100;
+			dispositionInstallmentCount = 0;
+		}
+		if($('partialpayment_full_cart_options')){
+			for(var i=0;i<$('partialpayment_full_cart_options').options.length;i++){
+				var optValue = $('partialpayment_full_cart_options').options[i].value;
+				if(optValue != ''){
+					for(var j in slabsJson){
+						if(parseInt(optValue) == slabsJson[j].unit){
+							var calculationPrice = 0;
+							 var optionPrice = 0;
+							 if(slabsJson[j].price_type == '<?php echo MD_Partialpayment_Model_Slabs::INSTALLMENT_SLAB_PRICE_PERCENTAGE ?>'){
+									calculationPrice = (currentSelectionPrice * parseFloat(slabsJson[j].price)) / 100;
+                                    optionPrice = currentSelectionPrice + calculationPrice;
+							 }else{
+									calculationPrice = parseFloat(slabsJson[j].price) * parseInt(<?php echo $cartQtyTotal ?>);
+                                    optionPrice = currentSelectionPrice + calculationPrice;
+							 }
+							 var installments = formatCurrency((optionPrice - dispositionInitialPrice) / (slabsJson[j].unit - dispositionInstallmentCount),<?php echo $jsPriceFormat ?>);
+                             var formatedPrice = formatCurrency(optionPrice,<?php echo $jsPriceFormat ?>);
+							 
+							 $('partialpayment_full_cart_options').options[i].innerHTML = (slabsJson[j].unit - dispositionInstallmentCount)+" Installments of "+installments+" at Total Price "+formatedPrice;
+						}
+					}
+				}
+			}
+			if(dispositionInitialPrice > 0){
+				if($('full_label_<?php echo $quote->getId() ?>')){
+					$('full_label_<?php echo $quote->getId() ?>').update('Pay Now <b>'+formatCurrency(dispositionInitialPrice,<?php echo $jsPriceFormat ?>)+'</b> and rest with easy installments<b>(<?php echo Mage::helper("md_partialpayment")->getFrequencyLabel() ?>)</b>');
+				}
+			}
+		}
+	});
+    var cartOptionForm = new VarienForm('partialpayment_full_cart');
+    cartOptionForm.submit = function () {
+        <?php if(!Mage::helper("md_partialpayment")->isAllowGroups()): ?>
+		alert("<?php echo $this->__("You are not allowed to purchase this product with partial payment option.") ?>");
+		return false;
+                <?php else: ?>
+                return VarienForm.prototype.submit.bind(cartOptionForm)();    
+                <?php endif; ?>
+        }
+    var slabsJson = <?php echo Mage::helper('core')->jsonEncode(Mage::helper('md_partialpayment')->getConfigInstallmentOptions()) ?>;
+    $('partialpayment_full_cart_options').observe("change",function(event){
+        var targetElement = Event.findElement(event);
+        var price_type = $$('input[name="partialpayment[price_type]"]')[0];
+        var price = $$('input[name="partialpayment[price]"]')[0];
+        var installments = $$('input[name="partialpayment[installments]"]')[0];
+        
+        if($(targetElement).getValue() !== ''){
+            for(var i in slabsJson){
+                if(parseInt(targetElement.value) == slabsJson[i].unit){
+                    if(price_type){
+                        $(price_type).writeAttribute("value",slabsJson[i].price_type);
+                        $(price_type).disabled = false;
+                    }
+                    if(price){
+                        $(price).writeAttribute("value",slabsJson[i].price);
+                        $(price).disabled = false;
+                    }
+                    if(installments){
+                        $(installments).writeAttribute("value",parseInt(targetElement.value));
+                        $(installments).disabled = false;
+                    }
+                }
+            }
+            
+        }else{
+            if(price_type){
+                $(price_type).setValue("");
+                $(price_type).disabled = true;
+            }
+            if(price){
+                $(price).setValue("");
+                $(price).disabled = true;
+            }
+            if(installments){
+                $(installments).setValue("");
+                $(installments).disabled = true;
+            }
+        }
+    });
+    //]]>
+</script>
+<?php else: ?>
+<script type="text/javascript">
+document.observe("dom:loaded", function() {
+    var dispositionInitialPrice = parseFloat(<?php echo $initialAmount ?>);
+    if(dispositionInitialPrice > 0){
+				if($('full_label_<?php echo $quote->getId() ?>')){
+					$('full_label_<?php echo $quote->getId() ?>').update('Pay Now <b>'+formatCurrency(dispositionInitialPrice,<?php echo $jsPriceFormat ?>)+'</b> and rest with easy installments<b>(<?php echo Mage::helper("md_partialpayment")->getFrequencyLabel() ?>)</b>');
+				}
+			}
+});
+</script>
+<?php endif; ?>
+<?php endif; ?>

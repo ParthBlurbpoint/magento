@@ -1,0 +1,59 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * 
+ * @author Kodematix
+ *
+ */
+--> 
+<layout version="0.1.0">
+   <default>
+   </default>
+       <catalog_category_layered>
+       <reference name="product_list">
+           <action method="setTemplate"><template>freegift/catalog/product/list.phtml</template></action>
+       </reference>
+   </catalog_category_layered>
+   
+       <catalog_category_default>
+       <reference name="product_list">
+           <action method="setTemplate"><template>freegift/catalog/product/list.phtml</template></action>
+       </reference>
+   </catalog_category_default>
+
+   <catalogsearch_result_index>
+   <reference name="product_list">
+           <action method="setTemplate"><template>freegift/catalog/product/list.phtml</template></action>
+       </reference>
+   </catalogsearch_result_index>
+   
+   <checkout_cart_index>
+		<reference name="checkout.cart"> 
+			<action method="addItemRender"><type>simple</type><block>checkout/cart_item_renderer</block><template>freegift/default.phtml</template></action>
+			<action method="addItemRender"><type>grouped</type><block>checkout/cart_item_renderer_grouped</block><template>freegift/default.phtml</template></action>
+            <action method="addItemRender"><type>configurable</type><block>checkout/cart_item_renderer_configurable</block><template>freegift/default.phtml</template></action>
+		</reference>
+   </checkout_cart_index>
+   
+    <wishlist_index_index> 
+	 
+		<reference name="customer.wishlist.item.image">
+           <action method="setTemplate"><template>freegift/catalog/product/image.phtml</template></action>
+       </reference>
+	</wishlist_index_index>
+   
+   <catalog_product_view>
+        <reference name="content">
+           <reference name="product.info.extrahint">
+               <block type="productgift/giftview" name="free_block" as="free" after="-" template="freegift/gifts.phtml"/>
+           </reference>
+       </reference>
+    </catalog_product_view>
+    <default translate="label" module="page">
+    <reference name="head">
+                    <action method="addCss">
+                    <stylesheet>css/giftproduct.css</stylesheet>
+                    </action>
+    </reference>
+    </default>
+</layout>

@@ -1,0 +1,256 @@
+.klarna-input-box input[type="text"] {
+    width: 254px;
+}
+
+.klarna_dob input[type="text"] {
+    width: 78px;
+}
+
+.klarna-input-box label {
+    float: none;
+    text-align: left;
+}
+
+#vaimo_klarna_account_addresses .klarna_addresses {
+    margin-bottom: 0;
+}
+
+.payment-methods .form-list li.klarna_notification {
+    margin-top: 20px;
+    padding: 10px 10px 10px 31px;
+    background-color: #ededed;
+}
+
+.klarna_notification{
+    background-image: url(data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4NCjwhLS0gR2VuZXJhdG9yOiBBZG9iZSBJbGx1c3RyYXRvciAxNy4xLjAsIFNWRyBFeHBvcnQgUGx1Zy1JbiAuIFNWRyBWZXJzaW9uOiA2LjAwIEJ1aWxkIDApICAtLT4NCjwhRE9DVFlQRSBzdmcgUFVCTElDICItLy9XM0MvL0RURCBTVkcgMS4xLy9FTiIgImh0dHA6Ly93d3cudzMub3JnL0dyYXBoaWNzL1NWRy8xLjEvRFREL3N2ZzExLmR0ZCI+DQo8c3ZnIHZlcnNpb249IjEuMSIgaWQ9IllvdXJfSWNvbiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgeD0iMHB4IiB5PSIwcHgiDQoJIHZpZXdCb3g9IjExLjUgMTEuNSAyMCAyMCIgZW5hYmxlLWJhY2tncm91bmQ9Im5ldyAxMS41IDExLjUgMjAgMjAiIHhtbDpzcGFjZT0icHJlc2VydmUiPg0KPGc+DQoJPHBhdGggZD0iTTIxLjUsMzEuNWMtNS41LDAtMTAtNC41LTEwLTEwYzAtNS41LDQuNS0xMCwxMC0xMHMxMCw0LjUsMTAsMTBDMzEuNSwyNywyNywzMS41LDIxLjUsMzEuNXogTTIxLjUsMTIuNA0KCQljLTUsMC05LjEsNC4xLTkuMSw5LjFzNC4xLDkuMSw5LjEsOS4xczkuMS00LjEsOS4xLTkuMUMzMC42LDE2LjUsMjYuNiwxMi40LDIxLjUsMTIuNHoiLz4NCjwvZz4NCjxwYXRoIGQ9Ik0yMS41LDI1LjJjMC42LDAsMS4xLDAuNSwxLjEsMS4xYzAsMC42LTAuNSwxLjEtMS4xLDEuMWMtMC42LDAtMS4xLTAuNS0xLjEtMS4xQzIwLjQsMjUuNywyMC45LDI1LjIsMjEuNSwyNS4yeiIvPg0KPGc+DQoJPHBhdGggZD0iTTIxLjUsMjMuNmMtMC42LDAtMS4xLTAuNS0xLjEtMS4xdi01LjdjMC0wLjYsMC41LTEuMSwxLjEtMS4xYzAuNiwwLDEuMSwwLjUsMS4xLDEuMXY1LjdDMjIuNiwyMy4xLDIyLjEsMjMuNiwyMS41LDIzLjZ6Ig0KCQkvPg0KPC9nPg0KPC9zdmc+DQo=);
+    background-size: 16px;
+    background-repeat: no-repeat;
+    background-position: 8px center;
+}
+
+.input_combo {
+    margin-top: 20px;
+}
+
+ul#vaimo_klarna_invoice_input_fields {
+    margin-top: 10px;
+}
+
+ul#payment_form_vaimo_klarna_invoice,
+ul#payment_form_vaimo_klarna_account,
+ul#payment_form_vaimo_klarna_special {
+    margin-top: 5px;
+}
+
+.payment_plan_wrapper {
+    margin-top: 5px;
+}
+
+.payment-method .form-list li.payment_plan_wrapper {
+    float: left;
+}
+
+.payment-method .form-list li.payment_plan_info_wrapper {
+    margin: 5px 0px 10px;
+    min-width: 100px;
+    float: left;
+    padding: 10px;
+    background-color: #FFF;
+    border: 1px solid #B6B6B6;
+}
+
+.payment_plan_details dt {
+    float: left;
+    clear: both;
+    margin: 0px 10px 3px 0px;
+    min-width: 100px;
+    font-weight: normal;
+    font-size: 11px;
+}
+
+.payment_plan_details dd {
+    float: right;
+    font-weight: normal;
+    font-size: 11px;
+}
+
+.payment_plan_details dd .price {
+    font-weight: normal;
+}
+
+.payment-method .form-list li.klarna_input_wrapper {
+    clear: both;
+}
+
+.payment-method .form-list select.klarna_address_dropdown {
+    width: 405px;
+}
+
+ul.payment_plan {
+    margin-top: 10px;
+}
+
+ul.payment_plan li {
+    margin-bottom: 0px;
+}
+
+#vaimo_klarna_account_pclasses input {
+    margin-right: 3px;
+}
+
+
+#vaimo_klarna_account_update_address_button,
+#vaimo_klarna_invoice_update_address_button,
+#vaimo_klarna_special_update_address_button {
+    margin: 0 0 0 15px;
+    background: #2c8ed8;
+    border: none;
+    color: #fff;
+    padding: 7px 14px;
+    border-radius: 12px;
+    cursor: pointer;
+}
+#vaimo_klarna_account_update_address_button:hover,
+#vaimo_klarna_invoice_update_address_button:hover,
+#vaimo_klarna_special_update_address_button:hover {
+    background: #006AA1;
+    -webkit-transition: all 0.1s ease-in;
+    transition: all 0.1s ease-in;
+}
+#vaimo_klarna_account_pno, #vaimo_klarna_account_phonenumber,
+.klarna-input-box input[type="text"] {
+    width: 100px;
+    border: 1px solid #eee;
+    padding: 7px;
+    text-align: center;
+    color: #666;
+}
+
+.klarna_dob input[type="text"] {
+    width: 40px !important; padding: 7px; text-align: center; border: 1px solid #eee;
+}
+
+.input_combo label {
+    font-size: 0.9em; margin-left:10px;
+}
+
+.gender-input-box label {
+    display: inline-block;
+}
+
+.gender-input-box input {
+    display: inline-block;
+    margin: 0px 3px 0px 5px;
+}
+
+.gender-input-box input:first-child {
+    margin-left: 0px;
+}
+
+.gender-input-box label,
+.gender-input-box label {
+    min-width: inherit;
+}
+
+.payment-methods .payment-method label[for=p_method_vaimo_klarna_account],
+.payment-methods .payment-method label[for=p_method_vaimo_klarna_invoice],
+.payment-methods .payment-method label[for=p_method_vaimo_klarna_special] {
+    display: inline-block;
+    line-height: 35px;
+    vertical-align: middle;
+}
+
+.payment-methods .payment-method label[for=p_method_vaimo_klarna_account] img,
+.payment-methods .payment-method label[for=p_method_vaimo_klarna_invoice] img,
+.payment-methods .payment-method label[for=p_method_vaimo_klarna_special] img {
+    margin-right: 5px;
+}
+
+#klarna_invoice_readme,
+#klarna_account_readme,
+#klarna_special_readme {
+    display: block;
+    text-align: right;
+    margin-top: 0px;
+}
+
+li.klarna_readme {
+    float: right;
+}
+
+label[for=vaimo_klarna_invoice_consent],
+label[for=vaimo_klarna_account_consent],
+label[for=vaimo_klarna_special_consent] {
+    display: inline-block;
+    margin-left: 5px;
+    margin-top: -2px;
+    max-width: 200px;
+}
+
+.klarna-input-box address {
+    display: inline-block;
+}
+
+.klarna-input-box address span {
+    display: block;
+}
+
+.klarna-input-box label.klarna_address {
+    margin-left: 10px;
+    vertical-align: middle;
+    float: none;
+    display: inline-block;
+}
+
+.klarna-input-box label.klarna_address_single {
+    display: block;
+}
+
+.klarna_msg_txt,
+.klarna_address_txt {
+    color: #2F2F2F;
+    color: #666666;
+    font-weight: 400;
+    line-height: 18.6px;
+    display: inline-block;
+}
+
+#p_method_vaimo_klarna_checkout { display: none; }
+#container_payment_method_vaimo_klarna_checkout { display: block !important; }
+
+a.button::-moz-focus-inner {
+    padding:0;
+    border:0;
+}
+a.button {
+    -webkit-border-fit:lines;
+}
+a.button {
+    overflow:visible;
+    width:auto;
+    border:0;
+    padding:0;
+    margin:0;
+    background:transparent;
+    cursor:pointer;
+    text-decoration: none;
+}
+a.button span {
+    display:block;
+    height:19px;
+    border:1px solid #de5400;
+    background:#f18200;
+    padding:0 8px;
+    font:bold 12px/19px Arial, Helvetica, sans-serif;
+    text-align:center;
+    white-space:nowrap;
+    color:#fff;
+}
+a.button span span {
+    border:0;
+    padding:0;
+}
+a.disabled span {
+    border-color:#bbb !important;
+    background:#bbb !important;
+}

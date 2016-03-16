@@ -1,0 +1,67 @@
+
+.countdown{display: inline-block; width: 100%;}
+.clock_days { 
+    background-image:url("./top.png");
+    width:70px;
+    height:70px;
+    background-repeat: no-repeat;
+    float:left;
+    margin-right: 20px;
+    position: relative;
+}
+.clock_hours { 
+    background-image:url("./top.png");
+    width:70px;
+    height:70px;
+    background-repeat: no-repeat;
+    float:left;
+    margin-right: 20px;
+    position: relative;
+}
+.clock_minutes { 
+    background-image:url("./top.png");
+    width:70px;
+    height:70px;
+    background-repeat: no-repeat;
+    float:left;
+    margin-right: 20px;
+    position: relative;
+}
+.clock_seconds {
+    background-image:url("./top.png");
+    width:70px;
+    height:70px;
+    background-repeat: no-repeat;
+    float:left;
+    position: relative;
+}
+
+.text {
+    position: absolute;
+    width:50px;
+    top:15px;
+    left:10px;
+}
+.text .val {
+    margin:0;
+    padding:0;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 24px;
+    color:#444;
+    font-weight: bold;
+    text-align:center;
+}
+
+.text .type_days,
+.text .type_hours,
+.text .type_minutes,
+.text .type_seconds
+{
+    margin-top:-5px;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 10px;
+    color:#444;
+    font-weight: bold;
+    text-transform: uppercase;
+    text-align:center;
+}

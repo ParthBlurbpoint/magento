@@ -1,0 +1,231 @@
+<?xml version="1.0" ?>
+<config>
+  <modules>
+    <ZetaPrints_OrderApproval>
+      <version>3</version>
+    </ZetaPrints_OrderApproval>
+  </modules>
+
+  <global>
+    <models>
+      <orderapproval>
+        <class>ZetaPrints_OrderApproval_Model</class>
+      </orderapproval>
+
+      <sales>
+        <rewrite>
+          <quote>ZetaPrints_OrderApproval_Model_Quote</quote>
+        </rewrite>
+      </sales>
+    </models>
+
+    <blocks>
+      <orderapproval>
+        <class>ZetaPrints_OrderApproval_Block</class>
+      </orderapproval>
+    </blocks>
+
+    <helpers>
+      <orderapproval>
+        <class>ZetaPrints_OrderApproval_Helper</class>
+      </orderapproval>
+    </helpers>
+
+    <resources>
+      <orderapproval_setup>
+        <setup>
+          <module>ZetaPrints_OrderApproval</module>
+          <class>Mage_Eav_Model_Entity_Setup</class>
+        </setup>
+        <connection>
+          <use>default_setup</use>
+        </connection>
+      </orderapproval_setup>
+
+      <orderapproval_write>
+        <connection><use>default_write</use></connection>
+      </orderapproval_write>
+
+      <orderapproval_read>
+        <connection><use>default_read</use></connection>
+      </orderapproval_read>
+    </resources>
+
+    <events>
+      <sales_quote_add_item>
+        <observers>
+          <orderapproval-mark-quote-item>
+            <type>singleton</type>
+            <class>ZetaPrints_OrderApproval_Model_Events_Observer</class>
+            <method>mark_quote_item</method>
+          </orderapproval-mark-quote-item>
+        </observers>
+      </sales_quote_add_item>
+
+      <controller_action_predispatch_checkout_cart_index>
+        <observers>
+          <orderapproval-check-for-not-sent-items>
+            <type>singleton</type>
+            <class>ZetaPrints_OrderApproval_Model_Events_Observer</class>
+            <method>check_for_not_sent_items</method>
+          </orderapproval-check-for-not-sent-items>
+        </observers>
+      </controller_action_predispatch_checkout_cart_index>
+
+      <!-- For compatibility with M. verion < 1.4.1.0 -->
+      <!--<sales_model_service_quote_submit_success>-->
+      <sales_model_service_quote_submit_after>
+        <observers>
+          <orderapproval-remove-approved-item-from-quote>
+            <type>singleton</type>
+            <class>ZetaPrints_OrderApproval_Model_Events_Observer</class>
+            <method>remove_approved_items_from_quote</method>
+          </orderapproval-remove-approved-item-from-quote>
+        </observers>
+      </sales_model_service_quote_submit_after>
+      <!--</sales_model_service_quote_submit_success>-->
+
+      <!--<controller_action_layout_render_before_customer_account>
+        <observers>
+          <orderapproval-add-menu-item>
+            <type>singleton</type>
+            <class>ZetaPrints_OrderApproval_Model_Events_Observer</class>
+            <method>addCartsMenuItem</method>
+          </orderapproval-add-menu-item>
+        </observers>
+      </controller_action_layout_render_before_customer_account>-->
+    </events>
+
+    <template>
+      <email>
+        <orderapproval_email_items_to_approve_template translate="label">
+          <label>Items to Approve</label>
+          <file>orderapproval/items_to_approve.html</file>
+          <type>html</type>
+        </orderapproval_email_items_to_approve_template>
+      </email>
+
+      <email>
+        <orderapproval_email_approved_items_template translate="label">
+          <label>Approved Items</label>
+          <file>orderapproval/approved_items.html</file>
+          <type>html</type>
+        </orderapproval_email_approved_items_template>
+      </email>
+
+      <email>
+        <orderapproval_email_declined_items_template translate="label">
+          <label>Declined Items</label>
+          <file>orderapproval/declined_items.html</file>
+          <type>html</type>
+        </orderapproval_email_declined_items_template>
+      </email>
+    </template>
+  </global>
+
+  <frontend>
+    <events>
+      <controller_action_predispatch_checkout>
+        <observers>
+          <orderapproval_use_only_approved_items_on_checkout>
+            <type>singleton</type>
+            <class>ZetaPrints_OrderApproval_Model_Events_Observer</class>
+            <method>useOnlyApprovedItemsOnCheckout</method>
+          </orderapproval_use_only_approved_items_on_checkout>
+        </observers>
+      </controller_action_predispatch_checkout>
+
+      <controller_action_predispatch_checkout_onepage_index>
+        <observers>
+          <orderapproval_process_items_before_checkout>
+            <type>singleton</type>
+            <class>ZetaPrints_OrderApproval_Model_Events_Observer</class>
+            <method>processItemsBeforeCheckout</method>
+          </orderapproval_process_items_before_checkout>
+        </observers>
+      </controller_action_predispatch_checkout_onepage_index>
+    </events>
+
+    <routers>
+      <orderapproval>
+        <use>standard</use>
+        <args>
+          <module>ZetaPrints_OrderApproval</module>
+          <frontName>order-approval</frontName>
+        </args>
+      </orderapproval>
+    </routers>
+
+    <layout>
+      <updates>
+        <orderapproval>
+          <file>order-approval.xml</file>
+        </orderapproval>
+      </updates>
+    </layout>
+  </frontend>
+
+  <adminhtml>
+    <acl>
+      <resources>
+        <admin>
+          <children>
+            <system>
+              <children>
+                <config>
+                  <children>
+                    <orderapproval>
+                      <title>Order Approval</title>
+                    </orderapproval>
+                  </children>
+                </config>
+              </children>
+            </system>
+          </children>
+        </admin>
+      </resources>
+    </acl>
+
+    <events>
+      <adminhtml_block_html_before>
+        <observers>
+          <orderapproval_add_approver_field_to_group>
+            <type>singleton</type>
+            <class>ZetaPrints_OrderApproval_Model_Events_Observer</class>
+            <method>addApproverToGroup</method>
+          </orderapproval_add_approver_field_to_group>
+        </observers>
+      </adminhtml_block_html_before>
+
+      <controller_action_predispatch_adminhtml_customer_group_save>
+        <observers>
+          <orderapproval_remember_approver_for_group>
+            <type>singleton</type>
+            <class>ZetaPrints_OrderApproval_Model_Events_Observer</class>
+            <method>rememberApproverForGroup</method>
+          </orderapproval_remember_approver_for_group>
+        </observers>
+      </controller_action_predispatch_adminhtml_customer_group_save>
+
+      <customer_group_save_before>
+        <observers>
+          <orderapproval_save_approver_for_group>
+            <type>singleton</type>
+            <class>ZetaPrints_OrderApproval_Model_Events_Observer</class>
+            <method>saveApproverForGroup</method>
+          </orderapproval_save_approver_for_group>
+        </observers>
+      </customer_group_save_before>
+    </events>
+  </adminhtml>
+
+  <default>
+    <orderapproval>
+      <email>
+        <items_to_approve_template>orderapproval_email_items_to_approve_template</items_to_approve_template>
+        <approved_items_template>orderapproval_email_approved_items_template</approved_items_template>
+        <declined_items_template>orderapproval_email_declined_items_template</declined_items_template>
+      </email>
+    </orderapproval>
+  </default>
+</config>

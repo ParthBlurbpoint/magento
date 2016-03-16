@@ -1,0 +1,117 @@
+/* Grid - Mass Action */
+.massaction {
+  width: 100%;
+  height: 26px;
+  border: 1px solid #d1cfcf;
+  border-bottom: none;
+  background: url(../../../../../adminhtml/default/default/images/massaction_bg.gif) repeat-x 0 100% #ebebeb;
+  font-size: .9em;
+}
+
+.massaction td {
+  width: 50%;
+  border-top: 1px solid #fff;
+  padding: 1px 8px;
+  vertical-align: middle;
+}
+
+.massaction .entry-edit fieldset .select {
+  width: auto;
+  display: inline;
+}
+
+.massaction .entry-edit fieldset select.validation-failed {
+  border: 1px dashed #eb340a !important;
+  background: #faebe7 !important
+}
+
+.massaction .entry-edit fieldset {
+  margin: 0;
+  padding: 0;
+  background: none;
+  border: none;
+}
+
+.massaction .entry-edit fieldset .field-row {
+  display: inline;
+}
+
+.massaction .entry-edit .field-row label {
+  float: none;
+  width: auto;
+  margin-left: 13px;
+}
+
+.massaction .entry-edit {
+  margin: 0 !important;
+  padding: 0;
+}
+
+.massaction .entry-edit .validation-advice {
+  display: none !important;
+ }
+
+.massaction a {
+  text-decoration: none;
+}
+
+.massaction .entry-edit fieldset span.form_row,
+.massaction .entry-edit fieldset span.field-row {
+  clear: none !important;
+  display: inline;
+  float: left !important;
+  margin: 0;
+  padding: 0 5px 0 0;
+}
+
+.massaction .entry-edit .outer-span {
+  float: left;
+}
+
+/* Form Elements */
+select {
+  min-height: 17px; /* to set the height for empty selects */
+}
+
+/* Form Button */
+button {
+  border-width: 1px;
+  border-style: solid;
+  border-color: #ed6502 #a04300 #a04300 #ed6502;
+  padding: 0 7px 1px 7px;
+  background: #ffac47 url(../../../../../adminhtml/default/default/images/btn_bg.gif) repeat-x 0 100%;
+  color: #fff;
+  font: bold 12px arial, helvetica, sans-serif;
+  cursor: pointer;
+  text-align: center !important;
+  white-space: nowrap;
+}
+
+.orderapproval-item-images {
+  margin: 0 0 20px;
+}
+
+.orderapproval-item-images a {
+  text-decoration: none;
+}
+
+.orderapproval-item-images a img {
+  max-width: 300px;
+  margin: 0 15px 15px 0;
+}
+
+.orderapproval-item-actions {
+  margin: 20px 0 0 0;
+}
+
+.orderapproval-item-actions form.orderapproval-hidden {
+  display: none;
+}
+
+.orderapproval-item-actions form input[type=text] {
+  width: 50%;
+}
+
+.orderapproval-item-actions form input.orderapproval-disabled {
+  color: gray;
+}

@@ -1,0 +1,15 @@
+<div class="klarna-default" id="klarna_default">
+    <div class="klarna_left">
+        <?php echo $this->getChildHtml('checkout.cart'); ?>
+        <?php echo $this->getChildHtml('shipping_method'); ?>
+    </div>
+
+    <div class="klarna_right">
+        <?php echo $this->getChildHtml('totals'); ?>
+        <?php echo $this->getChildHtml('klarnacheckout.reward'); ?>
+        <?php echo $this->getChildHtml('klarnacheckout.customer_balance'); ?>
+        <?php echo $this->getChildHtml('checkout.newsletter'); ?>
+        <?php echo $this->getChildHtml('discount'); ?>
+        <?php echo $this->getChildHtml('other.payment.methods'); ?>
+    </div>
+</div>

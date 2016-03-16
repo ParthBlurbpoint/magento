@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<layout>
+    <catalog_product_view>
+	<reference name="head">
+	    <action method="addItem">
+		<type>skin_css</type>
+		<name>md/partialpayment/style.css</name>
+	    </action>
+	</reference>
+	<reference name="product.info.addtocart">
+	    <block type="md_partialpayment/options" name="partialpayment.options" template="md/partialpayment/options.phtml" />
+	</reference>
+	<reference name="product.info.options">
+	    <action method="setTemplate">
+		<template>md/partialpayment/catalog/product/options.phtml</template>
+	    </action>
+	</reference>
+    </catalog_product_view>
+    <customer_account>
+	<reference name="customer_account_navigation">
+	    <action method="addLink" ifconfig="md_partialpayment/general/enabled" translate="label" module="md_partialpayment">
+		<name>pending_installments</name>
+		<path>md_partialpayment/summary/list/</path>
+		<label>Pending Installments</label>
+	    </action>
+	</reference>
+    </customer_account>
+    <md_partialpayment_summary_list>
+	<label>Customer My Account Order History</label>
+	<update handle="customer_account"/>
+	<reference name="head">
+	    <action method="addItem">
+		<type>skin_css</type>
+		<name>md/partialpayment/style.css</name>
+	    </action>
+	    <action method="setTitle" translate="title">
+		<title>Installments lists</title>
+	    </action>
+	</reference>
+	<reference name="my.account.wrapper">
+	    <block type="md_partialpayment/summary_list" name="md.partialpayment.summary.list">
+                
+	    </block>
+	</reference>
+    </md_partialpayment_summary_list>
+    <md_partialpayment_summary_view>
+	<label>Customer My Account Installments View</label>
+	<update handle="customer_account"/>
+	<reference name="head">
+	    <action method="addItem">
+		<type>skin_css</type>
+		<name>md/partialpayment/style.css</name>
+	    </action>
+	    <action method="setTitle" translate="title">
+		<title>Installments Summary</title>
+	    </action>
+	</reference>
+	<reference name="my.account.wrapper"> 
+	    <block type="md_partialpayment/summary_view" name="md.partialpayment.summary.view">
+		<block type="md_partialpayment/summary_payment_methods" name="md.partialpayment.payment.methods" />
+	    </block>
+	</reference>
+    </md_partialpayment_summary_view>
+    <md_partialpayment_payments_summary>
+	<block type="md_partialpayment/email_payments_summary" name="md.partialpayments.email.summary" />
+    </md_partialpayment_payments_summary>
+    
+    <PRODUCT_TYPE_grouped translate="label" module="catalog">
+	<reference name="product.info.addtocart">
+	    <remove name="partialpayment.options" />
+	</reference>
+    </PRODUCT_TYPE_grouped>
+    <PRODUCT_TYPE_configurable>
+	<reference name="product.info.options.configurable">
+	    <action method="setTemplate">
+		<template>md/partialpayment/catalog/product/type/configurable.phtml</template>
+	    </action>
+	</reference>
+    </PRODUCT_TYPE_configurable>
+    <PRODUCT_TYPE_downloadable>
+	<reference name="product.info.downloadable.options">
+	    <action method="setTemplate">
+		<template>md/partialpayment/catalog/product/type/downloadable.phtml</template>
+	    </action>
+	</reference>
+    </PRODUCT_TYPE_downloadable>
+    <sales_order_view translate="label">
+	<reference name="order_totals">
+	    <action method="setLabelProperties">
+		<value>colspan="4" class="a-right"</value>
+	    </action>
+	    <action method="setValueProperties">
+		<value>class="last a-right"</value>
+	    </action>
+	    <block type="md_partialpayment/adminhtml_sales_order_totals_partial" name="partialpayment.summary" />
+	</reference>
+    </sales_order_view>
+    <sales_order_print translate="label">
+	<reference name="order_totals">
+	    <action method="setLabelProperties">
+		<value>colspan="4" class="a-right"</value>
+	    </action>
+	    <action method="setValueProperties">
+		<value>class="last a-right"</value>
+	    </action>
+	    <block type="md_partialpayment/adminhtml_sales_order_totals_partial" name="partialpayment.summary" />
+	</reference>
+    </sales_order_print>
+    <sales_email_order_items>
+	<reference name="order_totals">
+	    <action method="setLabelProperties">
+		<value>colspan="3" align="right" style="padding:3px 9px"</value>
+	    </action>
+	    <action method="setValueProperties">
+		<value>align="right" style="padding:3px 9px"</value>
+	    </action>
+	    <block type="md_partialpayment/adminhtml_sales_order_totals_partial" name="partialpayment.summary" />
+	</reference>
+    </sales_email_order_items>
+</layout>

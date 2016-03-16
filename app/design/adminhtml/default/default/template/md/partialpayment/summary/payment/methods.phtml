@@ -1,0 +1,417 @@
+<?php
+
+/**
+ * Magedelight
+ * Copyright (C) 2015 Magedelight <info@magedelight.com>
+ *
+ * NOTICE OF LICENSE
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see http://opensource.org/licenses/gpl-3.0.html.
+ *
+ * @category MD
+ * @package MD_Cybersource
+ * @copyright Copyright (c) 2015 Mage Delight (http://www.magedelight.com/)
+ * @license http://opensource.org/licenses/gpl-3.0.html GNU General Public License,version 3 (GPL-3.0)
+ * @author Magedelight <info@magedelight.com>
+ */
+?>
+<style type="text/css">
+    .partial-payment-methods dt label{
+        color		: #636363;
+        background-color: #f4f4f4;
+        display		: inline-block;
+        width		: auto;
+        max-width	: none;
+        min-width	: 285px;
+        float		: none;
+        padding		: 6px 10px 6px 40px;
+    }
+    .partial-payment-methods dt input.radio{
+        float		: left;
+        margin-right	: -40px;
+        margin-top	: 10px;
+        margin-left	: 15px;
+        position	: relative;
+    }
+    .partial-payment-methods dt{
+        margin		: 0 0 5px;
+    }
+    .partial-payment-methods select.year{
+        width		: 96px !important;
+    }
+    .partial-payment-methods select.month{
+        width		: 120px !important;
+        margin-right	: 10px !important;
+    }
+    .partial-payment-methods p.required{
+        margin-bottom	: 5px;
+        float		: right;
+        font-size	: 12px;
+        margin-top	: 0px;
+        color		:red;
+    }
+</style>
+
+<?php
+$paymentId	   = $this->getRequest()->getParam('id');
+$helper		   = Mage::helper('md_partialpayment');
+$paymentConfig	   = Mage::getSingleton('payment/config');
+$methods	   = $this->getActiveMethods();
+$oneMethod	   = count($methods) <= 1;
+$ccTypes	   = $paymentConfig->getCcTypes();
+$months		   = $paymentConfig->getMonths();
+$years		   = $paymentConfig->getYears();
+$payments	   = Mage::getModel('md_partialpayment/payments')->load($paymentId);
+$customerId	   = $payments->getCustomerId();
+$customer	   = Mage::getModel('customer/customer')->load($customerId);
+
+$_ccRequiredMethod = array (
+    Mage_Paygate_Model_Authorizenet::METHOD_CODE,
+    'authorizenet_directpost',
+    'ccsave',
+    'md_authorizecim',
+    'md_stripe_cards',
+    'md_cybersource',
+);
+
+$_ccRedirectMethod = array (
+    Mage_Paypal_Model_Config::METHOD_WPS
+);
+
+$_adminRequiredActionMethod = array (
+    'cashondelivery',
+    'checkmo'
+);
+
+$_tokenizedMethods     = array(
+    'sagepaydirectpro' => 'md_partialpayment/sagepay_form_sagePayDirectPro',
+    'sagepayserver'    => 'md_partialpayment/sagepay_form_sagePayServer'
+);
+$checkPaybleto		    = Mage::getStoreConfig('payment/checkmo/payable_to');
+$checkMailingAddress        = Mage::getStoreConfig('payment/checkmo/mailing_address');
+$cashOnDeliveryInstructions = Mage::getStoreConfig('payment/cashondelivery/instructions');
+
+if (empty($methods)): ?>
+    <dl>
+        <dt> <?php echo $this->__('No Payment Methods') ?> </dt> 
+    </dl>
+
+<?php else: ?> 
+    <dl class="partial-payment-methods"> 
+    <?php
+    foreach ($methods as $_method):
+	$_code  = $_method->getCode();
+	$cCards = $helper->getCardsByMethods($_code, Mage::app()->getStore()->getId());
+    ?>
+	    <dt>
+		<input id="partial_method_<?php echo $_code ?>" value="<?php echo $_code ?>" type="radio" name="partial[method]" title="<?php echo $this->escapeHtml($_method->getTitle()) ?>" class="radio validate-one-required-by-name" />
+		
+		<label for="partial_method_<?php echo $_code ?>">
+		    <?php echo $this->escapeHtml($_method->getTitle()) ?>
+		</label>
+	    </dt>
+	    <?php 
+	    if ($_code && array_key_exists($_code, $_tokenizedMethods)):
+		echo $this->getLayout()->createBlock($_tokenizedMethods[$_code])->toHtml();
+	    elseif ($_code && in_array($_code, $_ccRequiredMethod)): 
+	    ?>
+		<dd>
+		    <table class="form-list" id="payment_form_<?php echo $_code ?>" cellpadding="0" cellspacing="0" style="display:none;">
+			<?php if ($_code == 'ccsave'): ?>
+			    <tr>
+				<td class="label">
+				    <label for="<?php echo $_code ?>_cc_owner" class="required">
+					<em>*</em>
+					<?php echo $this->__('Name on Card') ?>
+				    </label>
+				</td>
+				
+				<td class="value">
+				    <input type="text" title="<?php echo $this->__('Name on Card') ?>" class="input-text required-entry" id="<?php echo $_code ?>_cc_owner" name="<?php echo $_code ?>[cc_owner]" value="<?php echo $this->escapeHtml($this->getInfoData('cc_owner')) ?>" />
+				</td>
+			    </tr>
+			    
+			<?php elseif ($_code == 'md_authorizecim'): ?>
+			    <tr>
+				<script type="text/javascript">
+				    function viewForm() {						
+					var cimNewCardForm = $("<?php echo $_method->getCode() ?>_cc_new_card_form");
+					var id		   = '<?php echo $_method->getCode() ?>_payment_id';
+					var val		   = document.getElementById(id).value;
+
+					if (val == 'new') {
+					    cimNewCardForm.show();
+					    $("<?php echo $_method->getCode() ?>_cc_new_card_form").select('input', 'select', 'textarea').each(function (elm) {
+						if (elm.disabled = true)
+						    elm.disabled = false;
+					    });
+					} else {
+					    cimNewCardForm.hide();
+					    $("<?php echo $_method->getCode() ?>_cc_new_card_form").select('input', 'select', 'textarea').each(function (elm) {
+						elm.disabled = true;
+					    });
+					}
+				    }
+				</script>
+				<?php 
+				if (Mage::getModel("md_authorizecim/config")->getIsActive()):
+				    $cards = Mage::getModel("md_authorizecim/payment")
+					     ->setCustomer($customer)
+					     ->getCustomerPaymentProfiles(null, true); 
+				endif; 
+				?>
+				
+				<td colspan="2">
+				    <table id="<?php echo $_code ?>_cc_saved_cards" class="fields" >
+					<tr>
+					    <td class="label">
+						<label for="<?php echo $_code; ?>_payment_id">
+						    <?php echo $this->__('Pay with card on file'); ?>
+						</label>
+					    </td>
+					    
+					    <td class="value">
+						<select name="<?php echo $_code; ?>[payment_id]" id="<?php echo $_code; ?>_payment_id" class="<?php echo $_code; ?>_require required-entry" onchange="viewForm()">
+						    <option value="0">
+							<?php echo $this->__('--Please Select--'); ?>
+						    </option>
+						    <?php 
+						    foreach ($cards as $_card): 
+							$cardReplaced = substr_replace($_card->payment->creditCard->cardNumber, '-', 4, 0); ?>
+							<option value="<?php echo $_card->customerPaymentProfileId ?>">
+							    <?php echo sprintf('%s, %s %s', $cardReplaced, $_card->billTo->firstName, $_card->billTo->lastName) ?>
+							</option>
+						    <?php endforeach; ?>
+							
+						    <option value="new">
+							<?php echo $this->__('use a different card'); ?>
+						    </option>
+						</select>
+					    </td>
+					</tr>
+				    </table>
+				    
+				    <table id="<?php echo $_code ?>_cc_new_card_form" style="display:none;">
+					<tr>
+					    <td class="label">
+						<label for="<?php echo $_code ?>_cc_type" class="required">
+						    <em>*</em> <?php echo $this->__('Credit Card Type') ?>
+						</label>
+					    </td>
+					    
+					    <td class="value">
+						<select id="<?php echo $_code ?>_cc_type" name="<?php echo $_code ?>[cc_type]" class="select required-entry validate-cc-type-select" title="<?php echo $this->__('Credit Card Type') ?>" autocomplete="off">
+						    <option value="">
+							<?php echo $this->__('--Please Select--') ?>
+						    </option>
+						    
+						    <?php 
+						    foreach ($ccTypes as $code => $label): 
+							if (in_array($code, $cCards)): ?>
+							    <option value="<?php echo $code ?>">
+								<?php echo $label ?>
+							    </option>
+						    <?php 
+							endif; 
+						    endforeach; 
+						    ?>
+						</select>
+					    </td>
+					</tr>
+					
+					<tr>
+					    <td class="label">
+						<label for="<?php echo $_code ?>_cc_number" class="required">
+						    <em>*</em> <?php echo $this->__('Credit Card Number') ?>
+						</label>
+					    </td>
+					    
+					    <td class="value">
+						<input type="text" id="<?php echo $_code ?>_cc_number" name="<?php echo $_code ?>[cc_number]" title="<?php echo $this->__('Credit Card Number') ?>" class="input-text validate-cc-number validate-cc-type" value="" />
+					    </td>
+					</tr>
+					
+					<tr>
+					    <td class="label">
+						<label for="<?php echo $_code ?>_expiration" class="required">
+						    <em>*</em> <?php echo $this->__('Expiration Date') ?>
+						</label>
+					    </td>
+					    
+					    <td class="value">
+						<select id="<?php echo $_code ?>_expiration" name="<?php echo $_code ?>[cc_exp_month]" class="month validate-cc-exp required-entry">
+						    <?php foreach ($months as $k => $v): ?>
+							<option value="<?php echo $k ? $k : '' ?>">
+							    <?php echo $v ?>
+							</option>
+						    <?php endforeach ?>
+						</select>
+						
+						<select id="<?php echo $_code ?>_expiration_yr" name="<?php echo $_code ?>[cc_exp_year]" class="year required-entry">
+						    <?php foreach ($years as $k => $v): ?>
+							<option value="<?php echo $k ? $k : '' ?>">
+							    <?php echo $v; ?>
+							</option>
+						    <?php endforeach ?>
+						</select>
+					    </td>
+					</tr>
+					<?php if ($_method->hasVerification()): ?>
+		    			<tr>
+		    			    <td class="label">
+						<label for="<?php echo $_code ?>_cc_cid" class="required">
+						    <em>*</em> <?php echo $this->__('Card Verification Number') ?>
+						</label>
+					    </td>
+		    			    <td class="value">
+						<input type="text" pattern="\d*" title="<?php echo $this->__('Card Verification Number') ?>" class="input-text cvv required-entry validate-cc-cvn" id="<?php echo $_code ?>_cc_cid" name="<?php echo $_code ?>[cc_cid]" value="" />
+					    </td>
+		    			</tr>
+				    <?php endif; ?>
+					<tr class="<?php echo $_code ?>_new" id="<?php echo $_code ?>_save_card_wrapper">
+					    <td class="label">
+						<div class="input-box">
+						    <input type="checkbox" title="<?php echo $this->__('Save Card for Future Use') ?>" class="input-text" id="<?php echo $_code ?>_save_card" name="<?php echo $_code ?>[save_card]" value="1" style="width: 15px;" /><?php echo $this->__('Save this card for future use') ?>            
+						</div>
+					    </td>
+					</tr>
+				    </table>
+				</td>
+			    </tr>			    
+			<?php 
+			elseif ($_code == MD_Stripe_Model_Cardspayment::METHOD_CODE): 
+			   echo $this->getLayout()->createBlock('md_stripe/cards_form')
+				 ->setMethod($_method)
+				 ->setCustomer($customer)
+				 ->setTemplate('md/partialpayment/summary/payment/method/stripe/form.phtml')->toHtml();
+			elseif ($_code == 'md_cybersource'): 
+			    echo $this->getLayout()->createBlock('md_cybersource/form')
+				 ->setMethod($_method)
+				 ->setCustomer($customer)
+				 ->setTemplate('md/partialpayment/summary/payment/method/cybersource/form.phtml')->toHtml();
+			endif; ?>
+			<?php if (!in_array($_code,array('md_authorizecim',MD_Stripe_Model_Cardspayment::METHOD_CODE,'md_cybersource'))): ?>
+			    <tr>
+				<td class="label">
+				    <label for="<?php echo $_code ?>_cc_type" class="required">
+					<em>*</em> <?php echo $this->__('Credit Card Type') ?>
+				    </label>
+				</td>
+				<td class="value">
+				    <select id="<?php echo $_code ?>_cc_type" name="<?php echo $_code ?>[cc_type]" class="select required-entry validate-cc-type-select" title="<?php echo $this->__('Credit Card Type') ?>" autocomplete="off">
+					<option value=""><?php echo $this->__('--Please Select--') ?></option>
+					
+					<?php foreach ($ccTypes as $code => $label): 
+					          if (in_array($code, $cCards)): ?>
+						      <option value="<?php echo $code ?>">
+							<?php echo $label ?>
+						      </option>
+					    <?php endif;
+					endforeach; ?>
+				    </select>
+				</td>
+			    </tr>
+			    <tr>
+				<td class="label">
+				    <label for="<?php echo $_code ?>_cc_number" class="required">
+					<em>*</em> <?php echo $this->__('Credit Card Number') ?>
+				    </label>
+				</td>
+				
+				<td class="value">
+				    <input type="text" id="<?php echo $_code ?>_cc_number" name="<?php echo $_code ?>[cc_number]" title="<?php echo $this->__('Credit Card Number') ?>" class="input-text validate-cc-number validate-cc-type" value="" />
+				</td>
+			    </tr>
+			    <tr>
+				<td class="label">
+				    <label for="<?php echo $_code ?>_expiration" class="required">
+					<em>*</em> <?php echo $this->__('Expiration Date') ?>
+				    </label>
+				</td>
+				
+				<td class="value">
+				    <select id="<?php echo $_code ?>_expiration" name="<?php echo $_code ?>[cc_exp_month]" class="month validate-cc-exp required-entry">
+					<?php foreach ($months as $k => $v): ?>
+					    <option value="<?php echo $k ? $k : '' ?>"><?php echo $v ?></option>
+					<?php endforeach ?>
+				    </select>
+				    
+				    <select id="<?php echo $_code ?>_expiration_yr" name="<?php echo $_code ?>[cc_exp_year]" class="year required-entry">
+					<?php foreach ($years as $k => $v): ?>
+					    <option value="<?php echo $k ? $k : '' ?>"><?php echo $v ?></option>
+					<?php endforeach ?>
+				    </select>
+				</td>
+			    </tr>
+			    
+			<?php if ($_method->hasVerification()): ?>
+		    	    <tr>
+		    		<td class="label">
+				    <label for="<?php echo $_code ?>_cc_cid" class="required">
+					<em>*</em> <?php echo $this->__('Card Verification Number') ?>
+				    </label>
+				</td>
+		    		<td class="value">
+				    <input type="text" pattern="\d*" title="<?php echo $this->__('Card Verification Number') ?>" class="input-text cvv required-entry validate-cc-cvn" id="<?php echo $_code ?>_cc_cid" name="<?php echo $_code ?>[cc_cid]" value="" />
+				</td>
+		    	    </tr>
+			<?php 
+			    endif;
+			endif; 
+			?>
+	    	</table>
+	    </dd>
+	<?php elseif ($_code && (in_array($_code, $_ccRedirectMethod) || in_array($_code, $_adminRequiredActionMethod))): ?>
+	    <dd>
+	    	<ul class="form-list" id="payment_form_<?php echo $_code ?>" style="display:none;">
+		    <?php if ($_code == Mage_Paypal_Model_Config::METHOD_WPS): ?>
+			<li class="form-alt">
+			    <?php echo $this->__('You will be redirected to the PayPal website when you place an order.'); ?>
+			</li>
+		    <?php elseif ($_code == 'cashondelivery' && $cashOnDeliveryInstructions): ?>
+			    <li>
+				<div class="cashondelivery-instructions-content">
+				    <?php echo nl2br($cashOnDeliveryInstructions) ?>
+				</div>
+			    </li>
+		    <?php elseif ($_code == 'checkmo'):
+			    if ($checkPaybleto): ?>
+				<li>
+				    <label><?php echo $this->__('Make Check payable to: ') ?></label>
+				    <?php echo $checkPaybleto ?>
+				</li>
+			<?php 
+			    endif; 
+			    
+			    if ($checkMailingAddress): 
+			?>
+				<li>
+				    <label>
+					<?php echo $this->__('Send Check to: ') ?>
+				    </label>
+				    
+				    <address class="checkmo-mailing-address">
+					<?php echo nl2br($checkPaybleto) ?>
+				    </address>
+				</li>
+				<?php 
+			    endif;
+			endif; ?>
+			</ul>
+		    </dd>
+		<?php endif; ?>
+	<?php endforeach; ?>
+    </dl>    
+<?php endif; ?>
+

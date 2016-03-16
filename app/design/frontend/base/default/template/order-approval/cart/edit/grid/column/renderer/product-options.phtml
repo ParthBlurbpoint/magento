@@ -1,0 +1,31 @@
+<h2 class="product-name">
+  <a href="<?php echo $this->getUrl('*/*/item', array('id' => $this->getItem()->getId())); ?>">
+    <?php echo $this->htmlEscape($this->getProductName()) ?>
+  </a>
+</h2>
+
+<?php if ($_options = $this->getOptionList()):?>
+  <dl class="item-options">
+    <?php foreach ($_options as $_option) : ?>
+      <?php $_formatedOptionValue = $this->getFormatedOptionValue($_option) ?>
+
+      <dt><?php echo $this->htmlEscape($_option['label']) ?></dt>
+      <dd<?php if (isset($_formatedOptionValue['full_view'])): ?> class="truncated"<?php endif; ?>><?php echo $_formatedOptionValue['value'] ?>
+        <?php if (isset($_formatedOptionValue['full_view'])): ?>
+          <div class="truncated_full_value">
+            <dl class="item-options">
+              <dt><?php echo $this->htmlEscape($_option['label']) ?></dt>
+              <dd><?php echo $_formatedOptionValue['full_view'] ?></dd>
+            </dl>
+          </div>
+        <?php endif; ?>
+      </dd>
+    <?php endforeach; ?>
+  </dl>
+<?php endif;?>
+
+<?php if ($messages = $this->getMessages()): ?>
+  <?php foreach ($messages as $message): ?>
+    <p class="item-msg <?php echo $message['type'] ?>">* <?php echo $message['text'] ?></p>
+  <?php endforeach; ?>
+<?php endif; ?>

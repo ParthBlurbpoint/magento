@@ -1,0 +1,23 @@
+<div class="kodematix-socialconnect-checkout">
+<h3><?php echo $this->__('Login With us Also') ?></h3>
+    <div class="<?php echo $this->_getColSet(); ?>">
+        <?php if($this->_googleEnabled()): ?>
+        <div class="<?php echo $this->_getCol(); ?> kodematix-socialconnect-checkout-google">
+          
+            <?php echo $this->getChildHtml('kodematix_socialconnect_checkout_google_login')?>
+        </div>
+        <?php endif; ?>
+        <?php if($this->_facebookEnabled()): ?>
+        <div class="<?php echo $this->_getCol(); ?> kodematix-socialconnect-checkout-facebook">
+           
+            <?php echo $this->getChildHtml('kodematix_socialconnect_checkout_facebook_login')?>
+        </div>
+        <?php endif; ?>
+        <?php if($this->_twitterEnabled()): ?>
+        <div class="<?php echo $this->_getCol(); ?> kodematix-socialconnect-checkout-twitter">
+           
+            <?php echo $this->getChildHtml('kodematix_socialconnect_checkout_twitter_login')?>
+        </div>
+        <?php endif; ?>
+    </div>
+</div>

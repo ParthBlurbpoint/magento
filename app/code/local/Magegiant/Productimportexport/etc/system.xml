@@ -1,0 +1,156 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Magegiant
+ * 
+ * NOTICE OF LICENSE
+ * 
+ * This source file is subject to the magegiant.com license that is
+ * available through the world-wide-web at this URL:
+ * http://magegiant.com/license-agreement/
+ * 
+ * DISCLAIMER
+ * 
+ * Do not edit or add to this file if you wish to upgrade this extension to newer
+ * version in the future.
+ * 
+ * @category    Magegiant
+ * @package     Magegiant_Productimportexport
+ * @copyright   Copyright (c) 2014 Magegiant (http://magegiant.com/)
+ * @license     http://magegiant.com/license-agreement/
+ */
+-->
+<config>
+    <tabs>
+        <magegiant translate="label">
+            <label>Magegiant Extensions</label>
+            <sort_order>100</sort_order>
+        </magegiant>
+    </tabs>
+    <sections>
+        <productimportexport translate="label" module="productimportexport">
+            <class>separator-top</class>
+            <label>Product Import Export</label>
+            <tab>magegiant</tab>
+            <frontend_type>text</frontend_type>
+            <sort_order>299</sort_order>
+            <show_in_default>1</show_in_default>
+            <show_in_website>1</show_in_website>
+            <show_in_store>1</show_in_store>
+            <groups>
+                <general translate="label">
+                    <label>General Settings</label>
+                    <frontend_type>text</frontend_type>
+                    <sort_order>1</sort_order>
+                    <show_in_default>1</show_in_default>
+                    <show_in_website>1</show_in_website>
+                    <show_in_store>1</show_in_store>
+                    <fields>        
+                        <enable translate="label">
+                            <label>Enable</label>
+                            <frontend_type>select</frontend_type>
+                            <sort_order>1</sort_order>
+                            <source_model>adminhtml/system_config_source_yesno</source_model>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <comment></comment>
+                        </enable>
+
+
+
+                    </fields>
+                </general>
+
+                <product translate="label">
+                    <label>Product Settings</label>
+                    <frontend_type>text</frontend_type>
+                    <sort_order>20</sort_order>
+                    <show_in_default>1</show_in_default>
+                    <show_in_website>1</show_in_website>
+                    <show_in_store>1</show_in_store>
+                    <fields>
+                        <export_all translate="label">
+                            <label>Export All profile</label>
+                            <frontend_type>select</frontend_type>
+                            <sort_order>1</sort_order>
+                            <source_model>productimportexport/system_config_profiles</source_model>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <comment>Select profile for Export All Products action. </comment>
+                        </export_all>
+
+                        <export_basic translate="label">
+                            <label>Export Basic Profile</label>
+                            <frontend_type>select</frontend_type>
+                            <sort_order>10</sort_order>
+                            <source_model>productimportexport/system_config_profiles</source_model>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <comment>Select profile for Export Products with Basic information action.</comment>
+                        </export_basic>
+
+                        <export_stock translate="label">
+                            <label>Export Stocks Profile</label>
+                            <frontend_type>select</frontend_type>
+                            <sort_order>20</sort_order>
+                            <source_model>productimportexport/system_config_profiles</source_model>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <comment>Select profile for Export Stocks action.</comment>
+                        </export_stock>
+
+                        <import translate="label">
+                            <label>Import Profile</label>
+                            <frontend_type>select</frontend_type>
+                            <sort_order>30</sort_order>
+                            <source_model>productimportexport/system_config_profiles</source_model>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <comment></comment>
+                        </import>
+
+
+                        <generate_sku translate="label">
+                            <label>Automatically generate SKU</label>
+                            <frontend_type>select</frontend_type>
+                            <sort_order>50</sort_order>
+                            <source_model>adminhtml/system_config_source_yesno</source_model>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <comment>In Import process, if a row without SKU, system will automatically generate SKU.</comment>
+                        </generate_sku>
+
+                        <sku_length translate="label">
+                            <label>SKU Length</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>51</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <depends><generate_sku>1</generate_sku></depends>
+                            <comment>SKU length. Default: 18</comment>
+                        </sku_length>
+
+                        <generate_url translate="label">
+                            <label>Automatically generate URL Key</label>
+                            <frontend_type>select</frontend_type>
+                            <sort_order>60</sort_order>
+                            <source_model>adminhtml/system_config_source_yesno</source_model>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <comment>In Import process, if a row without URL Key, system will automatically generate URL Key.</comment>
+                        </generate_url>
+
+                    </fields>
+                </product>
+            </groups>
+        </productimportexport>
+    </sections>
+</config>

@@ -1,0 +1,14 @@
+/**
+ * @Description : Frontend Styles
+ * @author Kodematix
+ *
+ */
+.product_gift{min-width: 286px;width: 87%;float: left;padding: 10px 20px;position: relative;border: 1px solid #182E43;border-radius: 16px 16px;margin-bottom: 10px;}
+.product_gift .free-image-tag{position: absolute;z-index: 999;width: 60px;left: 223px;top: -25px;}
+.product_gift .free_product_selector{float: left;width: 8%;margin-top: 50px;}
+.product_gift .free_product_name{float: left;width: 85%;}
+.product_gift .free_product_name table{width: 100%;text-align: center;}
+.product_gift .free_product_name table .td-first{width:50%;vertical-align: middle;}
+.product_gift .free_product_name table .td-first .select-gift-img{width: 120px;height: auto;}
+.product_gift .free_product_name table .td-second{text-align: center;}
+.product_gift .free_product_name table .td-pname{text-align: center;color: #c76200;}

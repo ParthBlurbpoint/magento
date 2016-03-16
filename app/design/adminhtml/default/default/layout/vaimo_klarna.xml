@@ -1,0 +1,74 @@
+<?xml version="1.0"?>
+<!--
+/*
+ * Copyright (c) 2009-2014 Vaimo AB
+ *
+ * Vaimo reserves all rights in the Program as delivered. The Program
+ * or any portion thereof may not be reproduced in any form whatsoever without
+ * the written consent of Vaimo, except as provided by licence. A licence
+ * under Vaimo's rights in the Program may be available directly from
+ * Vaimo.
+ *
+ * Disclaimer:
+ * THIS NOTICE MAY NOT BE REMOVED FROM THE PROGRAM BY ANY USER THEREOF.
+ * THE PROGRAM IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+ * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL
+ * THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE PROGRAM OR THE USE OR OTHER DEALINGS
+ * IN THE PROGRAM.
+ *
+ * @category    Vaimo
+ * @package     Vaimo_Klarna
+ * @copyright   Copyright (c) 2009-2014 Vaimo AB
+ */
+-->
+
+<layout>
+    <adminhtml_system_config_edit>
+        <reference name="head">
+            <action method="addJs"><script>vaimo/klarna/klarna.js</script></action>
+            <action method="addCss"><name>vaimo/klarna/css/admin.css</name></action>
+        </reference>
+    </adminhtml_system_config_edit>
+
+    <adminhtml_sales_order_view>
+        <reference name="order_totals">
+            <block type="klarna/adminhtml_sales_order_totals" before="tax" name="vaimo_totals" />
+        </reference>
+    </adminhtml_sales_order_view>
+    <adminhtml_sales_order_invoice_new>
+        <reference name="invoice_totals">
+            <block type="klarna/adminhtml_sales_invoice_totals" before="tax" name="vaimo_totals" />
+        </reference>
+    </adminhtml_sales_order_invoice_new>
+    <adminhtml_sales_order_invoice_updateqty>
+        <reference name="invoice_totals">
+            <block type="klarna/adminhtml_sales_invoice_totals" before="tax" name="vaimo_totals" />
+        </reference>
+    </adminhtml_sales_order_invoice_updateqty>
+    <adminhtml_sales_order_invoice_view>
+        <reference name="invoice_totals">
+            <block type="klarna/adminhtml_sales_invoice_totals" before="tax" name="vaimo_totals" />
+        </reference>
+    </adminhtml_sales_order_invoice_view>
+    <adminhtml_sales_order_creditmemo_new>
+        <reference name="creditmemo_totals">
+            <block type="klarna/adminhtml_sales_creditmemo_totals" before="tax" name="vaimo_totals" />
+            <block type="klarna/adminhtml_sales_creditmemo_create_adjustments" before="adjustments" name="adjust_klarna_fee" template="vaimo/klarna/creditmemo/totals/adjustments.phtml" />
+        </reference>
+    </adminhtml_sales_order_creditmemo_new>
+    <adminhtml_sales_order_creditmemo_updateqty>
+        <reference name="creditmemo_totals">
+            <block type="klarna/adminhtml_sales_creditmemo_totals" before="tax" name="vaimo_totals" />
+            <block type="klarna/adminhtml_sales_creditmemo_create_adjustments" before="adjustments" name="adjust_klarna_fee" template="vaimo/klarna/creditmemo/totals/adjustments.phtml" />
+        </reference>
+    </adminhtml_sales_order_creditmemo_updateqty>
+    <adminhtml_sales_order_creditmemo_view>
+        <reference name="creditmemo_totals">
+            <block type="klarna/adminhtml_sales_creditmemo_totals" before="tax" name="vaimo_totals" />
+        </reference>
+    </adminhtml_sales_order_creditmemo_view>
+
+</layout>

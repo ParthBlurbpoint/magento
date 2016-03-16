@@ -1,0 +1,92 @@
+<?php
+/*
+ * Featured product Extension Developed by Magehit
+ */
+?>
+<?php
+$products = $this->featuretotalProduct();
+$prodIds = $products->getAllIds();//Get all ids that enable the Feature Product 
+$ftotalproduct = count($prodIds);//count of the product Feature Enable 
+$_item = $this->getStoreconfig();//get the Store Configuration value 
+
+$enable = $_item['enabled'];// Module Enable or Disble Value
+$title = $_item['horizontal_carousels_setting_title'];//Get the Title of the Horizontal Carousels
+$limit = $_item['horizontal_carousels_setting_limit'];//Get the Limit of the item Display 
+$slide_itemsonpage = $_item['horizontal_carousels_setting_slide_itemsonpage'];//Item on Page Display
+$slide_auto = $_item['horizontal_carousels_setting_slide_auto'];//Slide Auto 
+$slideWidth = $_item['slideWidth'];
+$minSlides = $_item['minSlides'];
+$maxSlides = $_item['maxSlides'];
+$autoslider =$_item['autoslider'];
+$slider_mode =$_item['slider_mode'];
+$slider_speed =$_item['slider_speed'];
+$slider_margin = $_item['slider_margin'];
+
+
+	if($slide_auto == 1) $slide_auto = 'true'; else $slide_auto = 'false';
+$slide_navigation = $_item['horizontal_carousels_setting_slide_navigation'];
+	if($slide_navigation == 1) $slide_navigation = 'true'; else $slide_navigation = 'false';
+
+?>
+<?php if ($enable): ?>
+
+    <div class="featured">
+        <div class="fhead">
+            <h2 class="subtitle"><?php echo $this->__($title); ?></h2>
+        </div>
+        <?php if ($ftotalproduct): ?>
+            <div id="owl-featuredproducts" class="owl-featuredproducts">
+                    <?php $count = 1; ?>
+                    <?php foreach ($products as $_product) : ?>
+   
+                        <?php if ($count <= $limit): ?>
+                            <div class="item" style="text-align:center">
+                                <a href="<?php echo $this->getUrl($_product->getUrlPath()) ?>" >
+                                    <span>
+                                        <img class="lazy" src="<?php echo $this->helper('catalog/image')->init($_product, 'small_image')->resize(270) ?>" alt="<?php echo $this->htmlEscape($_product->getName()) ?>" title="<?php echo $this->htmlEscape($_product->getName()) ?>" />
+                                    </span>
+                                </a>
+                                <h3 class="product-name">
+                                    <a href="<?php echo $this->getUrl($_product->getUrlPath()) ?>" ><?php echo $_product->getName(); ?>
+                                    </a>                   
+                                </h3>
+                                <span class="price-con">
+								<?php									
+									echo Mage::helper('core')->currency($_product->getFinalPrice(),true,false);
+								?>
+								</span>
+                                <span class="fadd">
+                                    <p>
+                                        <button type="button" title="<?php echo $this->__('Add to Cart') ?>" class="button btn-cart" onclick="setLocation(' <?php echo $this->helper('checkout/cart')->getAddUrl($_product) ?>')"><span><span><?php echo $this->__('Add to Cart') ?></span></span></button>
+                                    </p>
+                                </span>
+                            </div>
+                    <?php endif; ?>
+                    <?php $count++ ?>
+                <?php endforeach; ?>
+                </ul>
+            </div>
+    </div>
+    <?php else: ?>
+        <div class="show-msg">
+            <?php echo $this->__("There are no feature products."); ?> 
+        </div>
+    <?php endif; ?>
+<?php endif; ?>
+<script type="text/javascript">
+	var $fp = jQuery.noConflict();
+    $fp(document).ready(function() {
+      $fp("#owl-featuredproducts").bxSlider({
+  minSlides: <?php echo $minSlides; ?>,
+  maxSlides: <?php echo $maxSlides; ?>,
+  slideWidth: <?php echo $slideWidth; ?>,
+  auto: <?php echo $autoslider; ?>,
+  speed: <?php echo $slider_speed; ?>,
+  mode:'<?php echo $slider_mode ?>',
+  slideMargin: <?php echo $slider_margin;?>
+});
+     
+    });
+</script>
+
+

@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<package>
+    <name>Kodematix_Featureproduct</name>
+    <version>0.1.0</version>
+    <stability>stable</stability>
+    <license>Open Software License</license>
+    <channel>community</channel>
+    <extends/>
+    <summary>Kodematix_Featureproduct</summary>
+    <description>Kodematix_Featureproduct</description>
+    <notes>Kodematix_Featureproduct</notes>
+    <authors><author><name>kodematix</name><user>kodematix</user><email>hello@kodematix.com</email></author></authors>
+    <date>2015-10-02</date>
+    <time>06:51:44</time>
+    <contents><target name="magecommunity"><dir name="Kodematix"><dir name="Featureproduct"><dir name="Block"><file name="Index.php" hash="9cb0dfb7ed408d8011c34aba5777798e"/></dir><dir name="Helper"><file name="Data.php" hash="3acc8fb17497820eaa028203da744aae"/></dir><dir name="controllers"><file name="IndexController.php" hash="e9b7a8419d18fedbf1657b9d7d5166db"/></dir><dir name="etc"><file name="config.xml" hash="16a9b1aefbccfeed3c25b65b8ae83b2f"/><file name="system.xml" hash="35a4e117f4d4cc03e4030c2482c2059d"/></dir><dir name="sql"><dir name="featureproduct_setup"><file name="mysql4-install-0.1.0.php" hash="ace1709d1c95cbb0c79523ae45377908"/></dir></dir></dir></dir><dir name="Mage"><dir name="Adminhtml"><dir name="Model"><dir name="System"><dir name="Config"><dir name="Source"><file name="custom.php" hash="c2c9d8c36f6a143c559ef2eabfde20ca"/></dir></dir></dir></dir></dir></dir></target><target name="magedesign"><dir name="frontend"><dir name="base"><dir name="default"><dir name="layout"><file name="featureproduct.xml" hash="03c400699d260906f0966dc53dc1c38d"/></dir><dir name="template"><dir name="featureproduct"><file name="featureblock.phtml" hash="fe88618892e2c20285ac82960daeaaeb"/></dir></dir></dir></dir></dir></target><target name="mageskin"><dir name="frontend"><dir name="base"><dir name="default"><dir name="css"><file name="jquery.bxslider.css" hash="b2ef9981970a8795556c04c4bc596147"/></dir><dir name="images"><dir name="featureproduct"><file name="bx_loader.gif" hash="931bdb6b50816b03206c66921760b246"/><file name="controls.png" hash="d9d25372f38c6b242b9b51d5841fe86e"/></dir></dir><dir name="js"><dir name="featuredproduct"><file name="jquery-1.10.2.min.js" hash="628072e7212db1e8cdacb22b21752cda"/><file name="jquery.bxslider.js" hash="f14e280e61524c17e449530a194d66ec"/><file name="noconflict.js" hash="aec10679a7650d537d78e9faebf29463"/></dir></dir></dir></dir></dir></target><target name="mageetc"><dir name="modules"><file name="Kodematix_Featureproduct.xml" hash="600204784fc23fe26d968ef3f826f828"/></dir></target></contents>
+    <compatible/>
+    <dependencies><required><php><min>5.1.0</min><max>6.0.0</max></php></required></dependencies>
+</package>

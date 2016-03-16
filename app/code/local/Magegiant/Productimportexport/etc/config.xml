@@ -1,0 +1,154 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Magegiant
+ * 
+ * NOTICE OF LICENSE
+ * 
+ * This source file is subject to the magegiant.com license that is
+ * available through the world-wide-web at this URL:
+ * http://magegiant.com/license-agreement/
+ * 
+ * DISCLAIMER
+ * 
+ * Do not edit or add to this file if you wish to upgrade this extension to newer
+ * version in the future.
+ * 
+ * @category    Magegiant
+ * @package     Magegiant_Productimportexport
+ * @copyright   Copyright (c) 2014 Magegiant (http://magegiant.com/)
+ * @license     http://magegiant.com/license-agreement/
+ */
+-->
+<config>
+    <modules>
+        <Magegiant_Productimportexport>
+            <version>0.1.0</version>
+        </Magegiant_Productimportexport>
+    </modules>
+    <frontend>
+        <routers>
+            <productimportexport>
+                <use>standard</use>
+                <args>
+                    <module>Magegiant_Productimportexport</module>
+                    <frontName>productimportexport</frontName>
+                </args>
+            </productimportexport>
+        </routers>
+        <translate>
+            <modules>
+                <Magegiant_Productimportexport>
+                    <files>
+                        <default>Magegiant_Productimportexport.csv</default>
+                    </files>
+                </Magegiant_Productimportexport>
+            </modules>
+        </translate>
+    </frontend>
+    <admin>
+        <routers>
+            <productimportexportadmin>
+                <use>admin</use>
+                <args>
+                    <module>Magegiant_Productimportexport</module>
+                    <frontName>productimportexportadmin</frontName>
+                </args>
+            </productimportexportadmin>
+        </routers>
+    </admin>
+    <adminhtml>
+        <layout>
+            <updates>
+                <productimportexport>
+                    <file>magegiant/productimportexport.xml</file>
+                </productimportexport>
+            </updates>
+        </layout>
+        <translate>
+            <modules>
+                <Magegiant_Productimportexport>
+                    <files>
+                        <default>Magegiant_Productimportexport.csv</default>
+                    </files>
+                </Magegiant_Productimportexport>
+            </modules>
+        </translate>
+    </adminhtml>
+    <global>
+        <models>
+            <productimportexport>
+                <class>Magegiant_Productimportexport_Model</class>
+                <resourceModel>productimportexport_mysql4</resourceModel>
+            </productimportexport>
+
+            <magegiant_productimportexport>
+                <class>Magegiant_Productimportexport_Model</class>
+                <resourceModel>productimportexport_mysql4</resourceModel>
+            </magegiant_productimportexport>
+
+            <productimportexport_mysql4>
+                <class>Magegiant_Productimportexport_Model_Mysql4</class>
+                <entities>
+                    <productimportexport>
+                        <table>productimportexport</table>
+                    </productimportexport>
+                </entities>
+            </productimportexport_mysql4>
+        </models>
+        <resources>
+            <productimportexport_setup>
+                <setup>
+                    <module>Magegiant_Productimportexport</module>
+                </setup>
+                <connection>
+                    <use>core_setup</use>
+                </connection>
+            </productimportexport_setup>
+            <productimportexport_write>
+                <connection>
+                    <use>core_write</use>
+                </connection>
+            </productimportexport_write>
+            <productimportexport_read>
+                <connection>
+                    <use>core_read</use>
+                </connection>
+            </productimportexport_read>
+        </resources>
+        <blocks>
+            <productimportexport>
+                <class>Magegiant_Productimportexport_Block</class>
+            </productimportexport>
+        </blocks>
+        <helpers>
+            <productimportexport>
+                <class>Magegiant_Productimportexport_Helper</class>
+            </productimportexport>
+        </helpers>
+        <events>
+            <ie_export_add_extra_after>
+                <observers>
+                    <productimportexport_observers_parseRelated>
+                        <class>productimportexport/observer</class>
+                        <method>parseExtraData</method>
+                    </productimportexport_observers_parseRelated>
+                </observers>
+            </ie_export_add_extra_after>
+        </events>
+    </global>
+
+    <default>
+        <productimportexport>
+            <general>
+                <enable>1</enable>
+            </general>
+            <product>
+                <generate_sku>1</generate_sku>
+                <sku_length>18</sku_length>
+                <generate_url>1</generate_url>
+            </product>
+        </productimportexport>
+    </default>
+
+</config>

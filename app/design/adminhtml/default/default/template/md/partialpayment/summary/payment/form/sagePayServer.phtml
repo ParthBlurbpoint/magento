@@ -1,0 +1,35 @@
+<?php
+	$_code      = 'sagepayserver';
+	$tokenCards = $this->getTokenCards($_code);
+	$cTokens    = ($tokenCards->getSize()>0 && $this->canUseToken());
+	$sageStyle  = '';
+?>
+<div id="payment_form_<?php echo $_code ?>" style="display:none;">
+
+	<?php echo $this->getChildHtml('token.cards.li'); ?>
+
+	<ul class="form-list paymentsage<?php echo $_code ?>">
+	    <li id="serversecure"<?php echo $sageStyle; ?>>
+	        <span>
+	            <?php
+	            	$_secImage = '<img class="sagepay-server-content-image" src="' . $this->getSkinUrl('sagepaysuite/images/secured-by-sage-pay.png') . '" />';
+	            	echo preg_replace('/{{secured_logo}}/', $_secImage, Mage::getStoreConfig('payment/sagepayserver/selected_description'));
+	            ?>
+	        </span>
+	    </li>
+
+	<?php if($this->canUseToken()): ?>
+		<li<?php echo $sageStyle; ?>>
+			<label for="remembertoken-<?php echo $_code; ?>"><?php echo $this->__('Do you wish to have your credit card details remembered for faster checkout next time?'); ?></label>&nbsp;
+			<input checked="checked" type="checkbox" name="<?php echo $_code ?>[remembertoken]" value="1" id="remembertoken-<?php echo $_code; ?>" />
+		</li>
+        <li<?php echo $sageStyle; ?> id="<?php echo $_code ?>_cc_nickname_li" >
+            <label for="<?php echo $_code ?>_cc_nickname"><?php echo $this->__('Credit Card Description') ?></label>
+            <div class="input-box">
+                <input type="text" title="<?php echo $this->__('Credit Card Description') ?>" class="input-text" id="<?php echo $_code ?>_cc_nickname" name="<?php echo $_code ?>[cc_nickname]" value="<?php echo $this->htmlEscape($this->getInfoData('cc_nickname')) ?>" />
+            </div>
+        </li>
+	<?php endif; ?>
+
+	</ul>
+</div>

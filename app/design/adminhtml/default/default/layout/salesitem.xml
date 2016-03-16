@@ -1,0 +1,28 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * 
+ * @author Kodematix
+ *
+ */
+--> 
+<layout version="0.1.0">
+<adminhtml_sales_order_view>
+ <reference name="left">
+        <reference name="sales_order_tabs">
+			<reference name="order_tab_info">
+				<reference name="order_items">
+				<action method="setTemplate"> <template>freegift/items.phtml</template></action>
+						
+						<action method="addItemRender">
+                        <type>default</type>
+                        <block>adminhtml/sales_order_view_items_renderer_default</block>
+                        <template>freegift/default.phtml</template>
+                    </action>
+				</reference>
+			</reference>
+		</reference>
+	</reference>
+</adminhtml_sales_order_view>
+   
+</layout>

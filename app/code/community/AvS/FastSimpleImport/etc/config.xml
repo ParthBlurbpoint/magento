@@ -1,0 +1,89 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * @category   AvS
+ * @package    AvS_FastSimpleImport
+ * @license    http://opensource.org/licenses/osl-3.0.php Open Software Licence 3.0 (OSL-3.0)
+ * @author     Andreas von Studnitz <avs@avs-webentwicklung.de>
+ */
+-->
+<config>
+    <modules>
+        <AvS_FastSimpleImport>
+            <version>0.6.4</version>
+        </AvS_FastSimpleImport>
+    </modules>
+
+    <global>
+        <models>
+            <fastsimpleimport>
+                <class>AvS_FastSimpleImport_Model</class>
+            </fastsimpleimport>
+        </models>
+
+        <helpers>
+            <fastsimpleimport>
+                <class>AvS_FastSimpleImport_Helper</class>
+            </fastsimpleimport>
+        </helpers>
+
+        <importexport module="importexport">
+            <import_entities>
+                <catalog_category translate="label">
+                    <model_token>fastsimpleimport/import_entity_category</model_token>
+                    <label>Category</label>
+                </catalog_category>
+            </import_entities>
+
+            <import_product_types>
+                <simple>fastsimpleimport/import_entity_product_type_simple</simple>
+                <configurable>fastsimpleimport/import_entity_product_type_configurable</configurable>
+                <virtual>fastsimpleimport/import_entity_product_type_virtual</virtual>
+                <grouped>fastsimpleimport/import_entity_product_type_grouped</grouped>
+                <bundle>fastsimpleimport/import_entity_product_type_bundle</bundle>
+            </import_product_types>
+        </importexport>
+    </global>
+
+    <adminhtml>
+        <translate>
+            <modules>
+                <avs_fastsimpleimport>
+                    <files>
+                        <default>AvS_FastSimpleImport.csv</default>
+                    </files>
+                </avs_fastsimpleimport>
+            </modules>
+        </translate>
+    </adminhtml>
+
+    <default>
+        <fastsimpleimport>
+            <general>
+                <import_behavior>replace</import_behavior>
+                <partial_indexing>0</partial_indexing>
+                <continue_after_errors>0</continue_after_errors>
+                <error_limit>100</error_limit>
+                <support_nested_arrays>0</support_nested_arrays>
+                <ignore_duplicates>0</ignore_duplicates>
+                <clear_field_on_empty_string>0</clear_field_on_empty_string>
+                <symbol_for_clear_field>###EMPTY###</symbol_for_clear_field>
+            </general>
+            <product>
+                <allow_rename_files>1</allow_rename_files>
+                <status>1</status>
+                <visibility>4</visibility>
+                <weight>0</weight>
+            </product>
+        </fastsimpleimport>
+    </default>
+
+
+    <phpunit>
+        <suite>
+            <modules>
+                <AvS_FastSimpleImport/>
+            </modules>
+        </suite>
+    </phpunit>
+</config>

@@ -1,0 +1,94 @@
+<?php
+/**
+ * @Description : Block of free products in product detail page
+ * @author Kodematix
+ *
+ */
+?>
+<?php
+$productId=$this->getProduct()->getId();
+$product = Mage::getModel('catalog/product')->load($productId);
+$giftOptionEnable =  $product->getIsProductGiftEnabled();
+$FromGift=strtotime($product->getProductGiftActiveFrom());
+$ToGift=strtotime($product->getProductGiftActiveTo());
+if($giftOptionEnable && ($FromGift<=time() || empty($FromGift))  && ($ToGift>=time() || empty($ToGift)) && Mage::helper('core')->isModuleOutputEnabled('Kodematix_ProductGift') && Mage::getStoreConfigFlag('productgiftsection/productgiftgroup/productgiftstatus'))
+{
+    $skuGift=$product->getSkuOfProductGift();
+    $productSkus = explode(',',$skuGift);
+        $currency=Mage::app()->getLocale()->currency(Mage::app()->getStore()->getCurrentCurrencyCode())->getSymbol(); ?>
+	    <div class="product_gift_wrapper"><h3 class="gift_title"><span>Select Gift</span></h3>
+	    <div class="product_gift">
+	    <img class="free-image-tag" src="<?php echo Mage::getDesign()->getSkinUrl('images/free.png') ?>"/>
+	  <?php $count = 1;
+                $countProducts = 0;
+	/*
+     * loop to create html for all gift products
+     */
+	  foreach($productSkus as $sku):
+		$prodGift = Mage::getModel('catalog/product')->loadByAttribute('sku', $sku);
+		//print_r($prodGift);exit;
+		 $giftName = $prodGift->getName(); // Gift Name
+                 $giftPrice = $prodGift->getPrice(); // Gift Name
+                 $giftImage = $prodGift->getImageUrl();// Gift Image
+                 $stocklevel = (int)Mage::getModel('cataloginventory/stock_item')->loadByProduct($prodGift)->getQty();
+                 $productIsSalable=(int)$prodGift->isSalable();
+                 $productInStock=(int)$prodGift->getStockItem()->getIsInStock();
+                 $productInStock1 = (int)$productInStock;
+                 if($stocklevel!=0 && $productInStock1!=0)
+                 {
+                  
+		$giftUrl=Mage::getBaseUrl(Mage_Core_Model_Store::URL_TYPE_WEB);
+		$giftUrl.=$prodGift->getUrlPath();
+
+		if($count==1){ ?>
+		<div class="free_product_selector">
+		<input type="radio" name="free_gift" value="<?php echo $prodGift->getId() ?>" checked= "checked"/></div>
+		<?php }else{ ?>
+		<div class="free_product_selector">
+		<input type="radio" name="free_gift" value="<?php echo $prodGift->getId() ?>" /></div>
+		<?php } ?>
+		
+		 <div class="free_product_name">
+                 <table>
+                    <tr>
+                     <td class="td-first">
+                      <a href="<?php echo $giftUrl ?>"><img class="select-gift-img" attr="<?php echo $giftName ?>" title="<?php echo $giftName ?>" src="<?php echo $giftImage ?>"/></a>
+                     </td>
+                     <td class="td-first">
+                     <table>
+                      <tr>
+                        <td class="td-second"><h3><a href="<?php echo $giftUrl ?>"><?php echo substr($giftName,0,20); ?>
+                         <?php  if(strlen($giftName)>20){
+                               
+                             echo "...";
+                           }
+						   ?>
+                         </a></h3></td>
+                      </tr>
+                      <tr>
+                        <td class="td-second td-pname"><b><strike><?php echo $currency.number_format((float)$giftPrice, 2, '.', '') ?></strike></b><br/>
+                        <b><?php echo $currency.number_format((float)0, 2, '.', '') ?></b>
+                        </td>
+                      </tr>
+                       </table>
+                     </td>
+
+                    </tr>
+                   </table>
+               
+                 </div>
+                 <?php 
+                 $countProducts++;
+                 }
+		$count++;
+		endforeach;
+                
+                if($countProducts==0){
+                    echo "Free Gifts will come soon";
+                }
+		?>
+		</div></div>
+		<?php
+}
+
+?>
